@@ -108,9 +108,16 @@ const extractXlinkHrefs = (xml: any): any[] => {
   return xlinks;
 };
 
-export function printObjectTree(obj: any, maxLevels: number = -1, level: number = 0): void {
-  const indent = '  '.repeat(level); // Indentation based on depth
-  if (maxLevels !== -1 && level >= maxLevels) {
+interface TreeSearchFilter {
+  maxLevel?: number;
+  level?: number;
+  text?: string;
+}
+
+export function printObjectTree(obj: any, searchFilter: TreeSearchFilter, currentLevel: number = 0): void {
+  const indent = '  '.repeat(currentLevel); // Indentation based on depth
+  // Don't traverse below the maxLevel
+  if (searchFilter?.maxLevel !== undefined && currentLevel >= searchFilter?.maxLevel) {
     return;
   }
   for (const key in obj) {
@@ -128,10 +135,17 @@ export function printObjectTree(obj: any, maxLevels: number = -1, level: number 
           ...Object.keys(attributesObject ?? {}).filter((key) => !['id', 'type'].includes(key))
         ];
         const attributesStr = attributesObject !== undefined ? ` [${attributesArray.join(', ')}]` : '';
-        console.log(`${indent} ∟ ${key}` + attributesStr);
+        const doShowFilterMatchAndParentNodes =
+          searchFilter?.text === undefined ||
+          (searchFilter?.text !== undefined &&
+            (idStr.toLowerCase().includes(searchFilter.text.toLowerCase()) ||
+              currentLevel < (searchFilter.level ?? 0)));
+        if (doShowFilterMatchAndParentNodes) {
+          console.log(`${indent} ∟ ${key}` + attributesStr);
+        }
         // Recursively traverse the child object
         if (hasChildren) {
-          printObjectTree(obj[key], maxLevels, level + 1);
+          printObjectTree(obj[key], searchFilter, currentLevel + 1);
         }
       }
     }

@@ -31,6 +31,10 @@ Parse the file `xbrl.efrag.org/taxonomy/esrs/2023-12-22/common/esrs_cor.xsd`:
 
     npm run list:core
 
+Searching:
+
+    npm run list:core "Scope3GreenhouseGasEmissions"
+
 Dump to a text file:
 
     mkdir output
@@ -61,6 +65,10 @@ and further down:
 Parse the file `xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd`:
 
     npm run list:all
+
+Searching:
+
+    npm run list:all "Scope3GreenhouseGasEmissions"
 
 Dump to a text file:
 
