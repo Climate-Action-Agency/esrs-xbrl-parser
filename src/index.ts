@@ -44,10 +44,10 @@ const parseAndFollowReferences = async (filePath: string): Promise<ParsedXBRLFil
 
   // Parse the main file or fetch the external resource
   if (isExternalURL(filePath)) {
-    console.log(`Fetching external file: ${filePath}`);
+    console.log(`🌐 Parsing external file: ${filePath}`);
     result = await fetchExternalResource(filePath);
   } else {
-    console.log(`Parsing local file: ${filePath}`);
+    console.log(`🗂️ Parsing local file: ${filePath}`);
     result = await parseXML(filePath);
   }
 
@@ -117,12 +117,18 @@ function printObjectTree(obj: any, maxLevels: number = -1, level: number = 0): v
       // Don't traverse the attributes ($) object
       if (key !== ATTRIBUTES_KEY) {
         const hasChildren = typeof obj[key] === 'object' && obj[key] !== null;
-        const attributesStr =
-          hasChildren && obj[key][ATTRIBUTES_KEY] !== undefined
-            ? ` [${Object.keys(obj[key][ATTRIBUTES_KEY]).join(', ')}]`
-            : '';
+        const attributesObject = hasChildren ? obj[key][ATTRIBUTES_KEY] : undefined;
+        const idStr = attributesObject?.id !== undefined ? `id:'${attributesObject.id}'` : '';
+        // const nameStr = attributesObject?.name !== undefined ? `name:'${attributesObject.name}'` : ''; // name is too similar to id, and id is more common
+        const typeStr = attributesObject?.type !== undefined ? `type:'${attributesObject.type}'` : '';
+        const attributesArray = [
+          ...(idStr !== '' ? [idStr] : []),
+          ...(typeStr !== '' ? [typeStr] : []),
+          ...Object.keys(attributesObject ?? {}).filter((key) => !['id', 'type'].includes(key))
+        ];
+        const attributesStr = attributesObject !== undefined ? ` [${attributesArray.join(', ')}]` : '';
         console.log(`${indent} ∟ ${key}` + attributesStr);
-        // If the value is another object, recursively print its keys
+        // Recursively traverse the child object
         if (hasChildren) {
           printObjectTree(obj[key], maxLevels, level + 1);
         }
@@ -138,7 +144,7 @@ async function main() {
   const esrsAll = await parseAndFollowReferences(
     `./ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/${startFile}`
   );
-  console.log('\nTree:');
+  console.log(`\n${startFile}:`);
   printObjectTree(esrsAll, 10);
 
   // Extract and list all disclosures
