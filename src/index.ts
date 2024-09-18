@@ -85,33 +85,6 @@ const parseAndFollowReferences = async (filePath: string): Promise<ParsedXBRLFil
   return parsedSchema;
 };
 
-async function listDisclosures(xbrlData: any) {
-  const disclosures = [];
-
-  // Check if we have the 'xsd:schema' element
-  const schema = xbrlData['xsd:schema'];
-  console.log('schema:', schema);
-  if (!schema) {
-    console.error('No schema found in the XBRL file.');
-    return disclosures;
-  }
-
-  // Extract 'xsd:element' or any other relevant elements within the schema
-  const linkbaseRef = schema['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef'];
-  //console.log('linkbaseRef:', linkbaseRef);
-  const elements = schema['xsd:annotation']?.['xsd:appinfo']?.['xsd:import'] || [];
-
-  elements.forEach((element: any) => {
-    // Each element might have a name or reference to a type
-    disclosures.push({
-      namespace: element['$']?.namespace,
-      schemaLocation: element['$']?.schemaLocation
-    });
-  });
-
-  return disclosures;
-}
-
 function printObjectKeys(obj: any, maxLevels: number = -1, skipKeys: string[] = [], level: number = 0): void {
   const indent = '  '.repeat(level); // Indentation based on depth
   if (maxLevels !== -1 && level >= maxLevels) {
