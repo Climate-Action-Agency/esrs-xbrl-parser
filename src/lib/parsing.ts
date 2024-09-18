@@ -63,7 +63,8 @@ export const parseAndFollowReferences = async (filePath: string): Promise<Parsed
   const includes = result['xsd:schema']?.['xsd:include'] || [];
   const xlinkHrefs = extractXlinkHrefs(result);
 
-  const references = [...imports, ...includes, ...xlinkHrefs];
+  // imports can be a single object or an array of objects
+  const references = [...(imports.length === undefined ? [imports] : imports), ...includes, ...xlinkHrefs];
 
   for (const ref of references) {
     const schemaLocation = ref[ATTRIBUTES_KEY]?.schemaLocation || ref[ATTRIBUTES_KEY]?.['xlink:href'];
