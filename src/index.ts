@@ -114,13 +114,16 @@ function printObjectTree(obj: any, maxLevels: number = -1, level: number = 0): v
   }
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
-      if (key === ATTRIBUTES_KEY) {
-        console.log(`${indent} [${Object.keys(obj[ATTRIBUTES_KEY]).join(', ')}]`);
-        continue; // Don't traverse the attributes object
-      } else {
-        console.log(`${indent} ∟ ${key}`);
+      // Don't traverse the attributes ($) object
+      if (key !== ATTRIBUTES_KEY) {
+        const hasChildren = typeof obj[key] === 'object' && obj[key] !== null;
+        const attributesStr =
+          hasChildren && obj[key][ATTRIBUTES_KEY] !== undefined
+            ? ` [${Object.keys(obj[key][ATTRIBUTES_KEY]).join(', ')}]`
+            : '';
+        console.log(`${indent} ∟ ${key}` + attributesStr);
         // If the value is another object, recursively print its keys
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
+        if (hasChildren) {
           printObjectTree(obj[key], maxLevels, level + 1);
         }
       }
