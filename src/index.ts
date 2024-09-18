@@ -4,6 +4,7 @@ import xml2js from 'xml2js';
 import fetch from 'node-fetch';
 
 import { ParsedXBRLFile } from './types/global';
+const ATTRIBUTES_KEY = '$';
 
 // Helper to parse XML using promises from a local file
 const parseXML = async (filePath: string): Promise<any> => {
@@ -37,7 +38,7 @@ const isExternalURL = (url: string): boolean => {
   return url.startsWith('http://') || url.startsWith('https://');
 };
 
-// Recursive function to parse XML and follow references (imports/includes)
+// Recursive function to parse XML, follow schemaLocation and xlink:href
 const parseAndFollowReferences = async (filePath: string): Promise<ParsedXBRLFile> => {
   let result: any;
 
@@ -57,14 +58,15 @@ const parseAndFollowReferences = async (filePath: string): Promise<ParsedXBRLFil
     references: []
   };
 
-  // Extract references to other schemas (e.g., xs:import or xs:include)
+  // Extract references to other schemas (e.g., xs:import, xs:include, and xlink:href)
   const imports = result['xsd:schema']?.['xsd:import'] || [];
   const includes = result['xsd:schema']?.['xsd:include'] || [];
+  const xlinkHrefs = extractXlinkHrefs(result);
 
-  const references = [...imports, ...includes];
+  const references = [...imports, ...includes, ...xlinkHrefs];
 
   for (const ref of references) {
-    const schemaLocation = ref['$']?.schemaLocation;
+    const schemaLocation = ref[ATTRIBUTES_KEY]?.schemaLocation || ref[ATTRIBUTES_KEY]?.['xlink:href'];
     if (schemaLocation) {
       // Determine if the reference is external or local
       let refPath = schemaLocation;
@@ -85,20 +87,42 @@ const parseAndFollowReferences = async (filePath: string): Promise<ParsedXBRLFil
   return parsedSchema;
 };
 
-function printObjectKeys(obj: any, maxLevels: number = -1, skipKeys: string[] = [], level: number = 0): void {
+// Helper function to extract xlink:href references from XML
+const extractXlinkHrefs = (xml: any): any[] => {
+  const xlinks: any[] = [];
+
+  const traverse = (obj: any) => {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (typeof obj[key] === 'object') {
+          traverse(obj[key]);
+        } else if (key === 'xlink:href') {
+          xlinks.push(obj);
+        }
+      }
+    }
+  };
+
+  traverse(xml);
+  return xlinks;
+};
+
+function printObjectTree(obj: any, maxLevels: number = -1, level: number = 0): void {
   const indent = '  '.repeat(level); // Indentation based on depth
   if (maxLevels !== -1 && level >= maxLevels) {
     return;
   }
   for (const key in obj) {
-    if (skipKeys.includes(key)) {
-      continue;
-    }
     if (obj.hasOwnProperty(key)) {
-      console.log(`${indent} ∟ ${key}`);
-      // If the value is another object, recursively print its keys
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        printObjectKeys(obj[key], maxLevels, skipKeys, level + 1);
+      if (key === ATTRIBUTES_KEY) {
+        console.log(`${indent} [${Object.keys(obj[ATTRIBUTES_KEY]).join(', ')}]`);
+        continue; // Don't traverse the attributes object
+      } else {
+        console.log(`${indent} ∟ ${key}`);
+        // If the value is another object, recursively print its keys
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          printObjectTree(obj[key], maxLevels, level + 1);
+        }
       }
     }
   }
@@ -108,12 +132,11 @@ async function main() {
   // Parse the main XBRL file (adjust the path to your file)
   const startFile = 'common/esrs_cor.xsd'; // "esrs_all.xsd";
   console.log('startFile:', startFile);
-  // const esrsAll = await parseXML(`./ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/${startFile}`);
   const esrsAll = await parseAndFollowReferences(
     `./ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/${startFile}`
   );
-  console.log('esrsAll:');
-  printObjectKeys(esrsAll, 6, ['$']);
+  console.log('\nTree:');
+  printObjectTree(esrsAll, 10);
 
   // Extract and list all disclosures
   // const disclosures = await listDisclosures(esrsAll);
