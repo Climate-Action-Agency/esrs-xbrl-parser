@@ -1,4 +1,4 @@
-# ESRS XBRL Parser
+# ESRS XBRL Parser (for Node.js)
 
 ⚠️ Note: work-in-progress by The Climate Action Agency (https://www.climateaction.agency/).
 
