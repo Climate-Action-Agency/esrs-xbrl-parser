@@ -112,6 +112,25 @@ async function listDisclosures(xbrlData: any) {
   return disclosures;
 }
 
+function printObjectKeys(obj: any, maxLevels: number = -1, skipKeys: string[] = [], level: number = 0): void {
+  const indent = '  '.repeat(level); // Indentation based on depth
+  if (maxLevels !== -1 && level >= maxLevels) {
+    return;
+  }
+  for (const key in obj) {
+    if (skipKeys.includes(key)) {
+      continue;
+    }
+    if (obj.hasOwnProperty(key)) {
+      console.log(`${indent} ∟ ${key}`);
+      // If the value is another object, recursively print its keys
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        printObjectKeys(obj[key], maxLevels, skipKeys, level + 1);
+      }
+    }
+  }
+}
+
 async function main() {
   // Parse the main XBRL file (adjust the path to your file)
   const startFile = 'common/esrs_cor.xsd'; // "esrs_all.xsd";
@@ -120,7 +139,8 @@ async function main() {
   const esrsAll = await parseAndFollowReferences(
     `./ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/${startFile}`
   );
-  console.log('esrsAll:', JSON.stringify(esrsAll, null, 2));
+  console.log('esrsAll:');
+  printObjectKeys(esrsAll, 6, ['$']);
 
   // Extract and list all disclosures
   // const disclosures = await listDisclosures(esrsAll);
