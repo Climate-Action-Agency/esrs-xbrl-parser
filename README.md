@@ -2,7 +2,9 @@
 
 ⚠️ Note: work-in-progress by The Climate Action Agency (https://www.climateaction.agency/).
 
-The **ESRS XBRL Parser** is a lightweight and efficient tool designed to parse and navigate XBRL (eXtensible Business Reporting Language) taxonomies, specifically for the **European Sustainability Reporting Standards (ESRS)**. This parser simplifies working with complex XBRL files, enabling you to easily extract key financial and sustainability data from reports filed under the ESRS framework.
+**Tool for parsing European Sustainability Reporting Standards (ESRS) taxonomies in XBRL format**
+
+The **ESRS XBRL Parser** is a lightweight and efficient tool designed to parse XBRL (eXtensible Business Reporting Language) taxonomies, specifically tailored for the **European Sustainability Reporting Standards (ESRS)**. Developed to support the sustainability reporting requirements set by the **Corporate Sustainability Reporting Directive (CSRD)**, the parser helps navigate complex XBRL files. It enables the easy extraction of key financial and sustainability data from reports based on ESRS, which were created by **EFRAG (European Financial Reporting Advisory Group)** as the technical advisor to the European Commission.
 
 ## Features
 
@@ -17,7 +19,11 @@ This project is licensed under the [ISC License](LICENSE).
 
 ## ESRS files
 
+Get the ESRS files from EFRAG: https://www.efrag.org/en/projects/esrs-xbrl-taxonomy/concluded
+
 Unzip the ESRS files into `./ESRS-Set1-XBRL-Taxonomy`
+
+### `ESRS-Set1-XBRL-Taxonomy` folder contents
 
 	META-INF/catalog.xml
 	META-INF/taxonomyPackage.xml
