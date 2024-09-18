@@ -15,10 +15,10 @@
   "version": "0.1.0",
   "license": "ISC",
   "type": "module",
-  "main": "index.js",
+  "main": "src/list.ts",
   "scripts": {
-    "dev": "npx tsx src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "list:core": "npx tsx src/list.ts 2023-12-22/common/esrs_cor.xsd",
+    "list:all": "npx tsx src/list.ts 2023-12-22/esrs_all.xsd"
   },
   "dependencies": {
     "node-fetch": "^3.3.2",
