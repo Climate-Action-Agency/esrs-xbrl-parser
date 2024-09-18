@@ -1,7 +1,16 @@
 {
   "name": "esrs-xrbl-parser",
   "description": "",
-  "keywords": ["esrs", "xrbl", "parser", "efrag", "csrd", "esg", "sustainability", "reporting"],
+  "keywords": [
+    "esrs",
+    "xrbl",
+    "parser",
+    "efrag",
+    "csrd",
+    "esg",
+    "sustainability",
+    "reporting"
+  ],
   "author": "The Climate Action Agency AB",
   "version": "0.1.0",
   "license": "ISC",
@@ -12,6 +21,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "node-fetch": "^3.3.2",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {

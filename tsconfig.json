@@ -8,6 +8,8 @@
     "strict": true,
     "rootDir": "./src",
     "outDir": "./dist",
+    "typeRoots": ["./src/types", "./node_modules/@types"],
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "files": ["src/types/global.d.ts"]
 }
