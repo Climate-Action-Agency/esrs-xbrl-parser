@@ -75,9 +75,7 @@ Dump to a text file:
     mkdir output
     npm run list:all > output/list_esrs_all.txt
 
-## ESRS files
-
-### `ESRS-Set1-XBRL-Taxonomy` folder contents
+## `ESRS-Set1-XBRL-Taxonomy` folder contents
 
     META-INF/catalog.xml
     META-INF/taxonomyPackage.xml
@@ -97,3 +95,25 @@ Dump to a text file:
     xbrl.efrag.org/taxonomy/esrs/2023-12-22/all/linkbases/cal_esrs_*.xml // Many files, with numbers
     xbrl.efrag.org/taxonomy/esrs/2023-12-22/all/linkbases/def_esrs_*.xml // Many files, with numbers
     xbrl.efrag.org/taxonomy/esrs/2023-12-22/all/linkbases/pre_esrs_*.xml // Many files, with numbers
+
+## Glossary
+
+### Concepts:
+- **Definition**: Concepts represent individual data points or facts in XBRL. In ESRS, these are sustainability metrics or disclosures such as emissions or diversity.
+- **Example**: "Total GHG Emissions" could be a concept, allowing companies to tag their emissions data for sustainability reports, making it machine-readable.
+
+### Labels:
+- **Definition**: Labels are human-readable names or descriptions of concepts in the XBRL taxonomy. They provide clarity and context, making the technical elements easier to understand.
+- **Types**: Labels can be standard (short names) or documentation (detailed descriptions). These help users interpret the data points in sustainability reports.
+
+### References:
+- **Definition**: References link XBRL elements (concepts) to specific sections of regulations or standards. In ESRS, they point to where a disclosure is mandated, ensuring compliance with regulatory frameworks.
+- **Example**: A reference might direct users to a section in ESRS E1, which deals with climate-related disclosure requirements for companies.
+
+### Topics and Disclosure Requirements:
+- **Topics**: These are broad sustainability areas, such as climate change or governance, covered by ESRS. Each topic includes various aspects a company must report on.
+- **Disclosure Requirements (DR)**: These are the specific data points or narrative information companies must disclose, based on their relevance to each topic, like water use or social equity.
+
+### Linkbases:
+- **Definition**: Linkbases are files in the XBRL taxonomy that define relationships between elements, such as hierarchy, calculations, or labels.
+- **Types**: There are several linkbases—presentation (for hierarchy), definition (for dimensional relationships), calculation (for aggregating data), and label/reference linkbases (for adding names and documentation). These structure and organize sustainability reports.
