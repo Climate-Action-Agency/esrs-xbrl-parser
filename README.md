@@ -17,6 +17,14 @@ The **ESRS XBRL Parser** is a lightweight and efficient tool designed to parse X
 
 This project is licensed under the [ISC License](LICENSE).
 
+## Installation
+
+(coming soon)
+
+## Usage
+
+(coming soon)
+
 ## ESRS files
 
 Get the ESRS files from EFRAG: https://www.efrag.org/en/projects/esrs-xbrl-taxonomy/concluded
