@@ -85,25 +85,25 @@ Dump to a text file:
           ∟ 📁 esrs
              ∟ 📁 2023-12-22 (Release date)
                 ∟ 📄 esrs_all.xsda (Schema definitions assembly for the complete ESRS taxonomy)
-                ∟ 📁 common
+                ∟ 📁 common (Shared definitions and schema elements)
                    ∟ 📄 esrs_cor.xsd (Schema definitions for the core ESRS taxonomy)
-                   ∟ 📁 labels
-                      ∟ 📄 doc_esrs-en.xml (Documentation labels, in English, explaining elements in the taxonomy)
-                      ∟ 📄 gla_esrs-en.xml (General labels, in English, for understanding the elements of the taxonomy)
-                      ∟ 📄 lab_esrs-en.xml (Primary labels, in English, used for displaying human-readable names of ESRS elements)
-                   ∟ 📁 references
+                   ∟ 📁 labels (Human-readable names for things)
+                      ∟ 📄 doc_esrs-en.xml (Explanations how values to ESRS elements/disclosures should be provided)
+                      ∟ 📄 gla_esrs-en.xml (Headlines in the taxonomy/hierarchy)
+                      ∟ 📄 lab_esrs-en.xml (Labels of individual ESRS elements/disclosures)
+                   ∟ 📁 references (References to regulatory requirements)
                       ∟ 📄 ref_esrs.xml (References to regulatory requirements or standards linked to ESRS elements)
-                ∟ 📁 all
-                   ∟ 📁 dimensions
+                ∟ 📁 all (Complete ESRS taxonomy)
+                   ∟ 📁 dimensions (Categories or breakdowns)
                       ∟ 📄 dim_esrs_*.xml (Defining dimensional data, e.g. categories or breakdowns, for ESRS reporting)
-                   ∟ 📁 enumerations
-                      ∟ 📄 def_esrs_*.xml (Defining enumerations (fixed sets of values) for specific ESRS concepts)
-                   ∟ 📁 formula
-                      ∟ 📄 for_esrs_validation_mandatory_tags.xml (Formula for validating mandatory tags in ESRS reports)
-                      ∟ 📄 for_esrs_validation_typed_dimensions.xml (Formula for validating typed dimensions in reports)
-                      ∟ 📄 for_esrs_validation_units.xml (Formula for validating unit consistency in ESRS reporting)
+                   ∟ 📁 enumerations (Fixed enumerated sets of values)
+                      ∟ 📄 def_esrs_*.xml (Defining enumerations — fixed enumerated sets of values — for specific ESRS concepts)
+                   ∟ 📁 formula (Validation rules and formulas)
+                      ∟ 📄 for_esrs_validation_mandatory_tags.xml (Formulas for validating mandatory tags in ESRS reports)
+                      ∟ 📄 for_esrs_validation_typed_dimensions.xml (Formulas for validating typed dimensions in reports)
+                      ∟ 📄 for_esrs_validation_units.xml (Formulas for validating unit consistency in ESRS reporting)
                       ∟ 📄 for_esrs.xml (General validation rules and formulas for ESRS reports)
-                   ∟ 📁 linkbases
+                   ∟ 📁 linkbases (Relationships between taxonomy elements)
                       ∟ 📄 cal_esrs_*.xml (Defining calculation relationships between elements, how certain values are calculated)
                       ∟ 📄 def_esrs_*.xml (Defining concept and dimensional relationships, e.g. role of an element)
                       ∟ 📄 pre_esrs_*.xml (Organizing how concepts should be presented, e.g. hierarchical structure of disclosures)
