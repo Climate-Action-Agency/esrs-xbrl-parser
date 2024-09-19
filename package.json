@@ -18,7 +18,8 @@
   "main": "src/list.ts",
   "scripts": {
     "list:core": "npx tsx src/list.ts 2023-12-22/common/esrs_cor.xsd",
-    "list:all": "npx tsx src/list.ts 2023-12-22/esrs_all.xsd"
+    "list:all": "npx tsx src/list.ts 2023-12-22/esrs_all.xsd",
+    "presentation": "npx tsx src/presentation.ts"
   },
   "dependencies": {
     "node-fetch": "^3.3.2",
