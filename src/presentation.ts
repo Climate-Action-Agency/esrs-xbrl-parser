@@ -1,4 +1,5 @@
 import { parseXML } from './lib/parsing';
+import { printHierarchyTree } from './lib/output';
 
 // Parse the esrs_cor.xsd file to extract Role URIs and Definitions
 const extractRoleDefinitions = async (esrsCorFilePath: string): Promise<{ [key: string]: string }> => {
@@ -231,7 +232,9 @@ async function main() {
   const hierarchy = buildDisclosureHierarchy(presentationLinkbase, labelMap, locatorRoleMap, locatorToHeadlineMap);
 
   // Output the result
-  console.log('hierarchy:', JSON.stringify(hierarchy, null, 2));
+  //console.log('hierarchy:', JSON.stringify(hierarchy, null, 2));
+  console.log('printHierarchyTree:');
+  printHierarchyTree(hierarchy, {});
 }
 
 main();
