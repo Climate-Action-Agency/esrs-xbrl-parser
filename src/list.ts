@@ -1,4 +1,5 @@
-import { parseAndFollowReferences, printObjectTree } from './lib/parsing';
+import { parseAndFollowReferences } from './lib/parsing';
+import { printObjectTree } from './lib/output';
 
 async function main() {
   // Parse the main XBRL file (adjust the path to your file)
