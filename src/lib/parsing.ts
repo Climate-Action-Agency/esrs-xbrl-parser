@@ -151,3 +151,56 @@ export function printObjectTree(obj: any, searchFilter: TreeSearchFilter, curren
     }
   }
 }
+
+// Helper function to build the disclosure hierarchy
+export const buildDisclosureHierarchy = (presentationLinkbase: any) => {
+  const disclosures: any = {};
+
+  // Step 1: Gather locators (concepts)
+  const locators: any = {};
+  const locElements = presentationLinkbase['link:linkbase']?.['link:presentationLink']?.['link:loc'];
+
+  if (!locElements) {
+    console.error("No 'link:loc' elements found");
+    return disclosures;
+  }
+
+  locElements.forEach((loc: any) => {
+    const label = loc['$']['xlink:label'];
+    const href = loc['$']['xlink:href'];
+    locators[label] = href; // Map locator labels to their href values
+  });
+
+  // Step 2: Build the hierarchy based on arcs (parent-child relationships)
+  const arcs = presentationLinkbase['link:linkbase']?.['link:presentationLink']?.['link:presentationArc'];
+
+  if (!arcs) {
+    console.error("No 'link:presentationArc' elements found");
+    return disclosures;
+  }
+
+  arcs.forEach((arc: any) => {
+    const from = arc['$']['xlink:from'];
+    const to = arc['$']['xlink:to'];
+
+    const parentHref = locators[from]; // Get the parent's href
+    const childHref = locators[to]; // Get the child's href
+
+    if (parentHref && childHref) {
+      // Initialize parent node if it doesn't exist
+      if (!disclosures[parentHref]) {
+        disclosures[parentHref] = { children: [] };
+      }
+
+      // Add the child to the parent
+      if (!disclosures[childHref]) {
+        disclosures[childHref] = { children: [] };
+      }
+      disclosures[parentHref].children.push(disclosures[childHref]);
+    } else {
+      console.warn(`Missing locator reference for parent (${from}) or child (${to})`);
+    }
+  });
+
+  return disclosures;
+};
