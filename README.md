@@ -110,7 +110,7 @@ Dump to a text file:
 
 ## XBRL (eXtensible Business Reporting Language)
 
-[What is XBRL?](https://www.xbrl.org/the-standard/what/what-is-xbrl/)
+XBRL is an XML standard for digital business reporting ([read more here](https://www.xbrl.org/the-standard/what/what-is-xbrl/)).
 
 ### XBRL Tags
 
