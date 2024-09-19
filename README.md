@@ -108,29 +108,53 @@ Dump to a text file:
                       ∟ 📄 def_esrs_*.xml (Defining concept and dimensional relationships, e.g. role of an element)
                       ∟ 📄 pre_esrs_*.xml (Organizing how concepts should be presented, e.g. hierarchical structure of disclosures)
 
-## Glossary
+## XBRL (eXtensible Business Reporting Language)
 
-### Concepts:
+[What is XBRL?](https://www.xbrl.org/the-standard/what/what-is-xbrl/)
 
-- **Definition**: Concepts represent individual data points or facts in XBRL. In ESRS, these are sustainability metrics or disclosures such as emissions or diversity.
-- **Example**: "Total GHG Emissions" could be a concept, allowing companies to tag their emissions data for sustainability reports, making it machine-readable.
+### XBRL Tags
 
-### Labels:
+- **`<gen:arc />`**: A generic link arc that represents a relationship between two resources in XBRL, not specific to presentation or calculation.
+- **`<gen:link />`**: A generic linkbase in XBRL used to define custom relationships between different taxonomy elements.
+- **`<label:label />`**: Represents a human-readable label for an XBRL concept, used to display a descriptive name for reporting elements.
+- **`<link:arcroleRef />`**: Defines an arc role, which specifies the nature of the relationship between two elements in an XBRL taxonomy.
+- **`<link:linkbase />`**: The root element of a linkbase document in XBRL, which contains relationships (arcs) and resources (labels, locators).
+- **`<link:loc />`**: A locator element that points to a specific concept or resource in the taxonomy, used to refer to specific definitions or elements.
+- **`<link:presentationArc />`**: Defines the hierarchical relationship between concepts, helping to structure them for presentation.
+- **`<link:presentationLink />`**: A linkbase that organizes the presentation of concepts in a hierarchy, useful for displaying data.
+- **`<link:roleRef />`**: References a role, which groups related arcs and resources, defining the context in which they should be interpreted.
 
-- **Definition**: Labels are human-readable names or descriptions of concepts in the XBRL taxonomy. They provide clarity and context, making the technical elements easier to understand.
-- **Types**: Labels can be standard (short names) or documentation (detailed descriptions). These help users interpret the data points in sustainability reports.
+These tags are used to define relationships, labels, and hierarchies in XBRL, a reporting framework for financial and business data.
 
-### References:
+### XBRL Terminology
 
-- **Definition**: References link XBRL elements (concepts) to specific sections of regulations or standards. In ESRS, they point to where a disclosure is mandated, ensuring compliance with regulatory frameworks.
-- **Example**: A reference might direct users to a section in ESRS E1, which deals with climate-related disclosure requirements for companies.
+See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
-### Topics and Disclosure Requirements:
+- **Concepts**:
+  - Individual data points or facts in XBRL, such as sustainability metrics or disclosures.
+  - Example: "Total GHG Emissions" tagged for sustainability reporting.
+- **Dimensions**:
+  - Allow for the categorization or breakdown of reported data, enabling multi-dimensional analysis.
+  - Example: A company might report GHG emissions broken down by geographical region or time period using dimensions like `Geographical Area [axis]` or `Reporting Period [axis]`.
+- **Enumerations**:
+  - Define a set of allowed values (a fixed set) that can be used for specific data elements.
+  - Example: An enumeration might list "Yes" or "No" as the only allowable responses to a disclosure question about whether a company has a transition plan for climate change.
+- **Formula**:
+  - Specifies rules for validating reported data or calculating values based on other reported information.
+  - Example: A formula might ensure that reported totals (like total GHG emissions) are the sum of various components (e.g., emissions from Scope 1, Scope 2, and Scope 3).
+- **Labels**:
+  - Human-readable names or descriptions for XBRL concepts, offering clarity and context.
+  - Types: Standard (short) or documentation (detailed) labels.
+- **Linkbases**:
+  - Files in the XBRL taxonomy that define relationships between elements.
+  - Types: Presentation (for hierarchy), definition (for dimensions), calculation (for aggregating data), label/reference (for names and documentation).
+- **References**:
+  - Links between XBRL concepts and regulatory sections or standards.
+  - Example: A reference pointing to ESRS E1, which deals with climate-related disclosures.
 
-- **Topics**: These are broad sustainability areas, such as climate change or governance, covered by ESRS. Each topic includes various aspects a company must report on.
-- **Disclosure Requirements (DR)**: These are the specific data points or narrative information companies must disclose, based on their relevance to each topic, like water use or social equity.
+#### ESRS-specific terminology
 
-### Linkbases:
-
-- **Definition**: Linkbases are files in the XBRL taxonomy that define relationships between elements, such as hierarchy, calculations, or labels.
-- **Types**: There are several linkbases—presentation (for hierarchy), definition (for dimensional relationships), calculation (for aggregating data), and label/reference linkbases (for adding names and documentation). These structure and organize sustainability reports.
+- **Disclosure Requirements (DRs)**:
+  - Specific data points or narratives that companies must disclose, based on relevance to a topic, such as water use or social equity.
+- **Topics**:
+  - Broad areas in ESRS, like climate change or governance, that companies must report on.
