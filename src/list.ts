@@ -1,5 +1,5 @@
 import { parseAndFollowReferences } from './lib/parsing';
-import { printObjectTree } from './lib/output';
+import { printXMLTree } from './lib/output';
 
 async function main() {
   // Parse the main XBRL file (adjust the path to your file)
@@ -12,7 +12,7 @@ async function main() {
     ...(process.argv?.[3] !== undefined ? { level: 3, text: process.argv?.[3] } : {})
   };
   console.log(`\n${startFile} (filter ${JSON.stringify(searchFilter)}):`);
-  printObjectTree(taxonomy, searchFilter);
+  printXMLTree(taxonomy, searchFilter);
 }
 
 main();

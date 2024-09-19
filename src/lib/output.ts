@@ -1,12 +1,31 @@
 import { ATTRIBUTES_KEY } from './parsing';
 
+export function printObjectTree(obj: any, maxLevels: number = -1, skipKeys: string[] = [], level: number = 0): void {
+  const indent = '  '.repeat(level); // Indentation based on depth
+  if (maxLevels !== -1 && level >= maxLevels) {
+    return;
+  }
+  for (const key in obj) {
+    if (skipKeys.includes(key)) {
+      continue;
+    }
+    if (obj.hasOwnProperty(key)) {
+      console.log(`${indent} ∟ ${key}`);
+      // If the value is another object, recursively print its keys
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        printObjectTree(obj[key], maxLevels, skipKeys, level + 1);
+      }
+    }
+  }
+}
+
 interface TreeSearchFilter {
   maxLevel?: number;
   level?: number;
   text?: string;
 }
 
-export function printObjectTree(obj: any, searchFilter: TreeSearchFilter, currentLevel: number = 0): void {
+export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLevel: number = 0): void {
   const indent = '  '.repeat(currentLevel); // Indentation based on depth
   // Don't traverse below the maxLevel
   if (searchFilter?.maxLevel !== undefined && currentLevel >= searchFilter?.maxLevel) {
@@ -37,7 +56,7 @@ export function printObjectTree(obj: any, searchFilter: TreeSearchFilter, curren
         }
         // Recursively traverse the child object
         if (hasChildren) {
-          printObjectTree(obj[key], searchFilter, currentLevel + 1);
+          printXMLTree(obj[key], searchFilter, currentLevel + 1);
         }
       }
     }
