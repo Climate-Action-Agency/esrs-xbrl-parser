@@ -4,14 +4,14 @@
 
 **Tool for parsing European Sustainability Reporting Standards (ESRS) taxonomies in XBRL format**
 
-The **ESRS XBRL Parser** is a lightweight and efficient tool designed to parse XBRL (eXtensible Business Reporting Language) taxonomies, specifically tailored for the **European Sustainability Reporting Standards (ESRS)**. Developed to support the sustainability reporting requirements set by the **Corporate Sustainability Reporting Directive (CSRD)**, the parser helps navigate complex XBRL files. It enables the easy extraction of key financial and sustainability data from reports based on ESRS, which were created by **EFRAG (European Financial Reporting Advisory Group)** as the technical advisor to the European Commission.
+The **ESRS XBRL Parser** is a lightweight and efficient tool designed to parse [XBRL (eXtensible Business Reporting Language)](#xbrl-extensible-business-reporting-language) taxonomies, specifically tailored for the **European Sustainability Reporting Standards (ESRS)**. Developed to support the sustainability reporting requirements set by the **Corporate Sustainability Reporting Directive (CSRD)**, the parser helps navigate complex XBRL files. It enables the easy extraction of key financial and sustainability data from reports based on ESRS, which were created by **EFRAG (European Financial Reporting Advisory Group)** as the technical advisor to the European Commission.
 
 ## Goals
 
-- **Simple Integration**: Effortlessly integrate the parser into Node.js projects using modern JavaScript or TypeScript.
-- **Modular and Extensible**: Easily extend the parser to accommodate additional taxonomies or custom XBRL needs.
-- **High Performance**: Optimized to handle large and complex ESRS taxonomies quickly and efficiently.
 - **Compliant with Latest Standards**: Built to work seamlessly with ESRS Set 1 XBRL Taxonomies, ensuring compliance with the European Commission’s reporting requirements.
+- **Simple Integration**: Effortlessly integrate the parser into Node.js projects using modern JavaScript or TypeScript.
+- **High Performance**: Optimized to handle large and complex ESRS taxonomies quickly and efficiently.
+- **Modular and Extensible**: Easily extend the parser to accommodate additional taxonomies or custom XBRL needs.
 
 ## License
 
@@ -123,8 +123,6 @@ Dump to a text file:
 - **`<link:presentationArc />`**: Defines the hierarchical relationship between concepts, helping to structure them for presentation.
 - **`<link:presentationLink />`**: A linkbase that organizes the presentation of concepts in a hierarchy, useful for displaying data.
 - **`<link:roleRef />`**: References a role, which groups related arcs and resources, defining the context in which they should be interpreted.
-
-These tags are used to define relationships, labels, and hierarchies in XBRL, a reporting framework for financial and business data.
 
 ### XBRL Terminology
 
