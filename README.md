@@ -83,7 +83,7 @@ Dump to a text file:
     📁 xbrl.efrag.org
        ∟ 📁 taxonomy
           ∟ 📁 esrs
-             ∟ 📁 2023-12-22
+             ∟ 📁 2023-12-22 (Release date)
                 ∟ 📄 esrs_all.xsda (Schema definitions assembly for the complete ESRS taxonomy)
                 ∟ 📁 common
                    ∟ 📄 esrs_cor.xsd (Schema definitions for the core ESRS taxonomy)
@@ -91,8 +91,8 @@ Dump to a text file:
                       ∟ 📄 doc_esrs-en.xml (Documentation labels, in English, explaining elements in the taxonomy)
                       ∟ 📄 gla_esrs-en.xml (General labels, in English, for understanding the elements of the taxonomy)
                       ∟ 📄 lab_esrs-en.xml (Primary labels, in English, used for displaying human-readable names of ESRS elements)
-                ∟ 📁 references
-                   ∟ 📄 ref_esrs.xml (References to regulatory requirements or standards linked to ESRS elements)
+                   ∟ 📁 references
+                      ∟ 📄 ref_esrs.xml (References to regulatory requirements or standards linked to ESRS elements)
                 ∟ 📁 all
                    ∟ 📁 dimensions
                       ∟ 📄 dim_esrs_*.xml (Defining dimensional data, e.g. categories or breakdowns, for ESRS reporting)
