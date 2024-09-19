@@ -153,7 +153,7 @@ export function printObjectTree(obj: any, searchFilter: TreeSearchFilter, curren
 }
 
 // Step 1: Parse the label linkbase with arcs
-export const buildLabelMapWithArcs = async (labelFilePath: string): Promise<{ [key: string]: string }> => {
+export const buildLabelMap = async (labelFilePath: string): Promise<{ [key: string]: string }> => {
   const labelMap: { [key: string]: string } = {};
   const labelFile = await parseXML(labelFilePath);
 
@@ -199,7 +199,8 @@ export const buildLabelMapWithArcs = async (labelFilePath: string): Promise<{ [k
 
 // Step 2: Build the hierarchy and integrate labels
 // Update the hierarchy builder to include human-readable labels
-export const buildDisclosureHierarchyWithLabels = (presentationLinkbase: any, labelMap: { [key: string]: string }) => {
+// Update the hierarchy builder to include human-readable labels and IDs/codes
+export const buildDisclosureHierarchy = (presentationLinkbase: any, labelMap: { [key: string]: string }) => {
   const disclosures: any = {};
 
   // Step 1: Gather locators (concepts)
@@ -229,23 +230,32 @@ export const buildDisclosureHierarchyWithLabels = (presentationLinkbase: any, la
     const from = arc['$']['xlink:from'];
     const to = arc['$']['xlink:to'];
 
-    const parentHref = locators[from]; // Get the parent's href
-    const childHref = locators[to]; // Get the child's href
+    const parentHref = locators[from]; // Get the parent's href (code/ID)
+    const childHref = locators[to]; // Get the child's href (code/ID)
 
     const parentLabel = labelMap[from] || parentHref; // Use human-readable label if available
     const childLabel = labelMap[to] || childHref; // Use human-readable label if available
 
     if (parentHref && childHref) {
       // Initialize parent node if it doesn't exist
-      if (!disclosures[parentLabel]) {
-        disclosures[parentLabel] = { children: [] };
+      if (!disclosures[parentHref]) {
+        disclosures[parentHref] = {
+          id: parentHref, // Add the ID (href) to the parent
+          label: parentLabel,
+          children: []
+        };
       }
 
       // Add the child to the parent
-      if (!disclosures[childLabel]) {
-        disclosures[childLabel] = { children: [] };
+      if (!disclosures[childHref]) {
+        disclosures[childHref] = {
+          id: childHref, // Add the ID (href) to the child
+          label: childLabel,
+          children: []
+        };
       }
-      disclosures[parentLabel].children.push(disclosures[childLabel]);
+
+      disclosures[parentHref].children.push(disclosures[childHref]); // Push the child into parent's children array
     } else {
       console.warn(`Missing locator reference for parent (${from}) or child (${to})`);
     }

@@ -1,4 +1,4 @@
-import { parseXML, buildDisclosureHierarchyWithLabels, buildLabelMapWithArcs } from './lib/parsing';
+import { parseXML, buildDisclosureHierarchy, buildLabelMap } from './lib/parsing';
 
 async function main() {
   // Parse the main XBRL file (adjust the path to your file)
@@ -9,9 +9,9 @@ async function main() {
   // console.log('Parsed XML:', JSON.stringify(presentationLinkbase, null, 2)); // Check the structure
   // Parse the label file and build the label map
   const labelFile = '2023-12-22/common/labels/lab_esrs-en.xml';
-  const labelMapWithArcs = await buildLabelMapWithArcs(rootPath + labelFile);
+  const labelMapWithArcs = await buildLabelMap(rootPath + labelFile);
   // Build the disclosure hierarchy
-  const hierarchy = buildDisclosureHierarchyWithLabels(presentationLinkbase, labelMapWithArcs);
+  const hierarchy = buildDisclosureHierarchy(presentationLinkbase, labelMapWithArcs);
   // Output the result
   console.log('hierarchy:', JSON.stringify(hierarchy, null, 2));
 }
