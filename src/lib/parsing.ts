@@ -152,8 +152,54 @@ export function printObjectTree(obj: any, searchFilter: TreeSearchFilter, curren
   }
 }
 
-// Helper function to build the disclosure hierarchy
-export const buildDisclosureHierarchy = (presentationLinkbase: any) => {
+// Step 1: Parse the label linkbase with arcs
+export const buildLabelMapWithArcs = async (labelFilePath: string): Promise<{ [key: string]: string }> => {
+  const labelMap: { [key: string]: string } = {};
+  const labelFile = await parseXML(labelFilePath);
+
+  // Extract locators, labels, and label arcs
+  const labelLink = labelFile['link:linkbase']?.['link:labelLink'];
+
+  if (!labelLink) {
+    console.error("No 'link:labelLink' elements found");
+    return labelMap;
+  }
+
+  const locators = labelLink['link:loc'] || [];
+  const labels = labelLink['link:label'] || [];
+  const arcs = labelLink['link:labelArc'] || [];
+
+  // Step 2: Build locator-to-label maps using arcs
+  const locatorToLabelMap: { [key: string]: string } = {};
+  arcs.forEach((arc: any) => {
+    const from = arc['$']['xlink:from']; // Locator reference (e.g., loc_2)
+    const to = arc['$']['xlink:to']; // Label reference (e.g., res_2)
+    locatorToLabelMap[from] = to; // Map locator to label resource
+  });
+
+  // Step 3: Extract human-readable labels from label elements
+  const labelResourceMap: { [key: string]: string } = {};
+  labels.forEach((label: any) => {
+    const labelId = label['$']['xlink:label']; // e.g., res_2
+    const labelText = label['_']; // Human-readable label text
+    labelResourceMap[labelId] = labelText;
+  });
+
+  // Step 4: Combine locator to label mapping
+  locators.forEach((loc: any) => {
+    const locatorId = loc['$']['xlink:label']; // e.g., loc_2
+    const labelId = locatorToLabelMap[locatorId]; // e.g., res_2
+    if (labelId && labelResourceMap[labelId]) {
+      labelMap[locatorId] = labelResourceMap[labelId]; // Map locator to label
+    }
+  });
+
+  return labelMap;
+};
+
+// Step 2: Build the hierarchy and integrate labels
+// Update the hierarchy builder to include human-readable labels
+export const buildDisclosureHierarchyWithLabels = (presentationLinkbase: any, labelMap: { [key: string]: string }) => {
   const disclosures: any = {};
 
   // Step 1: Gather locators (concepts)
@@ -186,17 +232,20 @@ export const buildDisclosureHierarchy = (presentationLinkbase: any) => {
     const parentHref = locators[from]; // Get the parent's href
     const childHref = locators[to]; // Get the child's href
 
+    const parentLabel = labelMap[from] || parentHref; // Use human-readable label if available
+    const childLabel = labelMap[to] || childHref; // Use human-readable label if available
+
     if (parentHref && childHref) {
       // Initialize parent node if it doesn't exist
-      if (!disclosures[parentHref]) {
-        disclosures[parentHref] = { children: [] };
+      if (!disclosures[parentLabel]) {
+        disclosures[parentLabel] = { children: [] };
       }
 
       // Add the child to the parent
-      if (!disclosures[childHref]) {
-        disclosures[childHref] = { children: [] };
+      if (!disclosures[childLabel]) {
+        disclosures[childLabel] = { children: [] };
       }
-      disclosures[parentHref].children.push(disclosures[childHref]);
+      disclosures[parentLabel].children.push(disclosures[childLabel]);
     } else {
       console.warn(`Missing locator reference for parent (${from}) or child (${to})`);
     }
