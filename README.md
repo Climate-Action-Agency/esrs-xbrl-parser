@@ -128,6 +128,7 @@ XBRL is an XML standard for digital business reporting ([read more here](https:/
 
 See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
+- **Arcs**: Define **relationships** (e.g., parent-child, calculation) between elements. Arcs typically have `xlink:from`, `xlink:to`, and `xlink:arcrole` attributes, to indicate which elements are connected and what the nature of the relationship is.
 - **Concepts**:
   - Individual data points or facts in XBRL, such as sustainability metrics or disclosures.
   - Example: "Total GHG Emissions" tagged for sustainability reporting.
@@ -143,12 +144,14 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 - **Labels**:
   - Human-readable names or descriptions for XBRL concepts, offering clarity and context.
   - Types: Standard (short) or documentation (detailed) labels.
+- **Links**: Act as **containers** or **groups** of arcs, organizing how those relationships are structured or presented.
 - **Linkbases**:
   - Files in the XBRL taxonomy that define relationships between elements.
   - Types: Presentation (for hierarchy), definition (for dimensions), calculation (for aggregating data), label/reference (for names and documentation).
 - **References**:
   - Links between XBRL concepts and regulatory sections or standards.
   - Example: A reference pointing to ESRS E1, which deals with climate-related disclosures.
+- **Roles**: Defines the **context or purpose** of relationships and resources within a taxonomy, helping organize and interpret different arcs and linkbases. Roles are used to group related relationships, such as presentation, calculation, or label information, and provide additional meaning for how elements in the taxonomy should be processed or displayed.
 
 #### ESRS-specific terminology
 
