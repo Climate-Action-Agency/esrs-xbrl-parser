@@ -1,17 +1,32 @@
-import { parseXML, buildDisclosureHierarchy, buildLabelMap } from './lib/parsing';
+import {
+  parseXML,
+  buildDisclosureHierarchy,
+  buildLabelMap,
+  extractRoleDefinitions,
+  mapLocatorsToRoles
+} from './lib/parsing';
 
 async function main() {
-  // Parse the main XBRL file (adjust the path to your file)
-  const rootPath = './ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/';
+  const rootPath = './ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/';
+  const presentationFilePath = 'all/linkbases/pre_esrs_301040.xml';
+  const labelFilePath = 'common/labels/lab_esrs-en.xml';
+  const esrsCorFilePath = 'common/esrs_cor.xsd';
+
   // Parse the presentation linkbase
-  const presentationFile = process.argv?.[2] ?? '2023-12-22/all/linkbases/pre_esrs_301040.xml';
-  const presentationLinkbase = await parseXML(rootPath + presentationFile);
-  // console.log('Parsed XML:', JSON.stringify(presentationLinkbase, null, 2)); // Check the structure
-  // Parse the label file and build the label map
-  const labelFile = '2023-12-22/common/labels/lab_esrs-en.xml';
-  const labelMapWithArcs = await buildLabelMap(rootPath + labelFile);
-  // Build the disclosure hierarchy
-  const hierarchy = buildDisclosureHierarchy(presentationLinkbase, labelMapWithArcs);
+  const presentationLinkbase = await parseXML(rootPath + presentationFilePath);
+
+  // Extract role definitions (ID/Code) from esrs_cor.xsd
+  const roleMap = await extractRoleDefinitions(rootPath + esrsCorFilePath);
+
+  // Map locators to role definitions
+  const locatorRoleMap = await mapLocatorsToRoles(rootPath + labelFilePath, roleMap);
+
+  // Parse the label file and build the label map using arcs
+  const labelMap = await buildLabelMap(rootPath + labelFilePath);
+
+  // Build the disclosure hierarchy with labels, IDs, and roles
+  const hierarchy = buildDisclosureHierarchy(presentationLinkbase, labelMap, locatorRoleMap);
+
   // Output the result
   console.log('hierarchy:', JSON.stringify(hierarchy, null, 2));
 }

@@ -152,6 +152,45 @@ export function printObjectTree(obj: any, searchFilter: TreeSearchFilter, curren
   }
 }
 
+/* ----- Presentation ----- */
+
+// Parse the esrs_cor.xsd file to extract Role URIs and Definitions
+export const extractRoleDefinitions = async (esrsCorFilePath: string): Promise<{ [key: string]: string }> => {
+  const roleMap: { [key: string]: string } = {};
+  const esrsCorFile = await parseXML(esrsCorFilePath);
+
+  const roleTypes = esrsCorFile['xsd:schema']?.['link:roleType'] || [];
+  roleTypes.forEach((roleType: any) => {
+    const roleId = roleType['$']['id']; // e.g., role-301020
+    const definition = roleType['link:definition']; // e.g., "[301020] E1-2 Policies related to climate change mitigation and adaptation"
+    roleMap[roleId] = definition;
+  });
+
+  return roleMap;
+};
+
+// Parse the gla_esrs-en.xml or lab_esrs-en.xml file to map locators to roles
+export const mapLocatorsToRoles = async (
+  labelFilePath: string,
+  roleMap: { [key: string]: string }
+): Promise<{ [key: string]: string }> => {
+  const locatorRoleMap: { [key: string]: string } = {};
+  const labelFile = await parseXML(labelFilePath);
+
+  const labelLink = labelFile['link:linkbase']?.['link:labelLink'];
+  const locators = labelLink['link:loc'] || [];
+
+  locators.forEach((loc: any) => {
+    const href = loc['$']['xlink:href']; // e.g., ../esrs_cor.xsd#role-301020
+    const roleId = href.split('#')[1]; // Extract the role ID (e.g., role-301020)
+    if (roleMap[roleId]) {
+      locatorRoleMap[loc['$']['xlink:label']] = roleMap[roleId]; // Map the locator to the role definition
+    }
+  });
+
+  return locatorRoleMap;
+};
+
 // Step 1: Parse the label linkbase with arcs
 export const buildLabelMap = async (labelFilePath: string): Promise<{ [key: string]: string }> => {
   const labelMap: { [key: string]: string } = {};
@@ -198,12 +237,14 @@ export const buildLabelMap = async (labelFilePath: string): Promise<{ [key: stri
 };
 
 // Step 2: Build the hierarchy and integrate labels
-// Update the hierarchy builder to include human-readable labels
-// Update the hierarchy builder to include human-readable labels and IDs/codes
-export const buildDisclosureHierarchy = (presentationLinkbase: any, labelMap: { [key: string]: string }) => {
+// Update the hierarchy builder to include ID/Code (e.g., E1-2) for each disclosure
+export const buildDisclosureHierarchy = (
+  presentationLinkbase: any,
+  labelMap: { [key: string]: string },
+  locatorRoleMap: { [key: string]: string }
+) => {
   const disclosures: any = {};
 
-  // Step 1: Gather locators (concepts)
   const locators: any = {};
   const locElements = presentationLinkbase['link:linkbase']?.['link:presentationLink']?.['link:loc'];
 
@@ -218,9 +259,7 @@ export const buildDisclosureHierarchy = (presentationLinkbase: any, labelMap: { 
     locators[label] = href; // Map locator labels to their href values
   });
 
-  // Step 2: Build the hierarchy based on arcs (parent-child relationships)
   const arcs = presentationLinkbase['link:linkbase']?.['link:presentationLink']?.['link:presentationArc'];
-
   if (!arcs) {
     console.error("No 'link:presentationArc' elements found");
     return disclosures;
@@ -230,32 +269,33 @@ export const buildDisclosureHierarchy = (presentationLinkbase: any, labelMap: { 
     const from = arc['$']['xlink:from'];
     const to = arc['$']['xlink:to'];
 
-    const parentHref = locators[from]; // Get the parent's href (code/ID)
-    const childHref = locators[to]; // Get the child's href (code/ID)
+    const parentHref = locators[from];
+    const childHref = locators[to];
 
-    const parentLabel = labelMap[from] || parentHref; // Use human-readable label if available
-    const childLabel = labelMap[to] || childHref; // Use human-readable label if available
+    const parentLabel = labelMap[from] || parentHref;
+    const childLabel = labelMap[to] || childHref;
+
+    const parentRole = locatorRoleMap[from] || parentHref; // Get ID/Code
+    const childRole = locatorRoleMap[to] || childHref; // Get ID/Code
 
     if (parentHref && childHref) {
-      // Initialize parent node if it doesn't exist
       if (!disclosures[parentHref]) {
         disclosures[parentHref] = {
-          id: parentHref, // Add the ID (href) to the parent
+          id: parentRole, // Add ID/Code (e.g., E1-2)
           label: parentLabel,
           children: []
         };
       }
 
-      // Add the child to the parent
       if (!disclosures[childHref]) {
         disclosures[childHref] = {
-          id: childHref, // Add the ID (href) to the child
+          id: childRole, // Add ID/Code (e.g., E1-2.1)
           label: childLabel,
           children: []
         };
       }
 
-      disclosures[parentHref].children.push(disclosures[childHref]); // Push the child into parent's children array
+      disclosures[parentHref].children.push(disclosures[childHref]);
     } else {
       console.warn(`Missing locator reference for parent (${from}) or child (${to})`);
     }
