@@ -88,25 +88,25 @@ Dump to a text file:
                 ∟ 📁 common
                    ∟ 📄 esrs_cor.xsd (Schema definitions for the core ESRS taxonomy)
                    ∟ 📁 labels
-                      ∟ 📄 doc_esrs-en.xml (English labels for documentation purposes, explaining elements in the taxonomy)
-                      ∟ 📄 gla_esrs-en.xml (General labels in English for understanding the elements of the taxonomy)
-                      ∟ 📄 lab_esrs-en.xml (Primary labels used for displaying human-readable names of ESRS elements)
+                      ∟ 📄 doc_esrs-en.xml (Documentation labels, in English, explaining elements in the taxonomy)
+                      ∟ 📄 gla_esrs-en.xml (General labels, in English, for understanding the elements of the taxonomy)
+                      ∟ 📄 lab_esrs-en.xml (Primary labels, in English, used for displaying human-readable names of ESRS elements)
                 ∟ 📁 references
-                   ∟ 📄 ref_esrs.xml (Contains references to regulatory requirements or standards linked to ESRS elements)
+                   ∟ 📄 ref_esrs.xml (References to regulatory requirements or standards linked to ESRS elements)
                 ∟ 📁 all
                    ∟ 📁 dimensions
-                      ∟ 📄 dim_esrs_*.xml (Defining dimensional data (e.g. categories or breakdowns) for ESRS reporting)
+                      ∟ 📄 dim_esrs_*.xml (Defining dimensional data, e.g. categories or breakdowns, for ESRS reporting)
                    ∟ 📁 enumerations
                       ∟ 📄 def_esrs_*.xml (Defining enumerations (fixed sets of values) for specific ESRS concepts)
                    ∟ 📁 formula
                       ∟ 📄 for_esrs_validation_mandatory_tags.xml (Formula for validating mandatory tags in ESRS reports)
                       ∟ 📄 for_esrs_validation_typed_dimensions.xml (Formula for validating typed dimensions in reports)
                       ∟ 📄 for_esrs_validation_units.xml (Formula for validating unit consistency in ESRS reporting)
-                      ∟ 📄 for_esrs.xml (Contains general validation rules and formulas for ESRS reports)
+                      ∟ 📄 for_esrs.xml (General validation rules and formulas for ESRS reports)
                    ∟ 📁 linkbases
-                      ∟ 📄 cal_esrs_*.xml (Defining calculation relationships between elements (how certain values are calculated))
-                      ∟ 📄 def_esrs_*.xml (Defining concept and dimensional relationships (e.g., role of an element))
-                      ∟ 📄 pre_esrs_*.xml (Organizing how concepts should be presented (e.g., hierarchical structure of disclosures))
+                      ∟ 📄 cal_esrs_*.xml (Defining calculation relationships between elements, how certain values are calculated)
+                      ∟ 📄 def_esrs_*.xml (Defining concept and dimensional relationships, e.g. role of an element)
+                      ∟ 📄 pre_esrs_*.xml (Organizing how concepts should be presented, e.g. hierarchical structure of disclosures)
 
 ## Glossary
 
