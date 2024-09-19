@@ -37,6 +37,60 @@ const mapLocatorsToRoles = async (
   return locatorRoleMap;
 };
 
+// Map locators to their corresponding resource labels (e.g., loc_1 -> res_390)
+const mapLocatorsToResources = async (glaFilePath: string): Promise<{ [key: string]: string }> => {
+  const locatorToResourceMap: { [key: string]: string } = {};
+  const glaFile = await parseXML(glaFilePath);
+
+  const genLink = glaFile['link:linkbase']?.['gen:link'];
+  const arcs = genLink?.['gen:arc'] || [];
+
+  // Iterate through the arcs to map locators to resources
+  arcs.forEach((arc: any) => {
+    const from = arc['$']['xlink:from']; // e.g., loc_1
+    const to = arc['$']['xlink:to']; // e.g., res_390
+    locatorToResourceMap[from] = to; // Map locator to resource
+  });
+
+  return locatorToResourceMap;
+};
+
+// Combine locator-to-resource map and headline map to get locators mapped to headlines
+const mapLocatorsToHeadlines = async (glaFilePath: string) => {
+  const locatorToResourceMap = await mapLocatorsToResources(glaFilePath);
+  const headlineMap = await extractHeadlinesFromLabelElements(glaFilePath);
+
+  const locatorToHeadlineMap: { [key: string]: string } = {};
+
+  Object.keys(locatorToResourceMap).forEach((locator) => {
+    const resource = locatorToResourceMap[locator]; // e.g., res_390
+    const headline = headlineMap[resource]; // Find the headline for res_390
+    if (headline) {
+      locatorToHeadlineMap[locator] = headline;
+    }
+  });
+
+  return locatorToHeadlineMap;
+};
+
+// Extract headlines from label:label elements in gla_esrs-en.xml
+const extractHeadlinesFromLabelElements = async (glaFilePath: string): Promise<{ [key: string]: string }> => {
+  const headlineMap: { [key: string]: string } = {};
+  const glaFile = await parseXML(glaFilePath);
+
+  const genLink = glaFile['link:linkbase']?.['gen:link'];
+  const labels = genLink?.['label:label'] || [];
+
+  // Iterate through the label elements to extract human-readable headlines
+  labels.forEach((label: any) => {
+    const labelId = label['$']['xlink:label']; // e.g., res_390
+    const headline = label['_']; // e.g., "[200510] ESRS2.BP-1 General basis for..."
+    headlineMap[labelId] = headline;
+  });
+
+  return headlineMap;
+};
+
 // Step 1: Parse the label linkbase with arcs
 const buildLabelMap = async (labelFilePath: string): Promise<{ [key: string]: string }> => {
   const labelMap: { [key: string]: string } = {};
@@ -83,11 +137,12 @@ const buildLabelMap = async (labelFilePath: string): Promise<{ [key: string]: st
 };
 
 // Step 2: Build the hierarchy and integrate labels
-// Update the hierarchy builder to include ID/Code (e.g., E1-2) for each disclosure
+// Update the hierarchy builder to include both primary labels and headlines
 const buildDisclosureHierarchy = (
   presentationLinkbase: any,
   labelMap: { [key: string]: string },
-  locatorRoleMap: { [key: string]: string }
+  locatorRoleMap: { [key: string]: string },
+  locatorToHeadlineMap: { [key: string]: string }
 ) => {
   const disclosures: any = {};
 
@@ -118,8 +173,8 @@ const buildDisclosureHierarchy = (
     const parentHref = locators[from];
     const childHref = locators[to];
 
-    const parentLabel = labelMap[from] || parentHref;
-    const childLabel = labelMap[to] || childHref;
+    const parentLabel = locatorToHeadlineMap[from] || labelMap[from] || parentHref;
+    const childLabel = locatorToHeadlineMap[to] || labelMap[to] || childHref;
 
     const parentRole = locatorRoleMap[from] || parentHref; // Get ID/Code
     const childRole = locatorRoleMap[to] || childHref; // Get ID/Code
@@ -128,7 +183,7 @@ const buildDisclosureHierarchy = (
       if (!disclosures[parentHref]) {
         disclosures[parentHref] = {
           id: parentRole, // Add ID/Code (e.g., E1-2)
-          label: parentLabel,
+          label: parentLabel, // Use the headline or label
           children: []
         };
       }
@@ -136,7 +191,7 @@ const buildDisclosureHierarchy = (
       if (!disclosures[childHref]) {
         disclosures[childHref] = {
           id: childRole, // Add ID/Code (e.g., E1-2.1)
-          label: childLabel,
+          label: childLabel, // Use the headline or label
           children: []
         };
       }
@@ -154,6 +209,7 @@ async function main() {
   const rootPath = './ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/';
   const presentationFilePath = 'all/linkbases/pre_esrs_301040.xml';
   const labelFilePath = 'common/labels/lab_esrs-en.xml';
+  const glaFilePath = 'common/labels/gla_esrs-en.xml'; // Add GLA for headlines
   const esrsCorFilePath = 'common/esrs_cor.xsd';
 
   // Parse the presentation linkbase
@@ -168,8 +224,11 @@ async function main() {
   // Parse the label file and build the label map using arcs
   const labelMap = await buildLabelMap(rootPath + labelFilePath);
 
-  // Build the disclosure hierarchy with labels, IDs, and roles
-  const hierarchy = buildDisclosureHierarchy(presentationLinkbase, labelMap, locatorRoleMap);
+  // Map locators to headlines
+  const locatorToHeadlineMap = await mapLocatorsToHeadlines(rootPath + glaFilePath);
+
+  // Build the disclosure hierarchy with labels, IDs, roles, and headlines
+  const hierarchy = buildDisclosureHierarchy(presentationLinkbase, labelMap, locatorRoleMap, locatorToHeadlineMap);
 
   // Output the result
   console.log('hierarchy:', JSON.stringify(hierarchy, null, 2));
