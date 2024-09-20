@@ -132,15 +132,38 @@ XBRL is an XML standard for digital business reporting ([read more here](https:/
 
 ### XBRL Tags
 
-- **`<gen:arc />`**: A generic link arc that represents a relationship between two resources in XBRL, not specific to presentation or calculation.
-- **`<gen:link />`**: A generic linkbase in XBRL used to define custom relationships between different taxonomy elements.
-- **`<label:label />`**: Represents a human-readable label for an XBRL concept, used to display a descriptive name for reporting elements.
-- **`<link:arcroleRef />`**: Defines an arc role, which specifies the nature of the relationship between two elements in an XBRL taxonomy.
-- **`<link:linkbase />`**: The root element of a linkbase document in XBRL, which contains relationships (arcs) and resources (labels, locators).
-- **`<link:loc />`**: A locator element that points to a specific concept or resource in the taxonomy, used to refer to specific definitions or elements.
-- **`<link:presentationArc />`**: Defines the hierarchical relationship between concepts, helping to structure them for presentation.
-- **`<link:presentationLink />`**: A linkbase that organizes the presentation of concepts in a hierarchy, useful for displaying data.
-- **`<link:roleRef />`**: References a role, which groups related arcs and resources, defining the context in which they should be interpreted.
+- Generic:
+  - **`<gen:arc />`**: A generic link arc that represents a relationship between two resources in XBRL, not specific to presentation or calculation.
+  - **`<gen:link />`**: A generic linkbase in XBRL used to define custom relationships between different taxonomy elements.
+- Labels:
+  - **`<label:label />`**: Represents a human-readable label for an XBRL concept, used to display a descriptive name for reporting elements.
+- Links:
+  - **`<link:arcroleRef />`**: Defines an arc role, which specifies the nature of the relationship between two elements in an XBRL taxonomy.
+  - **`<link:linkbase />`**: The root element of a linkbase document in XBRL, which contains relationships (arcs) and resources (labels, locators).
+  - **`<link:loc />`**: A locator element that points to a specific concept or resource in the taxonomy, used to refer to specific definitions or elements.
+  - **`<link:presentationArc />`**: Defines the hierarchical relationship between concepts, helping to structure them for presentation.
+  - **`<link:presentationLink />`**: A linkbase that organizes the presentation of concepts in a hierarchy, useful for displaying data.
+  - **`<link:roleRef />`**: References a role, which groups related arcs and resources, defining the context in which they should be interpreted.
+- References:
+  - **`<ref:Clause>`**: Refers to a specific clause in a legal or regulatory document.
+  - **`<ref:Name>`**: Specifies the name of the referenced document or regulation.
+  - **`<ref:Number>`**: Represents the number assigned to a section or article in a regulatory document.
+  - **`<ref:Paragraph>`**: Points to a specific paragraph in a regulation or standard.
+  - **`<ref:Section>`**: Refers to a section within a referenced document.
+  - **`<ref:Subparagraph>`**: Specifies a subparagraph within a referenced paragraph.
+  - **`<ref:Subsection>`**: Refers to a subsection of a section in a regulation or standard.
+  - **`<ref:URI>`**: Specifies the URI (Uniform Resource Identifier) linking to the document or section being referenced.
+
+ESRS-specific tags:
+
+- **`<esrs:Alternative>`**: Defines an **alternative reporting option** or scenario that can be used under certain conditions in the ESRS framework. It could represent an optional disclosure path when companies are allowed flexibility in their reporting.
+- **`<esrs:ConditionalDatapoint>`**: Refers to a **data point that is only required** under certain conditions. It may be triggered by certain facts or events (e.g., the disclosure becomes mandatory if certain thresholds are met or certain circumstances apply).
+- **`<esrs:DatapointId>`**: Identifies a **specific data point** within the ESRS taxonomy. This unique identifier links the data point to its definition, role, and requirements for reporting.
+- **`<esrs:Level1Element>`**: Represents a **top-level element** in the ESRS taxonomy hierarchy. These elements typically organize broader sustainability disclosures, such as high-level categories like climate, governance, or social impact.
+- **`<esrs:MandatoryDatapoint>`**: Specifies a **data point that is required** for all companies, without conditions. This tag marks disclosures that must be reported as part of the ESRS framework.
+- **`<esrs:PhaseIn>`**: Refers to a **transition or phase-in period** for certain ESRS requirements. Companies may be allowed extra time to comply with specific disclosure requirements, and this tag helps track which disclosures are subject to phase-in rules.
+- **`<esrs:ReferenceType>`**: Defines the **type of reference** being made in the ESRS taxonomy. It helps link the element to external standards, regulations, or other authoritative documents, specifying the nature of the reference.
+- **`<esrs:RelatedAR>`**: Refers to a **related Accounting Regulation (AR)** or another authoritative reference linked to the ESRS disclosure. This tag provides the connection between the ESRS reporting element and the relevant accounting or sustainability regulation.
 
 ### XBRL Terminology
 
