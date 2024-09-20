@@ -25,7 +25,10 @@ Unzip the ESRS files into `./ESRS-Set1-XBRL-Taxonomy` inside this project folder
 
 ## Usage
 
-### `list`
+- List: `npm run list [path to XML file]`
+- Outline: `npm run outline` (⚠️ work in progress)
+
+### List
 
     npm run list [path to XML file]
 
@@ -78,6 +81,10 @@ Dump to a text file:
 
     mkdir output
     npm run list:all > output/list_esrs_all.txt
+
+### Outline (⚠️ work in progress)
+
+    npm run outline
 
 ## ESRS taxonomy
 
