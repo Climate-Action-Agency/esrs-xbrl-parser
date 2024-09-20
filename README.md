@@ -88,7 +88,9 @@ Dump to a text file:
 
 ## ESRS taxonomy
 
-- Starting points: `esrs_all.xsda`, `esrs_cor.xsd`
+- Starting points:
+  - `esrs_all.xsda` (all topics and disclosure requirements, with all linkbases)
+  - `esrs_cor.xsd` (concepts, labels and references only)
 - Structure and hierarchy: `pre_esrs_*.xml`
 - Human-readable descriptions and explanations: `labels` folder
 - Field types, dimensions (categories), and enumerations
@@ -102,9 +104,9 @@ Dump to a text file:
        ∟ 📁 taxonomy
           ∟ 📁 esrs
              ∟ 📁 2023-12-22 (Release date)
-                ∟ 📄 esrs_all.xsda (Schema definitions assembly for the complete ESRS taxonomy)
+                ∟ 📄 esrs_all.xsda (Schema definitions assembly for the complete ESRS taxonomy: all topics and disclosure requirements, with all linkbases)
                 ∟ 📁 common (Shared definitions and schema elements)
-                   ∟ 📄 esrs_cor.xsd (Schema definitions for the core ESRS taxonomy)
+                   ∟ 📄 esrs_cor.xsd (Schema definitions for the core ESRS taxonomy: concepts, labels and references only)
                    ∟ 📁 labels (Human-readable names for things)
                       ∟ 📄 doc_esrs-en.xml (Explanations how values to ESRS elements/disclosures should be provided)
                       ∟ 📄 gla_esrs-en.xml (Headlines in the taxonomy/hierarchy)
