@@ -1,20 +1,7 @@
-import fs from 'fs';
-import xml2js from 'xml2js';
 import path from 'path';
 
-import { parseAndFollowReferences } from './lib/parsing';
-import { printXMLTree, printHierarchyTree } from './lib/output';
-
-// Helper to parse XML using promises from a local file
-export const parseXML = async (filePath: string): Promise<any> => {
-  try {
-    const data = await fs.promises.readFile(filePath);
-    const result = await xml2js.parseStringPromise(data, { explicitArray: false });
-    return result;
-  } catch (err) {
-    throw err;
-  }
-};
+import { parseXML } from './lib/parsing';
+import { printXMLTree } from './lib/output';
 
 // Helper to fetch and parse XML, handling links with fragments (e.g., #role-200510)
 export const parseAndFollowLinks = async (
