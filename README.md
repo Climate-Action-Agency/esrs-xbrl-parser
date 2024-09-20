@@ -75,7 +75,13 @@ Dump to a text file:
     mkdir output
     npm run list:all > output/list_esrs_all.txt
 
-## `ESRS-Set1-XBRL-Taxonomy` folder contents
+## ESRS taxonomy
+
+- Starting points: `esrs_all.xsda`, `esrs_cor.xsd`
+- Structure and hierarchy: `pre_esrs_*.xml`
+- Human-readable descriptions and explanations: `labels` folder
+
+### `ESRS-Set1-XBRL-Taxonomy` folder contents
 
     📁 META-INF
        ∟ 📄 catalog.xml (XML catalog for mapping URIs to local files, aiding file lookups in the taxonomy)
