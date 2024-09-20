@@ -137,8 +137,6 @@ XBRL is an XML standard for digital business reporting ([read more here](https:/
 - Generic:
   - **`<gen:arc />`**: A generic link arc that represents a relationship between two resources in XBRL, not specific to presentation or calculation.
   - **`<gen:link />`**: A generic linkbase in XBRL used to define custom relationships between different taxonomy elements.
-- Labels:
-  - **`<label:label />`**: Represents a human-readable label for an XBRL concept, used to display a descriptive name for reporting elements.
 - Links:
   - **`<link:arcroleRef />`**: Defines an arc role, which specifies the nature of the relationship between two elements in an XBRL taxonomy.
   - **`<link:linkbase />`**: The root element of a linkbase document in XBRL, which contains relationships (arcs) and resources (labels, locators).
@@ -146,6 +144,19 @@ XBRL is an XML standard for digital business reporting ([read more here](https:/
   - **`<link:presentationArc />`**: Defines the hierarchical relationship between concepts, helping to structure them for presentation.
   - **`<link:presentationLink />`**: A linkbase that organizes the presentation of concepts in a hierarchy, useful for displaying data.
   - **`<link:roleRef />`**: References a role, which groups related arcs and resources, defining the context in which they should be interpreted.
+- Labels:
+  - **`<label:label />`**: Represents a human-readable label for an XBRL concept, used to display a descriptive name for reporting elements.
+- Values & concepts:
+  - **`<cf:concept>`**: This tag refers to a **concept** in XBRL, which is essentially a **data point** or **fact** that is reported. Concepts represent the actual items being reported in a financial statement, such as revenue, net income, or assets.
+  - **`<cf:conceptName>`**: This specifies the **name of the concept** (the data point or fact) within the XBRL taxonomy. It identifies the concept uniquely in the taxonomy so that systems know exactly what data is being reported.
+  - **`<cf:qname>`** refers to a **qualified name** of a concept or element within the taxonomy, ensuring that the name is unique across different namespaces.
+- Validation rules:
+  - **`<msg:message>`** element holds this message, which is often returned to the user to inform them of the validation result.
+  - **`<va:valueAssertion>`** defines a specific validation rule to ensure that a reported value is correct, based on the context or relationships defined in the taxonomy.
+  - **`<validation:assertionSet>`**: This element defines a **set of assertions**, or validation rules, that must be applied together. These sets group related assertions and ensure that certain conditions or relationships between facts are checked when processing an XBRL document.
+  - **`<variable:factVariable>`** defines a variable that can be referenced in formulas or validation rules. It essentially represents the reported data that is being used in the validation process.
+  - **`<variable:variableArc>`** specifies how variables relate to each other in a formula or validation rule.
+  - **`<variable:variableFilterArc>`**: This tag defines a **filtering relationship** between variables in XBRL. It is used to connect variables with **filters** that restrict which facts or data points can be used in calculations or validation. Filters can narrow down data based on criteria like time period, dimensions, or other attributes.
 - References:
   - **`<ref:Clause>`**: Refers to a specific clause in a legal or regulatory document.
   - **`<ref:Name>`**: Specifies the name of the referenced document or regulation.
@@ -155,17 +166,15 @@ XBRL is an XML standard for digital business reporting ([read more here](https:/
   - **`<ref:Subparagraph>`**: Specifies a subparagraph within a referenced paragraph.
   - **`<ref:Subsection>`**: Refers to a subsection of a section in a regulation or standard.
   - **`<ref:URI>`**: Specifies the URI (Uniform Resource Identifier) linking to the document or section being referenced.
-
-ESRS-specific tags:
-
-- **`<esrs:Alternative>`**: Defines an **alternative reporting option** or scenario that can be used under certain conditions in the ESRS framework. It could represent an optional disclosure path when companies are allowed flexibility in their reporting.
-- **`<esrs:ConditionalDatapoint>`**: Refers to a **data point that is only required** under certain conditions. It may be triggered by certain facts or events (e.g., the disclosure becomes mandatory if certain thresholds are met or certain circumstances apply).
-- **`<esrs:DatapointId>`**: Identifies a **specific data point** within the ESRS taxonomy. This unique identifier links the data point to its definition, role, and requirements for reporting.
-- **`<esrs:Level1Element>`**: Represents a **top-level element** in the ESRS taxonomy hierarchy. These elements typically organize broader sustainability disclosures, such as high-level categories like climate, governance, or social impact.
-- **`<esrs:MandatoryDatapoint>`**: Specifies a **data point that is required** for all companies, without conditions. This tag marks disclosures that must be reported as part of the ESRS framework.
-- **`<esrs:PhaseIn>`**: Refers to a **transition or phase-in period** for certain ESRS requirements. Companies may be allowed extra time to comply with specific disclosure requirements, and this tag helps track which disclosures are subject to phase-in rules.
-- **`<esrs:ReferenceType>`**: Defines the **type of reference** being made in the ESRS taxonomy. It helps link the element to external standards, regulations, or other authoritative documents, specifying the nature of the reference.
-- **`<esrs:RelatedAR>`**: Refers to a **related Accounting Regulation (AR)** or another authoritative reference linked to the ESRS disclosure. This tag provides the connection between the ESRS reporting element and the relevant accounting or sustainability regulation.
+- ESRS-specific tags:
+  - **`<esrs:Alternative>`**: Defines an **alternative reporting option** or scenario that can be used under certain conditions in the ESRS framework. It could represent an optional disclosure path when companies are allowed flexibility in their reporting.
+  - **`<esrs:ConditionalDatapoint>`**: Refers to a **data point that is only required** under certain conditions. It may be triggered by certain facts or events (e.g., the disclosure becomes mandatory if certain thresholds are met or certain circumstances apply).
+  - **`<esrs:DatapointId>`**: Identifies a **specific data point** within the ESRS taxonomy. This unique identifier links the data point to its definition, role, and requirements for reporting.
+  - **`<esrs:Level1Element>`**: Represents a **top-level element** in the ESRS taxonomy hierarchy. These elements typically organize broader sustainability disclosures, such as high-level categories like climate, governance, or social impact.
+  - **`<esrs:MandatoryDatapoint>`**: Specifies a **data point that is required** for all companies, without conditions. This tag marks disclosures that must be reported as part of the ESRS framework.
+  - **`<esrs:PhaseIn>`**: Refers to a **transition or phase-in period** for certain ESRS requirements. Companies may be allowed extra time to comply with specific disclosure requirements, and this tag helps track which disclosures are subject to phase-in rules.
+  - **`<esrs:ReferenceType>`**: Defines the **type of reference** being made in the ESRS taxonomy. It helps link the element to external standards, regulations, or other authoritative documents, specifying the nature of the reference.
+  - **`<esrs:RelatedAR>`**: Refers to a **related Accounting Regulation (AR)** or another authoritative reference linked to the ESRS disclosure. This tag provides the connection between the ESRS reporting element and the relevant accounting or sustainability regulation.
 
 ### XBRL Terminology
 
