@@ -2,10 +2,10 @@ import { parseAndFollowReferences } from './lib/parsing';
 import { printXMLTree } from './lib/output';
 
 async function main() {
-  // Parse the main XBRL file (adjust the path to your file)
-  const startFile = process.argv?.[2] ?? '2023-12-22/common/esrs_cor.xsd'; // "2023-12-22/esrs_all.xsd";
-  console.log('Parsing:', startFile);
-  const filePath = `./ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/${startFile}`;
+  const rootPath = './ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/';
+  const startFile = process.argv?.[2] ?? 'common/esrs_cor.xsd'; // "esrs_all.xsd";
+  const filePath = rootPath + startFile;
+  console.log('Parsing:', filePath);
   const taxonomy = await parseAndFollowReferences(filePath);
   const searchFilter = {
     // maxLevel: 10,

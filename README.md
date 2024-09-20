@@ -42,16 +42,16 @@ Dump to a text file:
 
 #### Output
 
-    2023-12-22/common/esrs_cor.xsd:
-        ∟ filePath
-        ∟ schema
-        ∟ xsd:schema [targetNamespace, elementFormDefault, xmlns:xsd, xmlns:esrs, xmlns:link, xmlns:xbrldt, xmlns:dtr-types, xmlns:enum2, xmlns:xbrli, xmlns:country, xmlns:xlink]
-            ∟ xsd:annotation
-            ∟ xsd:appinfo
-                ∟ link:linkbaseRef
-                ∟ 0 [xlink:type, xlink:href, xlink:arcrole]
-                ∟ 1 [xlink:type, xlink:href, xlink:role, xlink:arcrole]
-                ∟ 2 [xlink:type, xlink:href, xlink:role, xlink:arcrole]
+    common/esrs_cor.xsd (filter {}):
+    ∟ filePath
+    ∟ schema
+      ∟ xsd:schema [targetNamespace, elementFormDefault, xmlns:xsd, xmlns:esrs, xmlns:link, xmlns:xbrldt, xmlns:dtr-types, xmlns:enum2, xmlns:xbrli, xmlns:country, xmlns:xlink]
+        ∟ xsd:annotation
+          ∟ xsd:appinfo
+            ∟ link:linkbaseRef
+              ∟ 0 [xlink:type, xlink:href, xlink:arcrole]
+              ∟ 1 [xlink:type, xlink:href, xlink:role, xlink:arcrole]
+              ∟ 2 [xlink:type, xlink:href, xlink:role, xlink:arcrole]
     (...etc)
 
 and further down:
