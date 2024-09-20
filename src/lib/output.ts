@@ -38,12 +38,13 @@ export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLe
         const hasChildren = typeof obj[key] === 'object' && obj[key] !== null;
         const attributesObject = hasChildren ? obj[key][ATTRIBUTES_KEY] : undefined;
         const idStr = attributesObject?.id !== undefined ? `id:'${attributesObject.id}'` : '';
-        // const nameStr = attributesObject?.name !== undefined ? `name:'${attributesObject.name}'` : ''; // name is too similar to id, and id is more common
-        const typeStr = attributesObject?.type !== undefined ? `type:'${attributesObject.type}'` : '';
+        const ATTRIBUTES_TO_SHOW_VALUE = ['id', 'type', 'xlink:title', 'xlink:href'];
+        const attributesWithValue = Object.keys(attributesObject ?? {})
+          .filter((key) => ATTRIBUTES_TO_SHOW_VALUE.includes(key))
+          .map((key) => `${key}:'${attributesObject[key]}'`);
         const attributesArray = [
-          ...(idStr !== '' ? [idStr] : []),
-          ...(typeStr !== '' ? [typeStr] : []),
-          ...Object.keys(attributesObject ?? {}).filter((key) => !['id', 'type'].includes(key))
+          ...attributesWithValue,
+          ...Object.keys(attributesObject ?? {}).filter((key) => !ATTRIBUTES_TO_SHOW_VALUE.includes(key))
         ];
         const attributesStr = attributesObject !== undefined ? ` [${attributesArray.join(', ')}]` : '';
         const doShowFilterMatchAndParentNodes =
