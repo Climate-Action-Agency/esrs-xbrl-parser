@@ -25,7 +25,11 @@ Unzip the ESRS files into `./ESRS-Set1-XBRL-Taxonomy` inside this project folder
 
 ## Usage
 
-### ESRS Core (concepts, labels and references only)
+### `list`
+
+    npm run list [path to XML file]
+
+#### ESRS Core (concepts, labels and references only)
 
 Parse the file `xbrl.efrag.org/taxonomy/esrs/2023-12-22/common/esrs_cor.xsd`:
 
@@ -40,7 +44,7 @@ Dump to a text file:
     mkdir output
     npm run list:core > output/list_esrs_cor.txt
 
-#### Output
+##### Output
 
     common/esrs_cor.xsd (filter {}):
     ∟ filePath
@@ -60,7 +64,7 @@ and further down:
     (...)
     ∟ 3976 [id:'esrs_PublicClaimsOfGHGNeutralityThatInvolveUseOfCarbonCreditsHaveBeenMade', type:'xbrli:booleanItemType', name, substitutionGroup, abstract, nillable, xbrli:periodType]
 
-### ESRS All (all topics and disclosure requirements, with all linkbases)
+#### ESRS All (all topics and disclosure requirements, with all linkbases)
 
 Parse the file `xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd`:
 
