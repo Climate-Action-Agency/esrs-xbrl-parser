@@ -208,6 +208,11 @@ const buildDisclosureHierarchy = (
   return disclosures;
 };
 
+const getPresentationFileNumber = (file: string) => {
+  const match = file.match(/pre_esrs_(\d+)\.xml/); // Extracts the numeric value
+  return match ? parseInt(match[1], 10) : 0;
+};
+
 async function main() {
   const rootPath = './ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/';
   const labelFilePath = 'common/labels/lab_esrs-en.xml';
@@ -217,7 +222,9 @@ async function main() {
   const linkbaseDirName = 'all/linkbases';
   const linkbaseDir = join(rootPath, linkbaseDirName);
   const linkbaseFiles = await readdir(linkbaseDir);
-  const presentationFiles = linkbaseFiles.filter((file) => file.startsWith('pre_esrs_') && file.endsWith('.xml'));
+  const presentationFiles = linkbaseFiles
+    .filter((file) => file.startsWith('pre_esrs_') && file.endsWith('.xml'))
+    .sort((a, b) => getPresentationFileNumber(a) - getPresentationFileNumber(b));
 
   let allPresentationLinkbases: any = {};
   presentationFiles.forEach(async (fileName) => {
