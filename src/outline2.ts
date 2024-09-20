@@ -16,8 +16,13 @@ export const parseXML = async (filePath: string): Promise<any> => {
   }
 };
 
-// Recursive helper to drill into the XML and find all xlink:href attributes
-export const parseAndFollowLinks = async (filePath: string, rootDir: string, visited = new Set()): Promise<any> => {
+// Helper to fetch and parse XML, handling links with fragments (e.g., #role-200510)
+export const parseAndFollowLinks = async (
+  filePath: string,
+  parentDir: string,
+  visited = new Set(),
+  fragment: string | null = null
+): Promise<any> => {
   if (visited.has(filePath)) {
     console.warn(`Already visited ${filePath}. Skipping to avoid circular references.`);
     return null;
@@ -26,6 +31,16 @@ export const parseAndFollowLinks = async (filePath: string, rootDir: string, vis
 
   // Parse the main file
   const fileData = await parseXML(filePath);
+
+  // If there's a fragment (like #role-200510), find the matching element by ID
+  if (fragment) {
+    const element = findElementById(fileData, fragment);
+    if (!element) {
+      console.warn(`Fragment ${fragment} not found in ${filePath}`);
+      return null;
+    }
+    return element; // Return the matched element for the fragment
+  }
 
   // Initialize the tree structure with the root node
   const tree = {
@@ -42,15 +57,21 @@ export const parseAndFollowLinks = async (filePath: string, rootDir: string, vis
 
         // Check if the current node contains an xlink:href attribute
         if (child?.['$']?.['xlink:href']) {
-          const href = child['$']['xlink:href'];
+          let href = child['$']['xlink:href'];
 
           if (!href.startsWith('http')) {
-            // Resolve relative path to absolute file path
-            const fullPath = path.resolve(rootDir, href);
-            console.log(`Following xlink:href link: ${fullPath}`);
+            // Handle #fragment in the href
+            let fragment: string | null = null;
+            if (href.includes('#')) {
+              [href, fragment] = href.split('#');
+            }
 
+            // Resolve relative path to absolute file path
+            const fullPath = path.resolve(parentDir, href);
+            const fullPathDir = path.dirname(fullPath);
+            console.warn(`Following xlink:href '${href}' from '${parentDir}' ('${fullPath}') with #${fragment}`);
             // Recursively parse the referenced file
-            const childTree = await parseAndFollowLinks(fullPath, rootDir, visited);
+            const childTree = await parseAndFollowLinks(fullPath, fullPathDir, visited, fragment);
 
             // Add the child tree to the parentNode
             if (childTree) {
@@ -73,6 +94,23 @@ export const parseAndFollowLinks = async (filePath: string, rootDir: string, vis
   return tree;
 };
 
+// Helper to find an element by its ID in the XML structure
+const findElementById = (xmlData: any, fragment: string): any => {
+  const findInObject = (obj: any): any => {
+    if (typeof obj === 'object' && obj !== null) {
+      if (obj['$']?.['id'] === fragment) {
+        return obj;
+      }
+      for (const key in obj) {
+        const found = findInObject(obj[key]);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+  return findInObject(xmlData);
+};
+
 // Main function to start parsing from the root file
 async function main() {
   const rootDir = './ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/';
@@ -82,8 +120,8 @@ async function main() {
   const tree = await parseAndFollowLinks(path.join(rootDir, rootFile), rootDir);
 
   // Output the result
-  console.log(JSON.stringify(tree, null, 2));
-  //printXMLTree(tree, { maxLevel: 20 });
+  //console.log(JSON.stringify(tree, null, 2));
+  printXMLTree(tree, { maxLevel: 20 });
 }
 
 main();
