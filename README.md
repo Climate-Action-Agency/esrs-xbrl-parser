@@ -80,6 +80,7 @@ Dump to a text file:
 - Starting points: `esrs_all.xsda`, `esrs_cor.xsd`
 - Structure and hierarchy: `pre_esrs_*.xml`
 - Human-readable descriptions and explanations: `labels` folder
+- Field types, dimensions (categories), and enumerations
 
 ### `ESRS-Set1-XBRL-Taxonomy` folder contents
 
