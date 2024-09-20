@@ -1,3 +1,5 @@
+import { join } from 'path';
+import { readdir } from 'fs/promises';
 import { parseXML } from './lib/parsing';
 import { printHierarchyTree } from './lib/output';
 
@@ -39,9 +41,9 @@ const mapLocatorsToRoles = async (
 };
 
 // Map locators to their corresponding resource labels (e.g., loc_1 -> res_390)
-const mapLocatorsToResources = async (glaFilePath: string): Promise<{ [key: string]: string }> => {
+const mapLocatorsToResources = async (glaLabelFilePath: string): Promise<{ [key: string]: string }> => {
   const locatorToResourceMap: { [key: string]: string } = {};
-  const glaFile = await parseXML(glaFilePath);
+  const glaFile = await parseXML(glaLabelFilePath);
 
   const genLink = glaFile['link:linkbase']?.['gen:link'];
   const arcs = genLink?.['gen:arc'] || [];
@@ -57,9 +59,9 @@ const mapLocatorsToResources = async (glaFilePath: string): Promise<{ [key: stri
 };
 
 // Combine locator-to-resource map and headline map to get locators mapped to headlines
-const mapLocatorsToHeadlines = async (glaFilePath: string) => {
-  const locatorToResourceMap = await mapLocatorsToResources(glaFilePath);
-  const headlineMap = await extractHeadlinesFromLabelElements(glaFilePath);
+const mapLocatorsToHeadlines = async (glaLabelFilePath: string) => {
+  const locatorToResourceMap = await mapLocatorsToResources(glaLabelFilePath);
+  const headlineMap = await extractHeadlinesFromLabelElements(glaLabelFilePath);
 
   const locatorToHeadlineMap: { [key: string]: string } = {};
 
@@ -75,9 +77,9 @@ const mapLocatorsToHeadlines = async (glaFilePath: string) => {
 };
 
 // Extract headlines from label:label elements in gla_esrs-en.xml
-const extractHeadlinesFromLabelElements = async (glaFilePath: string): Promise<{ [key: string]: string }> => {
+const extractHeadlinesFromLabelElements = async (glaLabelFilePath: string): Promise<{ [key: string]: string }> => {
   const headlineMap: { [key: string]: string } = {};
-  const glaFile = await parseXML(glaFilePath);
+  const glaFile = await parseXML(glaLabelFilePath);
 
   const genLink = glaFile['link:linkbase']?.['gen:link'];
   const labels = genLink?.['label:label'] || [];
@@ -143,7 +145,7 @@ const buildDisclosureHierarchy = (
   presentationLinkbase: any,
   labelMap: { [key: string]: string },
   locatorRoleMap: { [key: string]: string },
-  locatorToHeadlineMap: { [key: string]: string }
+  locatorToHeadlineMap?: { [key: string]: string }
 ) => {
   const disclosures: any = {};
 
@@ -174,8 +176,8 @@ const buildDisclosureHierarchy = (
     const parentHref = locators[from];
     const childHref = locators[to];
 
-    const parentLabel = locatorToHeadlineMap[from] || labelMap[from] || parentHref;
-    const childLabel = locatorToHeadlineMap[to] || labelMap[to] || childHref;
+    const parentLabel = locatorToHeadlineMap?.[from] || labelMap?.[from] || parentHref;
+    const childLabel = locatorToHeadlineMap?.[to] || labelMap?.[to] || childHref;
 
     const parentRole = locatorRoleMap[from] || parentHref; // Get ID/Code
     const childRole = locatorRoleMap[to] || childHref; // Get ID/Code
@@ -208,13 +210,49 @@ const buildDisclosureHierarchy = (
 
 async function main() {
   const rootPath = './ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/';
-  const presentationFilePath = 'all/linkbases/pre_esrs_301040.xml';
   const labelFilePath = 'common/labels/lab_esrs-en.xml';
-  const glaFilePath = 'common/labels/gla_esrs-en.xml'; // Add GLA for headlines
+  // const glaLabelFilePath = 'common/labels/gla_esrs-en.xml';
   const esrsCorFilePath = 'common/esrs_cor.xsd';
 
-  // Parse the presentation linkbase
-  const presentationLinkbase = await parseXML(rootPath + presentationFilePath);
+  const linkbaseDirName = 'all/linkbases';
+  const linkbaseDir = join(rootPath, linkbaseDirName);
+  const linkbaseFiles = await readdir(linkbaseDir);
+  const presentationFiles = linkbaseFiles.filter((file) => file.startsWith('pre_esrs_') && file.endsWith('.xml'));
+
+  let allPresentationLinkbases: any = {};
+  presentationFiles.forEach(async (fileName) => {
+    const presentationFilePath = join(linkbaseDir, fileName);
+    const presentationLinkbase = await parseXML(presentationFilePath);
+    // console.log(
+    //   'Processing:',
+    //   fileName,
+    //   [
+    //     presentationLinkbase['link:linkbase']?.['link:presentationLink']?.['link:loc'].length,
+    //     presentationLinkbase['link:linkbase']?.['link:presentationLink']?.['link:presentationArc'].length
+    //   ],
+    //   JSON.stringify(allPresentationLinkbases).length
+    // );
+    const linkLocs = presentationLinkbase['link:linkbase']?.['link:presentationLink']?.['link:loc'] ?? [];
+    const linkLocsArray = Array.isArray(linkLocs) ? linkLocs : [linkLocs];
+    const presentationArcs =
+      presentationLinkbase['link:linkbase']?.['link:presentationLink']?.['link:presentationArc'] ?? [];
+    const presentationArcsArray = Array.isArray(presentationArcs) ? presentationArcs : [presentationArcs];
+    allPresentationLinkbases = {
+      ...allPresentationLinkbases,
+      'link:linkbase': {
+        'link:presentationLink': {
+          'link:loc': [
+            ...(allPresentationLinkbases?.['link:linkbase']?.['link:presentationLink']?.['link:loc'] ?? []),
+            ...linkLocsArray
+          ],
+          'link:presentationArc': [
+            ...(allPresentationLinkbases['link:linkbase']?.['link:presentationLink']?.['link:presentationArc'] ?? []),
+            ...presentationArcsArray
+          ]
+        }
+      }
+    };
+  });
 
   // Extract role definitions (ID/Code) from esrs_cor.xsd
   const roleMap = await extractRoleDefinitions(rootPath + esrsCorFilePath);
@@ -226,15 +264,15 @@ async function main() {
   const labelMap = await buildLabelMap(rootPath + labelFilePath);
 
   // Map locators to headlines
-  const locatorToHeadlineMap = await mapLocatorsToHeadlines(rootPath + glaFilePath);
+  // const locatorToHeadlineMap = await mapLocatorsToHeadlines(rootPath + glaLabelFilePath);
 
   // Build the disclosure hierarchy with labels, IDs, roles, and headlines
-  const hierarchy = buildDisclosureHierarchy(presentationLinkbase, labelMap, locatorRoleMap, locatorToHeadlineMap);
+  const hierarchy = buildDisclosureHierarchy(allPresentationLinkbases, labelMap, locatorRoleMap);
 
   // Output the result
   //console.log('hierarchy:', JSON.stringify(hierarchy, null, 2));
   console.log('printHierarchyTree:');
-  printHierarchyTree(hierarchy, {});
+  printHierarchyTree(hierarchy, { maxLevel: 4 });
 }
 
 main();
