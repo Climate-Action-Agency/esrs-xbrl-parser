@@ -10,24 +10,28 @@ export const parseAndFollowLinks = async (
   visited = new Set(),
   fragment: string | null = null
 ): Promise<any> => {
-  console.warn(`\nparseAndFollowLinks: '${filePath}' in '${parentDir}'`);
-  const fullFilePath = path.resolve(parentDir, filePath);
-  const fullFilePathDir = path.dirname(fullFilePath);
+  console.warn(`Parsing: '${filePath}' in '${parentDir.split('/').slice(-4).join('/')}'`);
+  const currentFilePath = path
+    .resolve(parentDir, filePath)
+    // Desperate hack to fix broken link
+    .replace('taxonomy/common/esrs_cor.xsd', 'taxonomy/esrs/2023-12-22/common/esrs_cor.xsd');
+  const currentFolderPath = path.dirname(currentFilePath);
 
-  if (visited.has(fullFilePath)) {
-    console.warn(`  - Already visited ${fullFilePath}. Skipping to avoid circular references.`);
+  // Track visited files to avoid circular references
+  if (visited.has(currentFilePath)) {
+    //console.warn(`  - Already visited ${filePath} - skipping`);
     return null;
   }
-  visited.add(fullFilePath);
+  visited.add(currentFilePath);
 
   // Parse the main file
-  const fileData = await parseXML(fullFilePath);
+  const xmlData = await parseXML(currentFilePath);
 
   // If there's a fragment (like #role-200510), find the matching element by ID
   if (fragment) {
-    const element = findElementById(fileData, fragment);
+    const element = findElementById(xmlData, fragment);
     if (!element) {
-      console.warn(`  - Fragment ${fragment} not found in ${filePath}`);
+      //console.warn(`  - Fragment ${fragment} not found in ${filePath}`);
       return null;
     }
     return element; // Return the matched element for the fragment
@@ -35,50 +39,56 @@ export const parseAndFollowLinks = async (
 
   // Initialize the tree structure with the root node
   const tree = {
-    filePath,
-    schema: fileData,
-    children: []
+    ...xmlData
   };
 
   // Generic recursive function to find and follow any xlink:href in any tag
-  const followXlinkHrefs = async (node: any, parentNode: any) => {
-    if (typeof node === 'object' && node !== null) {
-      for (const key in node) {
-        const child = node[key];
+  const followXlinkHrefs = async (currentNode: any) => {
+    if (typeof currentNode === 'object' && currentNode !== null) {
+      for (const key in currentNode) {
+        const childNode = currentNode[key];
 
-        // Check if the current node contains an xlink:href attribute
-        if (child?.['$']?.['xlink:href']) {
-          let href = child['$']['xlink:href'];
+        // Check if the childNode contains an xlink:href attribute
+        if (childNode?.['$']?.['xlink:href']) {
+          let href = childNode['$']['xlink:href'];
 
           if (!href.startsWith('http')) {
             // Handle #fragment in the href
-            let fragment: string | null = null;
+            let childFragment: string | null = null;
             if (href.includes('#')) {
-              [href, fragment] = href.split('#');
+              [href, childFragment] = href.split('#');
             }
 
-            // Resolve relative path to absolute file path
-            console.warn(`  - Following xlink:href '${href}' from '${parentDir}' with #${fragment}`);
+            // console.warn(`  - Following xlink:href '${href}' from '${currentFolderPath}'`); // with #${childFragment}
             // Recursively parse the referenced file
-            const childTree = await parseAndFollowLinks(href, fullFilePathDir, visited, fragment);
+            const childTree = await parseAndFollowLinks(href, currentFolderPath, visited, childFragment);
 
-            // Add the child tree to the parentNode
+            // Add to the child tree
             if (childTree) {
-              parentNode.children.push(childTree);
+              const rootKey = Object.keys(childTree)[0];
+              if (childNode[rootKey] !== undefined) {
+                childNode[rootKey] = childTree[rootKey];
+              } else {
+                // Merge into an array if there are multiple children
+                if (!Array.isArray(childNode[rootKey])) {
+                  childNode[rootKey] = [childNode[rootKey]];
+                }
+                childNode[rootKey].push(childTree);
+              }
             }
           }
         }
 
         // Recurse for nested objects or arrays
-        if (typeof child === 'object') {
-          await followXlinkHrefs(child, tree); // Recursively follow links in the child node
+        if (typeof childNode === 'object') {
+          await followXlinkHrefs(childNode); // Recursively follow links in the child node
         }
       }
     }
   };
 
   // Recursively follow xlink:href in the parsed XML data
-  await followXlinkHrefs(fileData, tree);
+  await followXlinkHrefs(xmlData);
 
   return tree;
 };
