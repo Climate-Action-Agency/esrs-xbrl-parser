@@ -211,3 +211,9 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
   - Specific data points or narratives that companies must disclose, based on relevance to a topic, such as water use or social equity.
 - **Topics**:
   - Broad areas in ESRS, like climate change or governance, that companies must report on.
+
+## Related projects
+
+- http://www.openfiling.info/esrs/
+- http://www.openfiling.info/esrs/ → https://github.com/EasyESEF-Max/iXBRL-for-ESRS: _“JavaScript code transforms the input info file into an exported iXBRL output file, according to the ESRS XBRL taxonomy”_
+- https://www.xbrleurope.org/?page_id=1243
