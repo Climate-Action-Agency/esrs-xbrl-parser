@@ -10,7 +10,8 @@ export const parseAndFollowLinks = async (
   visited = new Set(),
   fragment: string | null = null
 ): Promise<any> => {
-  console.warn(`Parsing: '${filePath}' in '${parentDir.split('/').slice(-4).join('/')}'`);
+  const isNotTheCoreFile = !filePath.includes('esrs_cor.xsd');
+  if (isNotTheCoreFile) console.warn(`Parsing: '${filePath}' in '${parentDir.split('/').slice(-4).join('/')}'`);
   const currentFilePath = path
     .resolve(parentDir, filePath)
     // Desperate hack to fix broken link
