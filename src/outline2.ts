@@ -10,8 +10,10 @@ export const parseAndFollowLinks = async (
   visited = new Set(),
   fragment: string | null = null
 ): Promise<any> => {
+  console.warn(`\nparseAndFollowLinks: '${filePath}' from '${parentDir}'`);
+
   if (visited.has(filePath)) {
-    console.warn(`Already visited ${filePath}. Skipping to avoid circular references.`);
+    console.warn(`  - Already visited ${filePath}. Skipping to avoid circular references.`);
     return null;
   }
   visited.add(filePath);
@@ -23,7 +25,7 @@ export const parseAndFollowLinks = async (
   if (fragment) {
     const element = findElementById(fileData, fragment);
     if (!element) {
-      console.warn(`Fragment ${fragment} not found in ${filePath}`);
+      console.warn(`  - Fragment ${fragment} not found in ${filePath}`);
       return null;
     }
     return element; // Return the matched element for the fragment
@@ -56,7 +58,7 @@ export const parseAndFollowLinks = async (
             // Resolve relative path to absolute file path
             const fullPath = path.resolve(parentDir, href);
             const fullPathDir = path.dirname(fullPath);
-            console.warn(`Following xlink:href '${href}' from '${parentDir}' ('${fullPath}') with #${fragment}`);
+            console.warn(`  - Following xlink:href '${href}' from '${parentDir}' ('${fullPath}') with #${fragment}`);
             // Recursively parse the referenced file
             const childTree = await parseAndFollowLinks(fullPath, fullPathDir, visited, fragment);
 
@@ -107,8 +109,8 @@ async function main() {
   const tree = await parseAndFollowLinks(path.join(rootDir, rootFile), rootDir);
 
   // Output the result
-  //console.log(JSON.stringify(tree, null, 2));
-  printXMLTree(tree, { maxLevel: 20 });
+  console.log(JSON.stringify(tree, null, 2));
+  //printXMLTree(tree, { maxLevel: 20 });
 }
 
 main();
