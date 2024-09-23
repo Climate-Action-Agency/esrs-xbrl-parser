@@ -10,16 +10,18 @@ export const parseAndFollowLinks = async (
   visited = new Set(),
   fragment: string | null = null
 ): Promise<any> => {
-  console.warn(`\nparseAndFollowLinks: '${filePath}' from '${parentDir}'`);
+  console.warn(`\nparseAndFollowLinks: '${filePath}' in '${parentDir}'`);
+  const fullFilePath = path.resolve(parentDir, filePath);
+  const fullFilePathDir = path.dirname(fullFilePath);
 
-  if (visited.has(filePath)) {
-    console.warn(`  - Already visited ${filePath}. Skipping to avoid circular references.`);
+  if (visited.has(fullFilePath)) {
+    console.warn(`  - Already visited ${fullFilePath}. Skipping to avoid circular references.`);
     return null;
   }
-  visited.add(filePath);
+  visited.add(fullFilePath);
 
   // Parse the main file
-  const fileData = await parseXML(filePath);
+  const fileData = await parseXML(fullFilePath);
 
   // If there's a fragment (like #role-200510), find the matching element by ID
   if (fragment) {
@@ -56,11 +58,9 @@ export const parseAndFollowLinks = async (
             }
 
             // Resolve relative path to absolute file path
-            const fullPath = path.resolve(parentDir, href);
-            const fullPathDir = path.dirname(fullPath);
-            console.warn(`  - Following xlink:href '${href}' from '${parentDir}' ('${fullPath}') with #${fragment}`);
+            console.warn(`  - Following xlink:href '${href}' from '${parentDir}' with #${fragment}`);
             // Recursively parse the referenced file
-            const childTree = await parseAndFollowLinks(fullPath, fullPathDir, visited, fragment);
+            const childTree = await parseAndFollowLinks(href, fullFilePathDir, visited, fragment);
 
             // Add the child tree to the parentNode
             if (childTree) {
@@ -103,14 +103,14 @@ const findElementById = (xmlData: any, fragment: string): any => {
 // Main function to start parsing from the root file
 async function main() {
   const rootDir = './ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/';
-  const rootFile = 'esrs_all.xsd';
+  const startFile = 'esrs_all.xsd';
 
   // Build the tree starting from the root file
-  const tree = await parseAndFollowLinks(path.join(rootDir, rootFile), rootDir);
+  const tree = await parseAndFollowLinks(startFile, rootDir);
 
   // Output the result
-  console.log(JSON.stringify(tree, null, 2));
-  //printXMLTree(tree, { maxLevel: 20 });
+  //console.log(JSON.stringify(tree, null, 2));
+  printXMLTree(tree, { maxLevel: 20 });
 }
 
 main();
