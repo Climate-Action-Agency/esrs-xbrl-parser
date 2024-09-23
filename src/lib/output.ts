@@ -36,6 +36,7 @@ export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLe
       // Don't traverse the attributes ($) object
       if (key !== ATTRIBUTES_KEY) {
         const hasChildren = typeof obj[key] === 'object' && obj[key] !== null;
+        const isTextNode = typeof obj[key] === 'string';
         const attributesObject = hasChildren ? obj[key][ATTRIBUTES_KEY] : undefined;
         const idStr = attributesObject?.id !== undefined ? `id:'${attributesObject.id}'` : '';
         const ATTRIBUTES_TO_SHOW_VALUE = ['id', 'type', 'xlink:title', 'xlink:href'];
@@ -47,13 +48,14 @@ export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLe
           ...Object.keys(attributesObject ?? {}).filter((key) => !ATTRIBUTES_TO_SHOW_VALUE.includes(key))
         ];
         const attributesStr = attributesObject !== undefined ? ` [${attributesArray.join(', ')}]` : '';
+        const textChildStr = isTextNode ? `: "${obj[key]}"` : '';
         const doShowFilterMatchAndParentNodes =
           searchFilter?.text === undefined ||
           (searchFilter?.text !== undefined &&
             (idStr.toLowerCase().includes(searchFilter.text.toLowerCase()) ||
               currentLevel < (searchFilter.level ?? 0)));
         if (doShowFilterMatchAndParentNodes) {
-          console.log(indentStr + key + attributesStr);
+          console.log(indentStr + key + attributesStr + textChildStr);
         }
         // Recursively traverse the child object
         if (hasChildren) {
