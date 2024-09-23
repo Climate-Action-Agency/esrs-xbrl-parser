@@ -26,7 +26,7 @@ interface TreeSearchFilter {
 }
 
 export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLevel: number = 0): void {
-  const indent = '  '.repeat(currentLevel); // Indentation based on depth
+  const indentStr = currentLevel > 0 ? `${'  '.repeat(currentLevel)}∟ ` : '';
   // Don't traverse below the maxLevel
   if (searchFilter?.maxLevel !== undefined && currentLevel >= searchFilter?.maxLevel) {
     return;
@@ -53,7 +53,7 @@ export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLe
             (idStr.toLowerCase().includes(searchFilter.text.toLowerCase()) ||
               currentLevel < (searchFilter.level ?? 0)));
         if (doShowFilterMatchAndParentNodes) {
-          console.log(`${indent} ∟ ${key}` + attributesStr);
+          console.log(indentStr + key + attributesStr);
         }
         // Recursively traverse the child object
         if (hasChildren) {
