@@ -1,4 +1,6 @@
+import { Xml2JSNode } from '../types/global';
 import { parseXML } from './parsing';
+import { applyToAll } from './utils';
 
 /** Build a dictionary of labels. */
 export const buildLabelMap = async (labelFilePath: string): Promise<{ [key: string]: string }> => {
@@ -93,4 +95,87 @@ export const getRoleLabel = (
 ): string => {
   const labelKey = xlinkHref.includes('#') ? xlinkHref.split('#')[1] : xlinkHref;
   return (includeLabelKey ? `${labelKey}: ` : '') + (roleLabelMap[labelKey] ?? labelKey);
+};
+
+interface HierarchyNode {
+  id: string;
+  label: string;
+  order?: string;
+  children: HierarchyNode[];
+}
+
+export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode): HierarchyNode | null => {
+  const presentationLink = linkbaseRef['link:linkbase']?.[0]?.['link:presentationLink'];
+
+  if (!presentationLink) {
+    console.error('No presentation link found');
+    return null;
+  }
+
+  const locators = presentationLink['link:loc'] || [];
+  const arcs = presentationLink['link:presentationArc'] || [];
+
+  // Create a map of locators (xlink:label to href)
+  const locatorMap: { [key: string]: string } = {};
+  locators.forEach((loc: Xml2JSNode) => {
+    const label = loc['$']['xlink:label']; // e.g., loc_1
+    const href = loc['$']['xlink:href']; // e.g., ../../esrs_cor.xsd#esrs_GeneralBasisForPreparationOfSustainabilityStatementAbstract
+    locatorMap[label] = href;
+  });
+
+  // Create a map to store nodes by ID
+  const nodeMap: { [key: string]: HierarchyNode } = {};
+
+  // Create a hierarchy tree root
+  let root: HierarchyNode | null = null;
+
+  // Process each arc and build the parent-child relationships
+  console.warn('typeof arcs:', typeof arcs, arcs.length);
+  applyToAll(arcs, (arc: Xml2JSNode) => {
+    const fromLabel = arc['$']['xlink:from'];
+    const toLabel = arc['$']['xlink:to'];
+    const order = arc['$']['order']; // Use this for ordering within the parent
+
+    // Get the href values for both parent and child
+    const parentHref = locatorMap[fromLabel];
+    const childHref = locatorMap[toLabel];
+
+    // Initialize parent node if it doesn't exist
+    if (!nodeMap[parentHref]) {
+      nodeMap[parentHref] = {
+        id: parentHref,
+        label: parentHref.split('#')[1], // Get the fragment as a simple label
+        children: []
+      };
+    }
+
+    // Initialize child node if it doesn't exist
+    if (!nodeMap[childHref]) {
+      nodeMap[childHref] = {
+        id: childHref,
+        label: childHref.split('#')[1], // Get the fragment as a simple label
+        children: []
+      };
+    }
+
+    // Add order to the child node
+    nodeMap[childHref].order = order;
+
+    // Append the child node to the parent's children array
+    nodeMap[parentHref].children.push(nodeMap[childHref]);
+
+    // If this is the topmost arc (no parent node yet), set this node as root
+    if (!root) {
+      root = nodeMap[parentHref];
+    }
+  });
+
+  // Sort the children of each node based on the "order" attribute
+  Object.values(nodeMap).forEach((node) => {
+    if (node.children) {
+      node.children.sort((a, b) => parseFloat(a.order || '0') - parseFloat(b.order || '0'));
+    }
+  });
+
+  return root;
 };
