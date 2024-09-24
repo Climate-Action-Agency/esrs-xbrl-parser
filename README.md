@@ -45,7 +45,7 @@ Searching:
 Dump to a text file:
 
     mkdir output
-    npm run list:core > output/list_esrs_cor.txt
+    npm run list:core > output/core.txt
 
 ##### Output
 
@@ -80,11 +80,35 @@ Searching:
 Dump to a text file:
 
     mkdir output
-    npm run list:all > output/list_esrs_all.txt
+    npm run list:all > output/all.txt
 
 ### Outline (⚠️ work in progress)
 
     npm run outline
+
+Output:
+
+    0
+      ∟ sectionHeadline: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
+      ∟ roleNames
+        ∟ 0: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
+        ∟ 1: "role-901000"
+        ∟ 2: "[900000] Disaggregation by country"
+      ∟ sourceLinkbaseName: "pre_esrs_200510.xml"
+      ∟ descriptionsPreview
+        ∟ 0: "Ability to implement action or action plan depends on specific preconditions"
+        ∟ 1: "Absolute or relative target"
+        ∟ 2: "Absolute or relative target [axis]"
+        ∟ 3: "(etc, total 19)"
+    1
+      ∟ sectionHeadline: "[200520] ESRS2.BP-2 Disclosures in relation to specific circumstances - general"
+      ∟ roleNames: "[200520] ESRS2.BP-2 Disclosures in relation to specific circumstances - general"
+      ∟ sourceLinkbaseName: "pre_esrs_200520.xml"
+      ∟ descriptionsPreview
+        ∟ 0: "Action occurrence [member]"
+        ∟ 1: "Action relates to areas at water risk"
+        ∟ 2: "Action relates to areas of high-water stress"
+        ∟ 3: "(etc, total 57)"
 
 ## ESRS taxonomy
 
