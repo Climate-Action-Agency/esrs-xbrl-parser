@@ -3,7 +3,7 @@ import path from 'path';
 import { Xml2JSNode } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree, printObjectTree } from './lib/output';
-import { buildLabelMap } from './lib/labels';
+import { buildLabelMap, buildRoleLabelMap } from './lib/labels';
 
 async function main() {
   const PRESENTATION_SEARCH_KEY = 'pre_esrs_';
@@ -25,9 +25,11 @@ async function main() {
       (linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(PRESENTATION_SEARCH_KEY)
     ) ?? [];
 
+  // Parse the label files
   const labelFilePath = 'common/labels/lab_esrs-en.xml';
-  // Parse the label file and build the label map using arcs
   const labelMap = await buildLabelMap(path.join(rootPath, labelFilePath));
+  const roleLabelFilePath = 'common/labels/gla_esrs-en.xml';
+  const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
 
   const presentations = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => {
     const locs = linkbaseRef['link:linkbase'][0]['link:linkbase']['link:presentationLink']['link:loc'];
@@ -39,8 +41,8 @@ async function main() {
   });
 
   // Output the result
-  printXMLTree(presentations);
-  console.log(JSON.stringify(presentations, null, 2));
+  printXMLTree(roleLabelMap);
+  console.log(JSON.stringify(roleLabelMap, null, 2));
 }
 
 main();
