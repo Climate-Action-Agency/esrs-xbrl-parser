@@ -1,3 +1,5 @@
+import { TreeSearchFilter } from '../types/global';
+
 import { ATTRIBUTES_KEY } from './parsing';
 
 export function printObjectTree(obj: any, maxLevels: number = -1, skipKeys: string[] = [], level: number = 0): void {
@@ -17,12 +19,6 @@ export function printObjectTree(obj: any, maxLevels: number = -1, skipKeys: stri
       }
     }
   }
-}
-
-interface TreeSearchFilter {
-  maxLevel?: number;
-  level?: number;
-  text?: string;
 }
 
 export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLevel: number = 0): void {
