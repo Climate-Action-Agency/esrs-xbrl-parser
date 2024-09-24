@@ -2,8 +2,8 @@ import path from 'path';
 
 import { Xml2JSNode } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
-import { printXMLTree, printObjectTree } from './lib/output';
-import { buildLabelMap, buildRoleLabelMap, getRoleLabel } from './lib/labels';
+import { printXMLTree } from './lib/output';
+import { buildLabelMap, buildRoleLabelMap, getRoleLabel, buildPresentationHierarchy } from './lib/labels';
 import { applyToAll } from './lib/utils';
 
 async function main() {
@@ -25,6 +25,10 @@ async function main() {
     esrsAllXml?.['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef']?.filter(
       (linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(PRESENTATION_SEARCH_KEY)
     ) ?? [];
+
+  const hierarchy = linkbaseRefs.map(buildPresentationHierarchy);
+  printXMLTree(hierarchy);
+  return;
 
   // Parse the label files
   const labelFilePath = 'common/labels/lab_esrs-en.xml';

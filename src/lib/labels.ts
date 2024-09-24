@@ -1,3 +1,4 @@
+import { link } from 'fs';
 import { Xml2JSNode } from '../types/global';
 import { parseXML } from './parsing';
 import { applyToAll } from './utils';
@@ -98,6 +99,8 @@ export const getRoleLabel = (
 };
 
 interface HierarchyNode {
+  $?: { [key: string]: any };
+  roleRef?: Xml2JSNode;
   id: string;
   label: string;
   order?: string;
@@ -165,7 +168,11 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode): HierarchyNo
 
     // If this is the topmost arc (no parent node yet), set this node as root
     if (!root) {
-      root = nodeMap[parentHref];
+      root = {
+        $: linkbaseRef.$,
+        roleRef: linkbaseRef['link:linkbase']['link:roleRef'],
+        ...nodeMap[parentHref]
+      };
     }
   });
 
