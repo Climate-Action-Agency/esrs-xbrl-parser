@@ -3,7 +3,13 @@ import path from 'path';
 import { Xml2JSNode } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree } from './lib/output';
-import { buildLabelMap, buildRoleLabelMap, getRoleLabel, buildPresentationHierarchy } from './lib/labels';
+import {
+  buildLabelMap,
+  buildRoleLabelMap,
+  buildCoreRoleLabelMap,
+  getRoleLabel,
+  buildPresentationHierarchy
+} from './lib/labels';
 import { applyToAll } from './lib/utils';
 
 async function main() {
@@ -16,6 +22,14 @@ async function main() {
     ...(process.argv?.[3] !== undefined ? { level: 3, text: process.argv?.[3] } : {})
   };
 
+  // Parse the label files
+  const labelFilePath = 'common/labels/lab_esrs-en.xml';
+  const labelMap = await buildLabelMap(path.join(rootPath, labelFilePath));
+  const roleLabelFilePath = 'common/labels/gla_esrs-en.xml';
+  const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
+  const coreRoleLabelFilePath = 'common/esrs_cor.xsd';
+  const coreRoleLabelMap = await buildCoreRoleLabelMap(path.join(rootPath, coreRoleLabelFilePath));
+
   console.log(`${filePath} (filter ${JSON.stringify(searchFilter)}):\n`);
 
   // Build the tree starting from the root file
@@ -26,15 +40,11 @@ async function main() {
       (linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(PRESENTATION_SEARCH_KEY)
     ) ?? [];
 
-  const hierarchy = linkbaseRefs.map(buildPresentationHierarchy);
+  const hierarchy = linkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
+    buildPresentationHierarchy(linkbaseRef, coreRoleLabelMap)
+  );
   printXMLTree(hierarchy);
   return;
-
-  // Parse the label files
-  const labelFilePath = 'common/labels/lab_esrs-en.xml';
-  const labelMap = await buildLabelMap(path.join(rootPath, labelFilePath));
-  const roleLabelFilePath = 'common/labels/gla_esrs-en.xml';
-  const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
 
   const presentations = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => {
     const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();

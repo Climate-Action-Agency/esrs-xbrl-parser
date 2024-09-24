@@ -1,3 +1,5 @@
+export type StringMap = { [key: string]: string };
+
 export interface TreeSearchFilter {
   maxLevel?: number;
   level?: number;

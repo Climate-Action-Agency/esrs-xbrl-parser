@@ -1,10 +1,10 @@
 import { link } from 'fs';
-import { Xml2JSNode } from '../types/global';
+import { StringMap, Xml2JSNode } from '../types/global';
 import { parseXML } from './parsing';
 import { applyToAll } from './utils';
 
 /** Build a dictionary of labels. */
-export const buildLabelMap = async (labelFilePath: string): Promise<{ [key: string]: string }> => {
+export const buildLabelMap = async (labelFilePath: string): Promise<StringMap> => {
   const labelMap: { [key: string]: string } = {};
   const labelFile = await parseXML(labelFilePath);
 
@@ -48,7 +48,7 @@ export const buildLabelMap = async (labelFilePath: string): Promise<{ [key: stri
   return labelMap;
 };
 
-export const buildRoleLabelMap = async (labelFilePath: string): Promise<{ [key: string]: string }> => {
+export const buildRoleLabelMap = async (labelFilePath: string): Promise<StringMap> => {
   const labelMap: { [key: string]: string } = {}; // Map to hold role URIs and labels
   const labelFile = await parseXML(labelFilePath); // Parse the XML file
 
@@ -89,6 +89,31 @@ export const buildRoleLabelMap = async (labelFilePath: string): Promise<{ [key: 
   return labelMap; // Return the final role-to-label map
 };
 
+export const buildCoreRoleLabelMap = async (labelFilePath: string): Promise<StringMap> => {
+  // Parse the XML file
+  const labelFile = await parseXML(labelFilePath);
+
+  // Create a map to store the role and its label
+  const roleLabelMap: { [key: string]: string } = {};
+
+  // Find all <link:roleType> elements
+  const roleTypes = labelFile['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:roleType'];
+
+  if (Array.isArray(roleTypes)) {
+    roleTypes.forEach((roleType: any) => {
+      const roleId = roleType['$'].id; // Get the role ID, e.g., role-200511
+      const definition = roleType['link:definition']; // Get the definition text, e.g., "[200511] ..."
+
+      // Store in the map
+      roleLabelMap[roleId] = definition;
+    });
+  } else {
+    console.warn('No role types found in the provided XML file.');
+  }
+
+  return roleLabelMap;
+};
+
 export const getRoleLabel = (
   xlinkHref: string,
   roleLabelMap: { [key: string]: string },
@@ -99,15 +124,22 @@ export const getRoleLabel = (
 };
 
 interface HierarchyNode {
-  $?: { [key: string]: any };
-  roleRef?: Xml2JSNode;
   id: string;
-  label: string;
+  // label: string;
   order?: string;
   children: HierarchyNode[];
 }
 
-export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode): HierarchyNode | null => {
+interface HierarchyRootNode extends HierarchyNode, Partial<Xml2JSNode> {
+  $?: { [key: string]: any };
+  roleRef?: Xml2JSNode;
+  headlines?: string[] | string;
+}
+
+export const buildPresentationHierarchy = (
+  linkbaseRef: Xml2JSNode,
+  coreRoleLabelMap: StringMap
+): HierarchyNode | null => {
   const presentationLink = linkbaseRef['link:linkbase']?.['link:presentationLink'];
 
   if (!presentationLink) {
@@ -130,7 +162,7 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode): HierarchyNo
   const nodeMap: { [key: string]: HierarchyNode } = {};
 
   // Create a hierarchy tree root
-  let root: HierarchyNode | null = null;
+  let root: HierarchyRootNode | null = null;
 
   // Process each arc and build the parent-child relationships
   applyToAll(arcs, (arc: Xml2JSNode) => {
@@ -145,8 +177,7 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode): HierarchyNo
     // Initialize parent node if it doesn't exist
     if (!nodeMap[parentHref]) {
       nodeMap[parentHref] = {
-        id: parentHref,
-        label: parentHref.split('#')[1], // Get the fragment as a simple label
+        id: parentHref.split('#')[1], // Get the fragment as a simple label
         children: []
       };
     }
@@ -154,8 +185,7 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode): HierarchyNo
     // Initialize child node if it doesn't exist
     if (!nodeMap[childHref]) {
       nodeMap[childHref] = {
-        id: childHref,
-        label: childHref.split('#')[1], // Get the fragment as a simple label
+        id: childHref.split('#')[1], // Get the fragment as a simple label
         children: []
       };
     }
@@ -168,9 +198,13 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode): HierarchyNo
 
     // If this is the topmost arc (no parent node yet), set this node as root
     if (!root) {
+      const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
+      const roleRefs = linkbaseRef['link:linkbase']['link:roleRef'];
       root = {
-        $: linkbaseRef.$,
-        roleRef: linkbaseRef['link:linkbase']['link:roleRef'],
+        headlines: applyToAll(roleRefs, (roleRef) => getRoleLabel(roleRef.$['xlink:href'], coreRoleLabelMap)),
+        sourceLinkbaseName,
+        // $: linkbaseRef.$,
+        // roleRef: linkbaseRef['link:linkbase']['link:roleRef'],
         ...nodeMap[parentHref]
       };
     }
