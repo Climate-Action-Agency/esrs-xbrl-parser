@@ -105,7 +105,7 @@ interface HierarchyNode {
 }
 
 export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode): HierarchyNode | null => {
-  const presentationLink = linkbaseRef['link:linkbase']?.[0]?.['link:presentationLink'];
+  const presentationLink = linkbaseRef['link:linkbase']?.['link:presentationLink'];
 
   if (!presentationLink) {
     console.error('No presentation link found');
@@ -130,7 +130,6 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode): HierarchyNo
   let root: HierarchyNode | null = null;
 
   // Process each arc and build the parent-child relationships
-  console.warn('typeof arcs:', typeof arcs, arcs.length);
   applyToAll(arcs, (arc: Xml2JSNode) => {
     const fromLabel = arc['$']['xlink:from'];
     const toLabel = arc['$']['xlink:to'];

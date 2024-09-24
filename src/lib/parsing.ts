@@ -195,11 +195,11 @@ export const parseAndFollowLinks = async (
                   // Create array with the existing value
                   childNode[rootKey] = [childTree[rootKey]];
                 }
+                childNode[rootKey].push(rootValue);
               } else {
-                // Create empty array
-                childNode[rootKey] = [];
+                // It's undefined/new, place object in the root key
+                childNode[rootKey] = rootValue;
               }
-              childNode[rootKey].push(rootValue);
             }
           }
         }

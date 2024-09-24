@@ -34,16 +34,15 @@ async function main() {
 
   const presentations = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => {
     const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
-    const roleRefs = linkbaseRef['link:linkbase'][0]['link:roleRef'];
-    const roleNames = applyToAll<Xml2JSNode, string>(
-      (roleRef: Xml2JSNode) => getRoleLabel(roleRef.$['xlink:href'], roleLabelMap, true),
-      roleRefs
+    const roleRefs = linkbaseRef['link:linkbase']['link:roleRef'];
+    const roleNames = applyToAll<Xml2JSNode, string>(roleRefs, (roleRef: Xml2JSNode) =>
+      getRoleLabel(roleRef.$['xlink:href'], roleLabelMap, true)
     );
-    const presentationLink = linkbaseRef['link:linkbase'][0]['link:presentationLink'];
+    const presentationLink = linkbaseRef['link:linkbase']['link:presentationLink'];
     const sectionHeadlineRoleId = presentationLink.$['xlink:role'].split('taxonomy/')[1];
     const sectionHeadline = getRoleLabel(sectionHeadlineRoleId, roleLabelMap);
-    const locs = presentationLink['link:loc'];
-    const descriptions = locs.map((loc: Xml2JSNode) => labelMap[loc.$['xlink:label']]);
+    const linkLocs = presentationLink['link:loc'];
+    const descriptions = linkLocs.map((linkLoc: Xml2JSNode) => labelMap[linkLoc.$['xlink:label']]);
     const descriptionsPreview = [...descriptions.slice(0, 3), `(etc, total ${descriptions.length})`];
     return {
       sectionHeadline,
