@@ -3,7 +3,7 @@ import path from 'path';
 import xml2js from 'xml2js';
 import fetch from 'node-fetch';
 
-import { ParsedXBRLFile } from '../types/global';
+import { ParsedXBRLFile, TreeSearchFilter } from '../types/global';
 
 export const ATTRIBUTES_KEY = '$';
 
@@ -113,6 +113,7 @@ const extractXlinkHrefs = (xml: any): any[] => {
 export const parseAndFollowLinks = async (
   filePath: string,
   parentDir: string,
+  searchFilter?: TreeSearchFilter,
   visited = new Set(),
   fragment: string | null = null
 ): Promise<any> => {
@@ -177,20 +178,27 @@ export const parseAndFollowLinks = async (
 
             // console.warn(`  - Following xlink:href '${href}' from '${currentFolderPath}'`); // with #${childFragment}
             // Recursively parse the referenced file
-            const childTree = await parseAndFollowLinks(href, currentFolderPath, visited, childFragment);
+            const doFollowBranch =
+              !searchFilter?.onlyFollowBranches ||
+              searchFilter.onlyFollowBranches.some((fileName) => href.includes(fileName));
+            const childTree = doFollowBranch
+              ? await parseAndFollowLinks(href, currentFolderPath, searchFilter, visited, childFragment)
+              : null;
 
             // Add to the child tree
             if (childTree) {
-              const rootKey = Object.keys(childTree)[0];
+              const rootKey = Object.keys(childTree)[0]; // Never (?) more than one key
               if (childNode[rootKey] !== undefined) {
-                childNode[rootKey] = childTree[rootKey];
-              } else {
-                // Merge into an array if there are multiple children
+                // There‘s already a value in the root key
                 if (!Array.isArray(childNode[rootKey])) {
-                  childNode[rootKey] = [childNode[rootKey]];
+                  // Create array with the existing value
+                  childNode[rootKey] = [childTree[rootKey]];
                 }
-                childNode[rootKey].push(childTree);
+              } else {
+                // Create empty array
+                childNode[rootKey] = [];
               }
+              childNode[rootKey].push(childTree);
             }
           }
         }
