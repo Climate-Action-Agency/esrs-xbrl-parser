@@ -120,8 +120,10 @@ export const parseAndFollowLinks = async (
   if (isNotTheCoreFile) console.warn(`Parsing: '${filePath}' in '${parentDir.split('/').slice(-4).join('/')}'`);
   const currentFilePath = path
     .resolve(parentDir, filePath)
-    // Desperate hack to fix broken link
-    .replace('taxonomy/common/esrs_cor.xsd', 'taxonomy/esrs/2023-12-22/common/esrs_cor.xsd');
+    // Desperate hacks to fix broken link to ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/common/esrs_cor.xsd
+    .replace('taxonomy/esrs/common/esrs_cor.xsd', 'taxonomy/esrs/2023-12-22/common/esrs_cor.xsd')
+    .replace('taxonomy/common/esrs_cor.xsd', 'taxonomy/esrs/2023-12-22/common/esrs_cor.xsd')
+    .replace('2023-12-22/esrs_cor.xsd', '2023-12-22/common/esrs_cor.xsd');
   const currentFolderPath = path.dirname(currentFilePath);
 
   // Track visited files to avoid circular references
@@ -132,7 +134,14 @@ export const parseAndFollowLinks = async (
   visited.add(currentFilePath);
 
   // Parse the main file
-  const xmlData = await parseXML(currentFilePath);
+  let xmlData;
+  try {
+    xmlData = await parseXML(currentFilePath);
+  } catch (error) {
+    throw new Error(
+      `Failed to parse XML file: ${currentFilePath} ('${filePath}' in '${parentDir.split('/').slice(-4).join('/')}')`
+    );
+  }
 
   // If there's a fragment (like #role-200510), find the matching element by ID
   if (fragment) {
