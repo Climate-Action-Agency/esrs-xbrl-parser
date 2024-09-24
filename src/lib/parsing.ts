@@ -188,6 +188,7 @@ export const parseAndFollowLinks = async (
             // Add to the child tree
             if (childTree) {
               const rootKey = Object.keys(childTree)[0]; // Never (?) more than one key
+              const rootValue = Object.values(childTree)[0];
               if (childNode[rootKey] !== undefined) {
                 // There‘s already a value in the root key
                 if (!Array.isArray(childNode[rootKey])) {
@@ -198,7 +199,7 @@ export const parseAndFollowLinks = async (
                 // Create empty array
                 childNode[rootKey] = [];
               }
-              childNode[rootKey].push(childTree);
+              childNode[rootKey].push(rootValue);
             }
           }
         }
