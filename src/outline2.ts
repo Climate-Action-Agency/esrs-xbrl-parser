@@ -3,7 +3,8 @@ import path from 'path';
 import { Xml2JSNode } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree, printObjectTree } from './lib/output';
-import { buildLabelMap, buildRoleLabelMap } from './lib/labels';
+import { buildLabelMap, buildRoleLabelMap, getRoleLabel } from './lib/labels';
+import { applyToAll } from './lib/utils';
 
 async function main() {
   const PRESENTATION_SEARCH_KEY = 'pre_esrs_';
@@ -32,17 +33,24 @@ async function main() {
   const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
 
   const presentations = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => {
+    const rolesRefs = linkbaseRef['link:linkbase'][0]['link:linkbase']['link:roleRef'];
+    const roles = applyToAll<Xml2JSNode, string>(
+      (roleRef: Xml2JSNode) => getRoleLabel(roleRef.$['xlink:href'], roleLabelMap),
+      rolesRefs
+    );
     const locs = linkbaseRef['link:linkbase'][0]['link:linkbase']['link:presentationLink']['link:loc'];
     return {
       href: linkbaseRef.$?.['xlink:href'],
+      roles,
       headlines: locs.map((loc: Xml2JSNode) => labelMap[loc.$['xlink:label']])
       // locs: locs
+      // linkbaseRef
     };
   });
 
   // Output the result
-  printXMLTree(roleLabelMap);
-  console.log(JSON.stringify(roleLabelMap, null, 2));
+  printXMLTree(presentations);
+  console.log(JSON.stringify(presentations, null, 2));
 }
 
 main();
