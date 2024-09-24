@@ -36,7 +36,7 @@ async function main() {
     const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
     const roleRefs = linkbaseRef['link:linkbase'][0]['link:linkbase']['link:roleRef'];
     const roleNames = applyToAll<Xml2JSNode, string>(
-      (roleRef: Xml2JSNode) => getRoleLabel(roleRef.$['xlink:href'], roleLabelMap),
+      (roleRef: Xml2JSNode) => getRoleLabel(roleRef.$['xlink:href'], roleLabelMap, true),
       roleRefs
     );
     const presentationLink = linkbaseRef['link:linkbase'][0]['link:linkbase']['link:presentationLink'];
@@ -55,7 +55,7 @@ async function main() {
 
   // Output the result
   printXMLTree(presentations);
-  console.log(JSON.stringify(presentations, null, 2));
+  //console.log(JSON.stringify(esrsAllXml, null, 2));
 }
 
 main();
