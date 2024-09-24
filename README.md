@@ -45,7 +45,7 @@ Searching:
 Dump to a text file:
 
     mkdir output
-    npm run list:core > output/list_esrs_cor.txt
+    npm run list:core > output/core.txt
 
 ##### Output
 
@@ -80,7 +80,7 @@ Searching:
 Dump to a text file:
 
     mkdir output
-    npm run list:all > output/list_esrs_all.txt
+    npm run list:all > output/all.txt
 
 ### Outline (⚠️ work in progress)
 
