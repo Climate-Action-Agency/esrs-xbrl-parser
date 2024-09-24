@@ -33,18 +33,23 @@ async function main() {
   const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
 
   const presentations = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => {
-    const rolesRefs = linkbaseRef['link:linkbase'][0]['link:linkbase']['link:roleRef'];
-    const roles = applyToAll<Xml2JSNode, string>(
+    const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
+    const roleRefs = linkbaseRef['link:linkbase'][0]['link:linkbase']['link:roleRef'];
+    const roleNames = applyToAll<Xml2JSNode, string>(
       (roleRef: Xml2JSNode) => getRoleLabel(roleRef.$['xlink:href'], roleLabelMap),
-      rolesRefs
+      roleRefs
     );
-    const locs = linkbaseRef['link:linkbase'][0]['link:linkbase']['link:presentationLink']['link:loc'];
+    const presentationLink = linkbaseRef['link:linkbase'][0]['link:linkbase']['link:presentationLink'];
+    const sectionHeadlineRoleId = presentationLink.$['xlink:role'].split('taxonomy/')[1];
+    const sectionHeadline = getRoleLabel(sectionHeadlineRoleId, roleLabelMap);
+    const locs = presentationLink['link:loc'];
+    const descriptions = locs.map((loc: Xml2JSNode) => labelMap[loc.$['xlink:label']]);
+    const descriptionsPreview = [...descriptions.slice(0, 3), `(etc, total ${descriptions.length})`];
     return {
-      href: linkbaseRef.$?.['xlink:href'],
-      roles,
-      headlines: locs.map((loc: Xml2JSNode) => labelMap[loc.$['xlink:label']])
-      // locs: locs
-      // linkbaseRef
+      sectionHeadline,
+      roleNames,
+      sourceLinkbaseName,
+      descriptionsPreview
     };
   });
 

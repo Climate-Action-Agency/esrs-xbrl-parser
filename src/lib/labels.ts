@@ -87,6 +87,6 @@ export const buildRoleLabelMap = async (labelFilePath: string): Promise<{ [key: 
 };
 
 export const getRoleLabel = (xlinkHref: string, roleLabelMap: { [key: string]: string }): string => {
-  const role = xlinkHref.split('#')[1];
+  const role = xlinkHref.includes('#') ? xlinkHref.split('#')[1] : xlinkHref;
   return roleLabelMap[role] ?? role;
 };
