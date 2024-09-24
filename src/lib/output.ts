@@ -2,9 +2,14 @@ import { TreeSearchFilter } from '../types/global';
 
 import { ATTRIBUTES_KEY } from './parsing';
 
-export function printObjectTree(obj: any, maxLevels: number = -1, skipKeys: string[] = [], level: number = 0): void {
-  const indent = '  '.repeat(level); // Indentation based on depth
-  if (maxLevels !== -1 && level >= maxLevels) {
+export function printObjectTree(
+  obj: any,
+  maxLevels: number = -1,
+  skipKeys: string[] = [],
+  currentLevel: number = 0
+): void {
+  const indentStr = currentLevel > 0 ? `${'  '.repeat(currentLevel)}∟ ` : '';
+  if (maxLevels !== -1 && currentLevel >= maxLevels) {
     return;
   }
   for (const key in obj) {
@@ -12,16 +17,17 @@ export function printObjectTree(obj: any, maxLevels: number = -1, skipKeys: stri
       continue;
     }
     if (obj.hasOwnProperty(key)) {
-      console.log(`${indent} ∟ ${key}`);
+      const textChildStr = typeof obj[key] === 'string' ? `: "${obj[key]}"` : '';
+      console.log(indentStr + key + textChildStr);
       // If the value is another object, recursively print its keys
       if (typeof obj[key] === 'object' && obj[key] !== null) {
-        printObjectTree(obj[key], maxLevels, skipKeys, level + 1);
+        printObjectTree(obj[key], maxLevels, skipKeys, currentLevel + 1);
       }
     }
   }
 }
 
-export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLevel: number = 0): void {
+export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {
   const indentStr = currentLevel > 0 ? `${'  '.repeat(currentLevel)}∟ ` : '';
   // Don't traverse below the maxLevel
   if (searchFilter?.maxLevel !== undefined && currentLevel >= searchFilter?.maxLevel) {
@@ -43,13 +49,13 @@ export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLe
           ...attributesWithValue,
           ...Object.keys(attributesObject ?? {}).filter((key) => !ATTRIBUTES_TO_SHOW_VALUE.includes(key))
         ];
-        const attributesStr = attributesObject !== undefined ? ` [${attributesArray.join(', ')}]` : '';
+        const attributesStr = attributesObject !== undefined ? ` $[${attributesArray.join(', ')}]` : '';
         const textChildStr = isTextNode ? `: "${obj[key]}"` : '';
         const doShowFilterMatchAndParentNodes =
           searchFilter?.text === undefined ||
           (searchFilter?.text !== undefined &&
-            (idStr.toLowerCase().includes(searchFilter.text.toLowerCase()) ||
-              currentLevel < (searchFilter.level ?? 0)));
+            (idStr.toLowerCase().includes(searchFilter?.text.toLowerCase()) ||
+              currentLevel < (searchFilter?.level ?? 0)));
         if (doShowFilterMatchAndParentNodes) {
           console.log(indentStr + key + attributesStr + textChildStr);
         }
@@ -65,11 +71,11 @@ export function printXMLTree(obj: any, searchFilter: TreeSearchFilter, currentLe
 export function printHierarchyTree(obj: any, searchFilter: TreeSearchFilter, currentLevel: number = 0): void {
   const indent = '  '.repeat(currentLevel);
   // Stop recursion if the maxLevel is reached
-  if (searchFilter.maxLevel !== undefined && currentLevel >= searchFilter.maxLevel) {
+  if (searchFilter?.maxLevel !== undefined && currentLevel >= searchFilter?.maxLevel) {
     return;
   }
   // Filter by text if the filter is applied
-  if (searchFilter.text && obj?.label && !obj.label.includes(searchFilter.text)) {
+  if (searchFilter?.text && obj?.label && !obj.label.includes(searchFilter?.text)) {
     return;
   }
   // Print the current node with its ID and label
