@@ -2,9 +2,9 @@ export type StringMap = { [key: string]: string };
 
 export interface TreeSearchFilter {
   maxLevel?: number;
-  level?: number;
-  text?: string;
   onlyFollowBranches?: string[];
+  searchText?: string;
+  searchLevel?: number; // The level at which to find the searchText
 }
 
 export interface Xml2JSNode {

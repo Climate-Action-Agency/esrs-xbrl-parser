@@ -40,7 +40,6 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
         const hasChildren = typeof obj[key] === 'object' && obj[key] !== null;
         const isTextNode = typeof obj[key] === 'string';
         const attributesObject = hasChildren ? obj[key][ATTRIBUTES_KEY] : undefined;
-        const idStr = attributesObject?.id !== undefined ? `id:'${attributesObject.id}'` : '';
         const ATTRIBUTES_TO_SHOW_VALUE = ['id', 'type', 'xlink:title', 'xlink:href'];
         const attributesWithValue = Object.keys(attributesObject ?? {})
           .filter((key) => ATTRIBUTES_TO_SHOW_VALUE.includes(key))
@@ -49,15 +48,16 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
           ...attributesWithValue,
           ...Object.keys(attributesObject ?? {}).filter((key) => !ATTRIBUTES_TO_SHOW_VALUE.includes(key))
         ];
-        const attributesStr = attributesObject !== undefined ? ` $[${attributesArray.join(', ')}]` : '';
+        const attributesStr = attributesObject !== undefined ? ` $\{${attributesArray.join(', ')}\}` : '';
         const textChildStr = isTextNode ? `: "${obj[key]}"` : '';
+        const completeRowStr = indentStr + key + attributesStr + textChildStr;
         const doShowFilterMatchAndParentNodes =
-          searchFilter?.text === undefined ||
-          (searchFilter?.text !== undefined &&
-            (idStr.toLowerCase().includes(searchFilter?.text.toLowerCase()) ||
-              currentLevel < (searchFilter?.level ?? 0)));
+          searchFilter?.searchText === undefined ||
+          (searchFilter?.searchText !== undefined &&
+            (completeRowStr.toLowerCase().includes(searchFilter?.searchText.toLowerCase()) ||
+              currentLevel < (searchFilter?.searchLevel ?? 0)));
         if (doShowFilterMatchAndParentNodes) {
-          console.log(indentStr + key + attributesStr + textChildStr);
+          console.log(completeRowStr);
         }
         // Recursively traverse the child object
         if (hasChildren) {
@@ -75,7 +75,7 @@ export function printHierarchyTree(obj: any, searchFilter: TreeSearchFilter, cur
     return;
   }
   // Filter by text if the filter is applied
-  if (searchFilter?.text && obj?.label && !obj.label.includes(searchFilter?.text)) {
+  if (searchFilter?.searchText && obj?.label && !obj.label.includes(searchFilter?.searchText)) {
     return;
   }
   // Print the current node with its ID and label
@@ -91,4 +91,8 @@ export function printHierarchyTree(obj: any, searchFilter: TreeSearchFilter, cur
       printHierarchyTree(child, searchFilter, currentLevel + 1);
     });
   }
+}
+
+export function printJSON(obj: any): void {
+  console.log(JSON.stringify(obj, null, 2));
 }
