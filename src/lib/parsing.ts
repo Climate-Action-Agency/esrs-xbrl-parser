@@ -117,8 +117,6 @@ export const parseAndFollowLinks = async (
   visited = new Set(),
   fragment: string | null = null
 ): Promise<any> => {
-  const isNotTheCoreFile = !filePath.includes('esrs_cor.xsd');
-  if (isNotTheCoreFile) console.warn(`Parsing: '${filePath}' in '${parentDir.split('/').slice(-4).join('/')}'`);
   const currentFilePath = path
     .resolve(parentDir, filePath)
     // Desperate hacks to fix broken link to ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/common/esrs_cor.xsd
@@ -135,6 +133,7 @@ export const parseAndFollowLinks = async (
   visited.add(currentFilePath);
 
   // Parse the main file
+  console.warn(`Parsing: '${filePath}' in '${parentDir.split('/').slice(-4).join('/')}'`);
   let xmlData;
   try {
     xmlData = await parseXML(currentFilePath);
