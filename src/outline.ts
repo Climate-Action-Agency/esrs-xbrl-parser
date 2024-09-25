@@ -5,9 +5,9 @@ import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree, printJSON } from './lib/output';
 import {
   getLabelFromLabFile,
+  getRoleLabelFromGlaFile,
   buildLabelMap,
   buildRoleLabelMap,
-  buildCoreRoleLabelMap,
   getRoleLabel
 } from './lib/labels';
 import { applyToAll, asArray } from './lib/utils';
@@ -26,11 +26,7 @@ interface HierarchyRootNode extends HierarchyNode, Partial<Xml2JSNode> {
   roleRef?: Xml2JSNode;
 }
 
-export const buildPresentationHierarchy = (
-  linkbaseRef: Xml2JSNode,
-  esrsCoreXml: Xml2JSNode,
-  coreRoleLabelMap: StringMap
-): HierarchyNode | null => {
+export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml: Xml2JSNode): HierarchyNode | null => {
   const presentationLink = linkbaseRef['link:linkbase']?.['link:presentationLink'];
 
   if (!presentationLink) {
@@ -95,7 +91,7 @@ export const buildPresentationHierarchy = (
       const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
       const roleRefs = linkbaseRef['link:linkbase']['link:roleRef'];
       const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
-      const labels = applyToAll(roleRefs, (roleRef) => getRoleLabel(roleRef.$['xlink:href'], coreRoleLabelMap));
+      const labels = applyToAll(roles, (roleId) => getRoleLabelFromGlaFile(roleId, esrsCoreXml));
       root = {
         headline: asArray(labels)[0],
         roles,
@@ -132,11 +128,10 @@ async function main() {
   const coreFilePath = 'common/esrs_cor.xsd';
   const esrsCoreXml = await parseAndFollowLinks(coreFilePath, rootPath);
 
-  // // printXMLTree(esrsCoreXml, {
-  // //   // searchLevel: 8,
-  // //   // searchText:
-  // //   //   'esrs_ExplanationOfHowPolicyIsMadeAvailableToPotentiallyAffectedStakeholdersAndOrStakeholdersWhoNeedToHelpImplementItExplanatory_label'
-  // // });
+  // printXMLTree(esrsCoreXml, {
+  //   searchLevel: 8,
+  //   searchText: 'role-200510'
+  // });
   // return;
 
   // Parse the label files
@@ -144,7 +139,6 @@ async function main() {
   const labelMap = await buildLabelMap(path.join(rootPath, labelFilePath));
   const roleLabelFilePath = 'common/labels/gla_esrs-en.xml';
   const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
-  const coreRoleLabelMap = await buildCoreRoleLabelMap(path.join(rootPath, coreFilePath));
 
   console.log(`${filePath} (filter ${JSON.stringify(searchFilter)}):\n`);
 
@@ -156,9 +150,7 @@ async function main() {
       (linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(PRESENTATION_SEARCH_KEY)
     ) ?? [];
 
-  const hierarchy = linkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
-    buildPresentationHierarchy(linkbaseRef, esrsCoreXml, coreRoleLabelMap)
-  );
+  const hierarchy = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => buildPresentationHierarchy(linkbaseRef, esrsCoreXml));
   printXMLTree(hierarchy);
   return;
 

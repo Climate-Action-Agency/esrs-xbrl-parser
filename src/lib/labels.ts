@@ -1,4 +1,5 @@
 import { StringMap, Xml2JSNode } from '../types/global';
+import { printXMLTree } from './output';
 import { STRING_KEY, parseXML } from './parsing';
 
 /** Get label from file: lab_esrs-en.xml */
@@ -8,6 +9,20 @@ export const getLabelFromLabFile = (labelId: string, esrsCoreXml: Xml2JSNode): s
     ?.['link:linkbase']?.['link:labelLink']?.['link:label']?.find(
       (label: Xml2JSNode) => label.$.id === `${labelId}_label`
     )?.[STRING_KEY];
+  return label;
+};
+
+/** Get label from file: lab_esrs-en.xml */
+export const getRoleLabelFromGlaFile = (roleId: string, esrsCoreXml: Xml2JSNode): string => {
+  const genLink = esrsCoreXml['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef']?.find(
+    (linkbaseRef: Xml2JSNode) => linkbaseRef?.$?.['xlink:href'] === 'labels/gla_esrs-en.xml'
+  )?.['link:linkbase']?.['gen:link'];
+  const linkLoc = genLink?.['link:loc']?.find((loc: Xml2JSNode) => loc?.$?.['xlink:href'].includes(roleId));
+  const genArc = genLink?.['gen:arc']?.find((ga: Xml2JSNode) => ga?.$?.['xlink:from'] === linkLoc?.$?.['xlink:label']);
+  const labelLabel = genLink?.['label:label']?.find(
+    (ll: Xml2JSNode) => ll?.$?.['xlink:label'] === genArc?.$?.['xlink:to']
+  );
+  const label = labelLabel?.[STRING_KEY];
   return label;
 };
 
@@ -96,31 +111,6 @@ export const buildRoleLabelMap = async (labelFilePath: string): Promise<StringMa
   });
 
   return labelMap; // Return the final role-to-label map
-};
-
-export const buildCoreRoleLabelMap = async (labelFilePath: string): Promise<StringMap> => {
-  // Parse the XML file
-  const labelFile = await parseXML(labelFilePath);
-
-  // Create a map to store the role and its label
-  const roleLabelMap: { [key: string]: string } = {};
-
-  // Find all <link:roleType> elements
-  const roleTypes = labelFile['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:roleType'];
-
-  if (Array.isArray(roleTypes)) {
-    roleTypes.forEach((roleType: any) => {
-      const roleId = roleType['$'].id; // Get the role ID, e.g., role-200511
-      const definition = roleType['link:definition']; // Get the definition text, e.g., "[200511] ..."
-
-      // Store in the map
-      roleLabelMap[roleId] = definition;
-    });
-  } else {
-    console.warn('No role types found in the provided XML file.');
-  }
-
-  return roleLabelMap;
 };
 
 export const getRoleLabel = (
