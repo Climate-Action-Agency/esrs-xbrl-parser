@@ -1,4 +1,4 @@
-import { StringMap, Xml2JSNode } from '../types/global';
+import { AnyMap, StringMap, Xml2JSNode } from '../types/global';
 import { STRING_KEY, parseXML } from './parsing';
 import { printXMLTree } from './output';
 
@@ -14,7 +14,9 @@ export const getLabelFromLabFile = (labelId: string, esrsCoreXml: Xml2JSNode): s
 
 /** Get role label from file: esrs_cor.xsd */
 export const getRoleLabelFromCoreFile = (roleId: string, esrsCoreXml: Xml2JSNode): string => {
-  const roleTypes = esrsCoreXml['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:roleType'];
+  const annotation = esrsCoreXml['xsd:schema']?.['xsd:annotation'];
+  // 1) Find label
+  const roleTypes = annotation?.['xsd:appinfo']?.['link:roleType'];
   const roleType = roleTypes?.find((roleType: Xml2JSNode) => roleType?.$?.id === roleId);
   const label = roleType?.['link:definition'];
   // See also: roleType?.['link:usedOn']: [
@@ -23,6 +25,14 @@ export const getRoleLabelFromCoreFile = (roleId: string, esrsCoreXml: Xml2JSNode
   //   'link:presentationLink'
   // ]
   return label;
+};
+
+/** Get element attributes from file: esrs_cor.xsd */
+export const getAttributesFromCoreFile = (elementId: string, esrsCoreXml: Xml2JSNode): AnyMap => {
+  const annotation = esrsCoreXml['xsd:schema']?.['xsd:annotation'];
+  const elements = annotation?.['xsd:element'];
+  const element = elements?.find((element: Xml2JSNode) => element?.$?.id === elementId);
+  return element?.$;
 };
 
 /** Build a dictionary of labels: lab_esrs-en.xml */

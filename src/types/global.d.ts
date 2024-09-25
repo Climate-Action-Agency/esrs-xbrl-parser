@@ -1,3 +1,4 @@
+export type AnyMap = { [key: string]: string };
 export type StringMap = { [key: string]: string };
 
 export interface TreeSearchFilter {
@@ -9,7 +10,7 @@ export interface TreeSearchFilter {
 }
 
 export interface Xml2JSNode {
-  $: { [key: string]: any };
+  $: AnyMap;
   [key: string]: any;
 }
 
