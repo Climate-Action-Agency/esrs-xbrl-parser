@@ -94,9 +94,11 @@ export const buildPresentationHierarchy = (
     if (!root) {
       const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
       const roleRefs = linkbaseRef['link:linkbase']['link:roleRef'];
+      const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
       const labels = applyToAll(roleRefs, (roleRef) => getRoleLabel(roleRef.$['xlink:href'], coreRoleLabelMap));
       root = {
         headline: asArray(labels)[0],
+        roles,
         labels: labels,
         sourceLinkbaseName,
         // $: linkbaseRef.$,
