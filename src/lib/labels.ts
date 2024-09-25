@@ -1,5 +1,5 @@
 import { StringMap, Xml2JSNode } from '../types/global';
-import { parseXML } from './parsing';
+import { STRING_KEY, parseXML } from './parsing';
 
 /** Get label from file: lab_esrs-en.xml */
 export const getLabelFromLabFile = (labelId: string, esrsCoreXml: Xml2JSNode): string => {
@@ -7,7 +7,7 @@ export const getLabelFromLabFile = (labelId: string, esrsCoreXml: Xml2JSNode): s
     ?.find((linkbaseRef: Xml2JSNode) => linkbaseRef.$['xlink:href'] === 'labels/lab_esrs-en.xml')
     ?.['link:linkbase']?.['link:labelLink']?.['link:label']?.find(
       (label: Xml2JSNode) => label.$.id === `${labelId}_label`
-    )?._;
+    )?.[STRING_KEY];
   return label;
 };
 

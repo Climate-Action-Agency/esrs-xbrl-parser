@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 import { ParsedXBRLFile, TreeSearchFilter } from '../types/global';
 
 export const ATTRIBUTES_KEY = '$';
+export const STRING_KEY = '_';
 
 // Helper to parse XML using promises from a local file
 export const parseXML = async (filePath: string): Promise<any> => {
