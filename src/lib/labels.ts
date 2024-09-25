@@ -1,9 +1,17 @@
-import { link } from 'fs';
 import { StringMap, Xml2JSNode } from '../types/global';
 import { parseXML } from './parsing';
-import { applyToAll } from './utils';
 
-/** Build a dictionary of labels. */
+/** Get label from file: lab_esrs-en.xml */
+export const getLabelFromLabFile = (labelId: string, esrsCoreXml: Xml2JSNode): string => {
+  const label = esrsCoreXml['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef']
+    ?.find((linkbaseRef: Xml2JSNode) => linkbaseRef.$['xlink:href'] === 'labels/lab_esrs-en.xml')
+    ?.['link:linkbase']?.['link:labelLink']?.['link:label']?.find(
+      (label: Xml2JSNode) => label.$.id === `${labelId}_label`
+    )?._;
+  return label;
+};
+
+/** Build a dictionary of labels: lab_esrs-en.xml */
 export const buildLabelMap = async (labelFilePath: string): Promise<StringMap> => {
   const labelMap: { [key: string]: string } = {};
   const labelFile = await parseXML(labelFilePath);
@@ -48,6 +56,7 @@ export const buildLabelMap = async (labelFilePath: string): Promise<StringMap> =
   return labelMap;
 };
 
+/** gla_esrs-en.xml */
 export const buildRoleLabelMap = async (labelFilePath: string): Promise<StringMap> => {
   const labelMap: { [key: string]: string } = {}; // Map to hold role URIs and labels
   const labelFile = await parseXML(labelFilePath); // Parse the XML file

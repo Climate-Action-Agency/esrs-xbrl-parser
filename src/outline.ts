@@ -2,25 +2,33 @@ import path from 'path';
 
 import { StringMap, Xml2JSNode } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
-import { printXMLTree } from './lib/output';
-import { buildLabelMap, buildRoleLabelMap, buildCoreRoleLabelMap, getRoleLabel } from './lib/labels';
-import { applyToAll } from './lib/utils';
+import { printXMLTree, printJSON } from './lib/output';
+import {
+  getLabelFromLabFile,
+  buildLabelMap,
+  buildRoleLabelMap,
+  buildCoreRoleLabelMap,
+  getRoleLabel
+} from './lib/labels';
+import { applyToAll, asArray } from './lib/utils';
 
 interface HierarchyNode {
   id: string;
-  // label: string;
+  label: string;
   order?: string;
   children: HierarchyNode[];
 }
 
 interface HierarchyRootNode extends HierarchyNode, Partial<Xml2JSNode> {
   $?: { [key: string]: any };
+  headline: string;
+  labels?: string[] | string;
   roleRef?: Xml2JSNode;
-  headlines?: string[] | string;
 }
 
 export const buildPresentationHierarchy = (
   linkbaseRef: Xml2JSNode,
+  esrsCoreXml: Xml2JSNode,
   coreRoleLabelMap: StringMap
 ): HierarchyNode | null => {
   const presentationLink = linkbaseRef['link:linkbase']?.['link:presentationLink'];
@@ -56,11 +64,13 @@ export const buildPresentationHierarchy = (
     // Get the href values for both parent and child
     const parentHref = locatorMap[fromLabel];
     const childHref = locatorMap[toLabel];
+    const childId = childHref.split('#')[1];
 
     // Initialize parent node if it doesn't exist
     if (!nodeMap[parentHref]) {
       nodeMap[parentHref] = {
-        id: parentHref.split('#')[1], // Get the fragment as a simple label
+        id: childId, // Get the fragment as a simple label
+        label: getLabelFromLabFile(childId, esrsCoreXml),
         children: []
       };
     }
@@ -68,7 +78,8 @@ export const buildPresentationHierarchy = (
     // Initialize child node if it doesn't exist
     if (!nodeMap[childHref]) {
       nodeMap[childHref] = {
-        id: childHref.split('#')[1], // Get the fragment as a simple label
+        id: childId, // Get the fragment as a simple label
+        label: getLabelFromLabFile(childId, esrsCoreXml),
         children: []
       };
     }
@@ -83,8 +94,10 @@ export const buildPresentationHierarchy = (
     if (!root) {
       const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
       const roleRefs = linkbaseRef['link:linkbase']['link:roleRef'];
+      const labels = applyToAll(roleRefs, (roleRef) => getRoleLabel(roleRef.$['xlink:href'], coreRoleLabelMap));
       root = {
-        headlines: applyToAll(roleRefs, (roleRef) => getRoleLabel(roleRef.$['xlink:href'], coreRoleLabelMap)),
+        headline: asArray(labels)[0],
+        labels: labels,
         sourceLinkbaseName,
         // $: linkbaseRef.$,
         // roleRef: linkbaseRef['link:linkbase']['link:roleRef'],
@@ -113,13 +126,23 @@ async function main() {
     ...(process.argv?.[3] !== undefined ? { level: 3, text: process.argv?.[3] } : {})
   };
 
+  // Parse the core file
+  const coreFilePath = 'common/esrs_cor.xsd';
+  const esrsCoreXml = await parseAndFollowLinks(coreFilePath, rootPath);
+
+  // // printXMLTree(esrsCoreXml, {
+  // //   // searchLevel: 8,
+  // //   // searchText:
+  // //   //   'esrs_ExplanationOfHowPolicyIsMadeAvailableToPotentiallyAffectedStakeholdersAndOrStakeholdersWhoNeedToHelpImplementItExplanatory_label'
+  // // });
+  // return;
+
   // Parse the label files
   const labelFilePath = 'common/labels/lab_esrs-en.xml';
   const labelMap = await buildLabelMap(path.join(rootPath, labelFilePath));
   const roleLabelFilePath = 'common/labels/gla_esrs-en.xml';
   const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
-  const coreRoleLabelFilePath = 'common/esrs_cor.xsd';
-  const coreRoleLabelMap = await buildCoreRoleLabelMap(path.join(rootPath, coreRoleLabelFilePath));
+  const coreRoleLabelMap = await buildCoreRoleLabelMap(path.join(rootPath, coreFilePath));
 
   console.log(`${filePath} (filter ${JSON.stringify(searchFilter)}):\n`);
 
@@ -132,7 +155,7 @@ async function main() {
     ) ?? [];
 
   const hierarchy = linkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
-    buildPresentationHierarchy(linkbaseRef, coreRoleLabelMap)
+    buildPresentationHierarchy(linkbaseRef, esrsCoreXml, coreRoleLabelMap)
   );
   printXMLTree(hierarchy);
   return;
@@ -153,7 +176,8 @@ async function main() {
       sectionHeadline,
       roleNames,
       sourceLinkbaseName,
-      descriptionsPreview
+      descriptions
+      //descriptionsPreview
     };
   });
 
