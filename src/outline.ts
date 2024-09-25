@@ -5,10 +5,10 @@ import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree, printJSON } from './lib/output';
 import {
   getLabelFromLabFile,
-  getRoleLabelFromCoreFile,
-  buildLabelMap,
-  buildRoleLabelMap,
-  getRoleLabel
+  getRoleLabelFromCoreFile
+  // buildLabelMap,
+  // buildRoleLabelMap,
+  // getRoleLabel
 } from './lib/labels';
 import { applyToAll, asArray } from './lib/utils';
 
@@ -27,16 +27,28 @@ interface HierarchyRootNode extends Partial<Xml2JSNode> {
   children: HierarchyNode[];
 }
 
-export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml: Xml2JSNode): HierarchyNode | null => {
-  const presentationLink = linkbaseRef['link:linkbase']?.['link:presentationLink'];
+enum LinkbaseType {
+  Presentation = 'presentation',
+  Definition = 'definition',
+  Calculation = 'calculation',
+  Label = 'label',
+  Reference = 'reference'
+}
 
-  if (!presentationLink) {
-    console.error('No presentation link found');
+export const buildHierarchy = (
+  linkType = LinkbaseType.Presentation,
+  linkbaseRef: Xml2JSNode,
+  esrsCoreXml: Xml2JSNode
+): HierarchyNode | null => {
+  const xLink = linkbaseRef['link:linkbase']?.[`link:${linkType}Link`];
+
+  if (!xLink) {
+    console.error(`No ${linkType} link found`);
     return null;
   }
 
-  const locators = presentationLink['link:loc'] || [];
-  const arcs = presentationLink['link:presentationArc'] || [];
+  const locators = xLink['link:loc'] || [];
+  const arcs = xLink[`link:${linkType}Arc`] || [];
 
   // Create a map of locators (xlink:label to href)
   const locatorMap: { [key: string]: string } = {};
@@ -67,8 +79,8 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml:
     // Initialize parent node if it doesn't exist
     if (!nodeMap[parentId]) {
       nodeMap[parentId] = {
-        id: parentId, // Get the fragment as a simple label
         label: getLabelFromLabFile(parentId, esrsCoreXml),
+        id: parentId, // Get the fragment as a simple label
         children: []
       };
     }
@@ -76,8 +88,8 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml:
     // Initialize child node if it doesn't exist
     if (!nodeMap[childId]) {
       nodeMap[childId] = {
-        id: childId, // Get the fragment as a simple label
         label: getLabelFromLabFile(childId, esrsCoreXml),
+        id: childId, // Get the fragment as a simple label
         children: []
       };
     }
@@ -117,14 +129,8 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml:
 };
 
 async function main() {
-  const PRESENTATION_SEARCH_KEY = 'pre_esrs_';
   const filePath = process.argv?.[2] ?? 'ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd';
   const rootPath = path.dirname(filePath);
-  const searchFilter = {
-    // maxLevel: 10,
-    onlyFollowBranches: [PRESENTATION_SEARCH_KEY],
-    ...(process.argv?.[3] !== undefined ? { level: 3, text: process.argv?.[3] } : {})
-  };
 
   // Parse the core file
   const coreFilePath = 'common/esrs_cor.xsd';
@@ -136,26 +142,44 @@ async function main() {
   // });
   // return;
 
-  // Parse the label files
-  const labelFilePath = 'common/labels/lab_esrs-en.xml';
-  const labelMap = await buildLabelMap(path.join(rootPath, labelFilePath));
-  const roleLabelFilePath = 'common/labels/gla_esrs-en.xml';
-  const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
-
-  console.log(`${filePath} (filter ${JSON.stringify(searchFilter)}):\n`);
-
   // Build the tree starting from the root file
+  const LINKBASE_PRESENTATIONS = 'pre_esrs_';
+  const LINKBASE_DEFINITIONS = 'def_esrs_';
+  const LINKBASES_TO_INCLUDE = [LINKBASE_PRESENTATIONS, LINKBASE_DEFINITIONS];
+  const searchFilter = {
+    // maxLevel: 10,
+    onlyFollowBranches: LINKBASES_TO_INCLUDE,
+    ...(process.argv?.[3] !== undefined ? { level: 3, text: process.argv?.[3] } : {})
+  };
+  console.log(`${filePath} (filter ${JSON.stringify(searchFilter)}):\n`);
   const esrsAllXml = await parseAndFollowLinks(filePath, '', searchFilter);
+  const linkbaseRefs = esrsAllXml?.['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef'];
 
-  const linkbaseRefs =
-    esrsAllXml?.['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef']?.filter(
-      (linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(PRESENTATION_SEARCH_KEY)
-    ) ?? [];
-
-  const hierarchy = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => buildPresentationHierarchy(linkbaseRef, esrsCoreXml));
-  printXMLTree(hierarchy, { skipBranches: ['order'] });
+  // Presentations
+  const presentationLinkbaseRefs =
+    linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_PRESENTATIONS)) ??
+    [];
+  const presentations = presentationLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
+    buildHierarchy(LinkbaseType.Presentation, linkbaseRef, esrsCoreXml)
+  );
+  // Definitions
+  const definitionLinkbaseRefs =
+    linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_DEFINITIONS)) ??
+    [];
+  const definitions = definitionLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
+    buildHierarchy(LinkbaseType.Definition, linkbaseRef, esrsCoreXml)
+  );
+  printXMLTree({ presentations, definitions }, { skipBranches: ['order'] });
   return;
 
+  /*
+  // Parse the label files
+  const labelFilePath = 'common/labels/lab_esrs-en.xml';
+  const roleLabelFilePath = 'common/labels/gla_esrs-en.xml';
+  const labelMap = await buildLabelMap(path.join(rootPath, labelFilePath));
+  const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
+
+  // Create a list of presentations
   const presentations = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => {
     const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
     const roleRefs = linkbaseRef['link:linkbase']['link:roleRef'];
@@ -180,6 +204,7 @@ async function main() {
   // Output the result
   printXMLTree(presentations);
   //console.log(JSON.stringify(esrsAllXml, null, 2));
+  */
 }
 
 main();
