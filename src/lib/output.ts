@@ -52,10 +52,11 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
         const textChildStr = isTextNode ? `: "${obj[key]}"` : '';
         const completeRowStr = indentStr + key + attributesStr + textChildStr;
         const doShowFilterMatchAndParentNodes =
-          searchFilter?.searchText === undefined ||
-          (searchFilter?.searchText !== undefined &&
-            (completeRowStr.toLowerCase().includes(searchFilter?.searchText.toLowerCase()) ||
-              currentLevel < (searchFilter?.searchLevel ?? 0)));
+          !searchFilter?.skipBranches?.includes(key) &&
+          (searchFilter?.searchText === undefined ||
+            (searchFilter?.searchText !== undefined &&
+              (completeRowStr.toLowerCase().includes(searchFilter?.searchText.toLowerCase()) ||
+                currentLevel < (searchFilter?.searchLevel ?? 0))));
         if (doShowFilterMatchAndParentNodes) {
           console.log(completeRowStr);
         }

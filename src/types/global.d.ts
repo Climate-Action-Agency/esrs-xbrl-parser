@@ -2,7 +2,8 @@ export type StringMap = { [key: string]: string };
 
 export interface TreeSearchFilter {
   maxLevel?: number;
-  onlyFollowBranches?: string[];
+  onlyFollowBranches?: string[]; // TODO: replace with skipBranches
+  skipBranches?: string[];
   searchText?: string;
   searchLevel?: number; // The level at which to find the searchText
 }

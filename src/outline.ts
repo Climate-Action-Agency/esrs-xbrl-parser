@@ -151,7 +151,7 @@ async function main() {
     ) ?? [];
 
   const hierarchy = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => buildPresentationHierarchy(linkbaseRef, esrsCoreXml));
-  printXMLTree(hierarchy);
+  printXMLTree(hierarchy, { skipBranches: ['order', 'id'] });
   return;
 
   const presentations = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => {
