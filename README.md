@@ -240,5 +240,7 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
 ## See also
 
-- http://www.openfiling.info/esrs/ → https://github.com/EasyESEF-Max/iXBRL-for-ESRS: _“JavaScript code transforms the input info file into an exported iXBRL output file, according to the ESRS XBRL taxonomy”_
+- https://www.xbrl.org/the-standard/how/tools-and-services/
+- http://www.openfiling.info/esrs/ → https://github.com/EasyESEF-Max/iXBRL-for-ESRS: _“JavaScript code that transforms the input info file into an exported iXBRL output file, according to the ESRS XBRL taxonomy”_
 - https://www.xbrleurope.org/?page_id=1243
+- https://arelle.org/ → https://github.com/Arelle/Arelle: _“end-to-end open source XBRL platform”_
