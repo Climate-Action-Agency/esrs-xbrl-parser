@@ -68,7 +68,6 @@ export const buildHierarchy = (
   applyToAll(arcs, (arc: Xml2JSNode) => {
     const fromLabel = arc.$?.['xlink:from'];
     const toLabel = arc.$?.['xlink:to'];
-    const order = arc.$?.['order']; // Use this for ordering within the parent
 
     // Get the href values for both parent and child
     const parentHref = locatorMap[fromLabel];
@@ -90,12 +89,10 @@ export const buildHierarchy = (
       nodeMap[childId] = {
         label: getLabelFromLabFile(childId, esrsCoreXml),
         id: childId, // Get the fragment as a simple label
+        order: arc.$?.['order'], // Use this for ordering within the parent
         children: []
       };
     }
-
-    // Add order to the child node
-    nodeMap[childId].order = order;
 
     // Append the child node to the parent's children array
     nodeMap[parentId].children.push(nodeMap[childId]);
