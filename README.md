@@ -158,6 +158,8 @@ XBRL is an XML standard for digital business reporting ([read more here](https:/
 
 ### XBRL Tags
 
+Specification: https://www.xbrl.org/specification/basespecification/per-2011-11-16/xbrl-recommendation-2003-12-31+per-2011-10-31-redlined.htm
+
 - Generic:
   - **`<gen:arc />`**: A generic link arc that represents a relationship between two resources in XBRL, not specific to presentation or calculation.
   - **`<gen:link />`**: A generic linkbase in XBRL used to define custom relationships between different taxonomy elements.
@@ -236,8 +238,7 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 - **Topics**:
   - Broad areas in ESRS, like climate change or governance, that companies must report on.
 
-## Related projects
+## See also
 
-- http://www.openfiling.info/esrs/
 - http://www.openfiling.info/esrs/ → https://github.com/EasyESEF-Max/iXBRL-for-ESRS: _“JavaScript code transforms the input info file into an exported iXBRL output file, according to the ESRS XBRL taxonomy”_
 - https://www.xbrleurope.org/?page_id=1243
