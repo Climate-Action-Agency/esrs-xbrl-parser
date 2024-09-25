@@ -5,7 +5,7 @@ import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree, printJSON } from './lib/output';
 import {
   getLabelFromLabFile,
-  getRoleLabelFromGlaFile,
+  getRoleLabelFromCoreFile,
   buildLabelMap,
   buildRoleLabelMap,
   getRoleLabel
@@ -91,7 +91,7 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml:
       const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
       const roleRefs = linkbaseRef['link:linkbase']['link:roleRef'];
       const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
-      const labels = applyToAll(roles, (roleId) => getRoleLabelFromGlaFile(roleId, esrsCoreXml));
+      const labels = applyToAll(roles, (roleId) => getRoleLabelFromCoreFile(roleId, esrsCoreXml));
       root = {
         headline: asArray(labels)[0],
         roles,
@@ -130,7 +130,7 @@ async function main() {
 
   // printXMLTree(esrsCoreXml, {
   //   searchLevel: 8,
-  //   searchText: 'role-200510'
+  //   searchText: 'link:roleType'
   // });
   // return;
 

@@ -1,6 +1,6 @@
 import { StringMap, Xml2JSNode } from '../types/global';
-import { printXMLTree } from './output';
 import { STRING_KEY, parseXML } from './parsing';
+import { printXMLTree } from './output';
 
 /** Get label from file: lab_esrs-en.xml */
 export const getLabelFromLabFile = (labelId: string, esrsCoreXml: Xml2JSNode): string => {
@@ -12,17 +12,16 @@ export const getLabelFromLabFile = (labelId: string, esrsCoreXml: Xml2JSNode): s
   return label;
 };
 
-/** Get label from file: lab_esrs-en.xml */
-export const getRoleLabelFromGlaFile = (roleId: string, esrsCoreXml: Xml2JSNode): string => {
-  const genLink = esrsCoreXml['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef']?.find(
-    (linkbaseRef: Xml2JSNode) => linkbaseRef?.$?.['xlink:href'] === 'labels/gla_esrs-en.xml'
-  )?.['link:linkbase']?.['gen:link'];
-  const linkLoc = genLink?.['link:loc']?.find((loc: Xml2JSNode) => loc?.$?.['xlink:href'].includes(roleId));
-  const genArc = genLink?.['gen:arc']?.find((ga: Xml2JSNode) => ga?.$?.['xlink:from'] === linkLoc?.$?.['xlink:label']);
-  const labelLabel = genLink?.['label:label']?.find(
-    (ll: Xml2JSNode) => ll?.$?.['xlink:label'] === genArc?.$?.['xlink:to']
-  );
-  const label = labelLabel?.[STRING_KEY];
+/** Get role label from file: esrs_cor.xsd */
+export const getRoleLabelFromCoreFile = (roleId: string, esrsCoreXml: Xml2JSNode): string => {
+  const roleTypes = esrsCoreXml['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:roleType'];
+  const roleType = roleTypes?.find((roleType: Xml2JSNode) => roleType?.$?.id === roleId);
+  const label = roleType?.['link:definition'];
+  // See also: roleType?.['link:usedOn']: [
+  //   'link:calculationLink',
+  //   'link:definitionLink',
+  //   'link:presentationLink'
+  // ]
   return label;
 };
 
