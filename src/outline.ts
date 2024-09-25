@@ -19,11 +19,12 @@ interface HierarchyNode {
   children: HierarchyNode[];
 }
 
-interface HierarchyRootNode extends HierarchyNode, Partial<Xml2JSNode> {
+interface HierarchyRootNode extends Partial<Xml2JSNode> {
   $?: { [key: string]: any };
   headline: string;
   labels?: string[] | string;
   roleRef?: Xml2JSNode;
+  children: HierarchyNode[];
 }
 
 export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml: Xml2JSNode): HierarchyNode | null => {
@@ -40,8 +41,8 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml:
   // Create a map of locators (xlink:label to href)
   const locatorMap: { [key: string]: string } = {};
   locators.forEach((loc: Xml2JSNode) => {
-    const label = loc['$']['xlink:label']; // e.g., loc_1
-    const href = loc['$']['xlink:href']; // e.g., ../../esrs_cor.xsd#esrs_GeneralBasisForPreparationOfSustainabilityStatementAbstract
+    const label = loc.$?.['xlink:label']; // e.g., loc_1
+    const href = loc.$?.['xlink:href']; // e.g., ../../esrs_cor.xsd#esrs_GeneralBasisForPreparationOfSustainabilityStatementAbstract
     locatorMap[label] = href;
   });
 
@@ -53,27 +54,28 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml:
 
   // Process each arc and build the parent-child relationships
   applyToAll(arcs, (arc: Xml2JSNode) => {
-    const fromLabel = arc['$']['xlink:from'];
-    const toLabel = arc['$']['xlink:to'];
-    const order = arc['$']['order']; // Use this for ordering within the parent
+    const fromLabel = arc.$?.['xlink:from'];
+    const toLabel = arc.$?.['xlink:to'];
+    const order = arc.$?.['order']; // Use this for ordering within the parent
 
     // Get the href values for both parent and child
     const parentHref = locatorMap[fromLabel];
+    const parentId = parentHref.split('#')[1];
     const childHref = locatorMap[toLabel];
     const childId = childHref.split('#')[1];
 
     // Initialize parent node if it doesn't exist
-    if (!nodeMap[parentHref]) {
-      nodeMap[parentHref] = {
-        id: childId, // Get the fragment as a simple label
-        label: getLabelFromLabFile(childId, esrsCoreXml),
+    if (!nodeMap[parentId]) {
+      nodeMap[parentId] = {
+        id: parentId, // Get the fragment as a simple label
+        label: getLabelFromLabFile(parentId, esrsCoreXml),
         children: []
       };
     }
 
     // Initialize child node if it doesn't exist
-    if (!nodeMap[childHref]) {
-      nodeMap[childHref] = {
+    if (!nodeMap[childId]) {
+      nodeMap[childId] = {
         id: childId, // Get the fragment as a simple label
         label: getLabelFromLabFile(childId, esrsCoreXml),
         children: []
@@ -81,25 +83,25 @@ export const buildPresentationHierarchy = (linkbaseRef: Xml2JSNode, esrsCoreXml:
     }
 
     // Add order to the child node
-    nodeMap[childHref].order = order;
+    nodeMap[childId].order = order;
 
     // Append the child node to the parent's children array
-    nodeMap[parentHref].children.push(nodeMap[childHref]);
+    nodeMap[parentId].children.push(nodeMap[childId]);
 
     // If this is the topmost arc (no parent node yet), set this node as root
     if (!root) {
-      const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
-      const roleRefs = linkbaseRef['link:linkbase']['link:roleRef'];
+      const sourceFile = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
+      const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
       const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
       const labels = applyToAll(roles, (roleId) => getRoleLabelFromCoreFile(roleId, esrsCoreXml));
       root = {
         headline: asArray(labels)[0],
         roles,
         labels: labels,
-        sourceLinkbaseName,
+        sourceFile,
         // $: linkbaseRef.$,
         // roleRef: linkbaseRef['link:linkbase']['link:roleRef'],
-        ...nodeMap[parentHref]
+        children: [nodeMap[parentId]]
       };
     }
   });
@@ -151,7 +153,7 @@ async function main() {
     ) ?? [];
 
   const hierarchy = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => buildPresentationHierarchy(linkbaseRef, esrsCoreXml));
-  printXMLTree(hierarchy, { skipBranches: ['order', 'id'] });
+  printXMLTree(hierarchy, { skipBranches: ['order'] });
   return;
 
   const presentations = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => {
