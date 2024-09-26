@@ -249,6 +249,7 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
 ## See also
 
+- ESRS files from EFRAG: https://www.efrag.org/en/projects/esrs-xbrl-taxonomy/concluded
 - https://www.xbrl.org/the-standard/how/tools-and-services/
 - https://arelle.org/ → https://github.com/Arelle/Arelle: desktop app Windows/macOS/Linux, _“end-to-end open source XBRL platform”_
 - http://www.openfiling.info/esrs/ → https://github.com/EasyESEF-Max/iXBRL-for-ESRS: _“JavaScript code that transforms the input info file into an exported iXBRL output file, according to the ESRS XBRL taxonomy”_
