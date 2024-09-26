@@ -243,8 +243,7 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
 ## Todo & known issues
 
-- [ ] Missing top level headlines (E1, S1 etc). Present in `lab_esrs-en.xml` (e.g. `esrs_ESRSE1ClimateChangeMember_label`) but no references to it. Seems to be same issue when viewing ESRS in Arelle.
-- [ ] Some dimensions are empty
+- [ ] Missing top level headlines (E1, S1 etc). They’re present in `lab_esrs-en.xml` (e.g. `esrs_ESRSE1ClimateChangeMember_label`) but there are no references to it. Seems to be the same issue when viewing ESRS in Arelle.
 - [ ] Implement types, enums, validation etc
 
 ## See also

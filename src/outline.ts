@@ -40,15 +40,23 @@ export const buildHierarchy = (
   linkbaseRef: Xml2JSNode,
   esrsCoreXml: Xml2JSNode
 ): HierarchyNode | null => {
-  const xLink = linkbaseRef['link:linkbase']?.[`link:${linkType}Link`];
+  const xLink = asArray(linkbaseRef['link:linkbase']?.[`link:${linkType}Link`])[0];
 
   if (!xLink) {
     console.error(`No ${linkType} link found`);
     return null;
   }
 
-  const locators = xLink['link:loc'] || [];
-  const arcs = xLink[`link:${linkType}Arc`] || [];
+  const locKey = `link:loc`;
+  const locators = xLink[locKey] ? asArray(xLink[locKey]) : [];
+  if (!locators.length) {
+    console.warn(`No ${locKey} found in '${linkbaseRef.$?.['xlink:href']}'`, xLink);
+  }
+  const arcKey = `link:${linkType}Arc`;
+  const arcs = xLink[arcKey] ? asArray(xLink[arcKey]) : [];
+  if (!arcs.length) {
+    console.warn(`No ${arcKey} found in '${linkbaseRef.$?.['xlink:href']}'`, xLink);
+  }
 
   // Create a map of locators (xlink:label to href)
   const locatorMap: { [key: string]: string } = {};
@@ -103,8 +111,9 @@ export const buildHierarchy = (
       const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
       const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
       const labels = applyToAll(roles, (roleId) => getRoleLabelFromCoreFile(roleId, esrsCoreXml));
+      const headline = asArray(labels)[0];
       root = {
-        headline: asArray(labels)[0],
+        headline,
         roles,
         labels: labels,
         sourceFile,
@@ -156,17 +165,17 @@ async function main() {
   const presentationLinkbaseRefs =
     linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_PRESENTATIONS)) ??
     [];
-  const presentation = presentationLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
+  const presentations = presentationLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
     buildHierarchy(LinkbaseType.Presentation, linkbaseRef, esrsCoreXml)
   );
   // Definitions
   const definitionLinkbaseRefs =
     linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_DEFINITIONS)) ??
     [];
-  const dimension = definitionLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
+  const dimensions = definitionLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
     buildHierarchy(LinkbaseType.Definition, linkbaseRef, esrsCoreXml)
   );
-  printXMLTree({ presentation, dimension }, { skipBranches: ['order'] });
+  printXMLTree({ presentations, dimensions }, { skipBranches: ['order'] });
   return;
 
   /*
