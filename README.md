@@ -86,29 +86,32 @@ Dump to a text file:
 
     npm run outline
 
-Output:
+Outputs `presentation` and `dimension`:
 
-    0
-      ∟ sectionHeadline: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
-      ∟ roleNames
-        ∟ 0: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
-        ∟ 1: "role-901000"
-        ∟ 2: "[900000] Disaggregation by country"
-      ∟ sourceLinkbaseName: "pre_esrs_200510.xml"
-      ∟ descriptionsPreview
-        ∟ 0: "Ability to implement action or action plan depends on specific preconditions"
-        ∟ 1: "Absolute or relative target"
-        ∟ 2: "Absolute or relative target [axis]"
-        ∟ 3: "(etc, total 19)"
-    1
-      ∟ sectionHeadline: "[200520] ESRS2.BP-2 Disclosures in relation to specific circumstances - general"
-      ∟ roleNames: "[200520] ESRS2.BP-2 Disclosures in relation to specific circumstances - general"
-      ∟ sourceLinkbaseName: "pre_esrs_200520.xml"
-      ∟ descriptionsPreview
-        ∟ 0: "Action occurrence [member]"
-        ∟ 1: "Action relates to areas at water risk"
-        ∟ 2: "Action relates to areas of high-water stress"
-        ∟ 3: "(etc, total 57)"
+    presentation
+      ∟ 0
+        ∟ headline: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
+        ∟ roles
+          ∟ 0: "role-200510"
+          ∟ 1: "role-901000"
+          ∟ 2: "role-900000"
+        ∟ labels
+          ∟ 0: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
+          ∟ 1: "[901000] Countries"
+          ∟ 2: "[900000] Disaggregation by country"
+        ∟ sourceFile: "pre_esrs_200510.xml"
+        ∟ children
+          ∟ 0
+            ∟ label: "General basis for preparation of sustainability statement - general [abstract]"
+            ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementGeneralAbstract"
+            ∟ children
+              ∟ 0
+                ∟ label: "General basis for preparation of sustainability statement [abstract]"
+                ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementAbstract"
+                ∟ children
+                  ∟ 0
+                    ∟ label: "General basis for preparation of sustainability statement [table]"
+                    ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementTable"
 
 ## ESRS taxonomy
 
@@ -241,6 +244,6 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 ## See also
 
 - https://www.xbrl.org/the-standard/how/tools-and-services/
+- https://arelle.org/ → https://github.com/Arelle/Arelle: desktop app Windows/macOS/Linux, _“end-to-end open source XBRL platform”_
 - http://www.openfiling.info/esrs/ → https://github.com/EasyESEF-Max/iXBRL-for-ESRS: _“JavaScript code that transforms the input info file into an exported iXBRL output file, according to the ESRS XBRL taxonomy”_
 - https://www.xbrleurope.org/?page_id=1243
-- https://arelle.org/ → https://github.com/Arelle/Arelle: _“end-to-end open source XBRL platform”_
