@@ -241,6 +241,12 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 - **Topics**:
   - Broad areas in ESRS, like climate change or governance, that companies must report on.
 
+## Todo & known issues
+
+- [ ] Missing top level headlines (E1, S1 etc). Present in `lab_esrs-en.xml` (e.g. `esrs_ESRSE1ClimateChangeMember_label`) but no references to it. Seems to be same issue when viewing ESRS in Arelle.
+- [ ] Some dimensions are empty
+- [ ] Implement types, enums, validation etc
+
 ## See also
 
 - https://www.xbrl.org/the-standard/how/tools-and-services/
