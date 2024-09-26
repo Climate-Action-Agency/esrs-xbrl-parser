@@ -156,17 +156,17 @@ async function main() {
   const presentationLinkbaseRefs =
     linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_PRESENTATIONS)) ??
     [];
-  const presentations = presentationLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
+  const presentation = presentationLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
     buildHierarchy(LinkbaseType.Presentation, linkbaseRef, esrsCoreXml)
   );
   // Definitions
   const definitionLinkbaseRefs =
     linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_DEFINITIONS)) ??
     [];
-  const definitions = definitionLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
+  const dimension = definitionLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
     buildHierarchy(LinkbaseType.Definition, linkbaseRef, esrsCoreXml)
   );
-  printXMLTree({ presentations, definitions }, { skipBranches: ['order'] });
+  printXMLTree({ presentation, dimension }, { skipBranches: ['order'] });
   return;
 
   /*
