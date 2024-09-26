@@ -8,10 +8,16 @@ The **ESRS XBRL Parser** is a lightweight and efficient tool designed to parse [
 
 ## Goals
 
-- **Compliant with Latest Standards**: Built to work seamlessly with ESRS Set 1 XBRL Taxonomies, ensuring compliance with the European Commission’s reporting requirements.
-- **Simple Integration**: Effortlessly integrate the parser into Node.js projects using modern JavaScript or TypeScript.
-- **High Performance**: Optimized to handle large and complex ESRS taxonomies quickly and efficiently.
-- **Modular and Extensible**: Easily extend the parser to accommodate additional taxonomies or custom XBRL needs.
+- **Extract XBRL Hierarchy**: Develop functionality to extract the XBRL hierarchy for ESRS (European Sustainability Reporting Standards).
+- **Node.js Implementation**: Build the solution in Node.js using JavaScript/TypeScript to ensure compatibility with modern development environments.
+- **XBRL Data Parsing**: Implement a reliable parser to navigate and interpret XBRL data structures.
+- **Quick Adaptation to New ESRS Standards**: Ensure the system can quickly adapt to and integrate new or updated ESRS regulations and standards.
+- **User-friendly API**: Provide a clean and easy-to-use API for developers to interact with the ESRS data and XBRL extraction tools.
+
+Later:
+
+- **ESRS Data Creation**: Enable the creation of ESRS-compliant data and reports within the Node.js environment.
+- **Validation of ESRS Data**: Integrate validation mechanisms to ensure generated ESRS data meets regulatory standards.
 
 ## License
 
