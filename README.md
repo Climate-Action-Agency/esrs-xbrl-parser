@@ -275,7 +275,9 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 ## Todo & known issues
 
 - [ ] Missing top level labels (E1, S1 etc). They’re present in `lab_esrs-en.xml` (e.g. `esrs_ESRSE1ClimateChangeMember_label`) but there are no references to it. Seems to be the same issue when viewing ESRS in Arelle.
-- [ ] Implement types, enums, validation etc
+- [ ] Implement types
+- [ ] Implement enumerations
+- [ ] Implement validation
 
 ## See also
 
@@ -283,4 +285,4 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 - https://www.xbrl.org/the-standard/how/tools-and-services/
 - https://arelle.org/ → https://github.com/Arelle/Arelle: desktop app Windows/macOS/Linux, _“end-to-end open source XBRL platform”_
 - http://www.openfiling.info/esrs/ → https://github.com/EasyESEF-Max/iXBRL-for-ESRS: _“JavaScript code that transforms the input info file into an exported iXBRL output file, according to the ESRS XBRL taxonomy”_
-- ESEF/iXBRL Tools: https://www.xbrleurope.org/?page_id=1243
+- ESEF/XBRL Tools: https://www.xbrleurope.org/?page_id=1243
