@@ -21,7 +21,7 @@ interface HierarchyNode {
 
 interface HierarchyRootNode extends Partial<Xml2JSNode> {
   $?: { [key: string]: any };
-  headline: string;
+  label: string;
   labels?: string[] | string;
   roleRef?: Xml2JSNode;
   children: HierarchyNode[];
@@ -111,11 +111,11 @@ export const buildHierarchy = (
       const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
       const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
       const labels = applyToAll(roles, (roleId) => getRoleLabelFromCoreFile(roleId, esrsCoreXml));
-      const headline = asArray(labels)[0];
+      const label = asArray(labels)[0];
       root = {
-        headline,
-        roles,
+        label,
         labels: labels,
+        roles,
         sourceFile,
         // $: linkbaseRef.$,
         // roleRef: linkbaseRef['link:linkbase']['link:roleRef'],

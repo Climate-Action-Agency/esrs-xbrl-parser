@@ -100,15 +100,15 @@ Outputs `presentations` and `dimensions`:
 
     presentations
       ∟ 0
-        ∟ headline: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
-        ∟ roles
-          ∟ 0: "role-200510"
-          ∟ 1: "role-901000"
-          ∟ 2: "role-900000"
+        ∟ label: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
         ∟ labels
           ∟ 0: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
           ∟ 1: "[901000] Countries"
           ∟ 2: "[900000] Disaggregation by country"
+        ∟ roles
+          ∟ 0: "role-200510"
+          ∟ 1: "role-901000"
+          ∟ 2: "role-900000"
         ∟ sourceFile: "pre_esrs_200510.xml"
         ∟ children
           ∟ 0
@@ -127,13 +127,13 @@ and:
 
     dimensions
       ∟ 0
-        ∟ headline: "[200511] ESRS2.BP-1 General basis for preparation of sustainability statement - general - ESRS2.BP-1.1 General basis for preparation of sustainability statement"
-        ∟ roles
-          ∟ 0: "role-200511"
-          ∟ 1: "role-900000"
+        ∟ label: "[200511] ESRS2.BP-1 General basis for preparation of sustainability statement - general - ESRS2.BP-1.1 General basis for preparation of sustainability statement"
         ∟ labels
           ∟ 0: "[200511] ESRS2.BP-1 General basis for preparation of sustainability statement - general - ESRS2.BP-1.1 General basis for preparation of sustainability statement"
           ∟ 1: "[900000] Disaggregation by country"
+        ∟ roles
+          ∟ 0: "role-200511"
+          ∟ 1: "role-900000"
         ∟ sourceFile: "def_esrs_200510.xml"
         ∟ children
           ∟ 0
@@ -274,7 +274,7 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
 ## Todo & known issues
 
-- [ ] Missing top level headlines (E1, S1 etc). They’re present in `lab_esrs-en.xml` (e.g. `esrs_ESRSE1ClimateChangeMember_label`) but there are no references to it. Seems to be the same issue when viewing ESRS in Arelle.
+- [ ] Missing top level labels (E1, S1 etc). They’re present in `lab_esrs-en.xml` (e.g. `esrs_ESRSE1ClimateChangeMember_label`) but there are no references to it. Seems to be the same issue when viewing ESRS in Arelle.
 - [ ] Implement types, enums, validation etc
 
 ## See also
