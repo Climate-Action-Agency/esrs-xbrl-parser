@@ -96,9 +96,9 @@ Show hierarchy for ESRS All:
 
     npm run outline
 
-Outputs `presentation` and `dimension`:
+Outputs `presentations` and `dimensions`:
 
-    presentation
+    presentations
       ∟ 0
         ∟ headline: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
         ∟ roles
@@ -122,6 +122,27 @@ Outputs `presentation` and `dimension`:
                   ∟ 0
                     ∟ label: "General basis for preparation of sustainability statement [table]"
                     ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementTable"
+
+and:
+
+    dimensions
+      ∟ 0
+        ∟ headline: "[200511] ESRS2.BP-1 General basis for preparation of sustainability statement - general - ESRS2.BP-1.1 General basis for preparation of sustainability statement"
+        ∟ roles
+          ∟ 0: "role-200511"
+          ∟ 1: "role-900000"
+        ∟ labels
+          ∟ 0: "[200511] ESRS2.BP-1 General basis for preparation of sustainability statement - general - ESRS2.BP-1.1 General basis for preparation of sustainability statement"
+          ∟ 1: "[900000] Disaggregation by country"
+        ∟ sourceFile: "def_esrs_200510.xml"
+        ∟ children
+          ∟ 0
+            ∟ label: "General basis for preparation of sustainability statement [abstract]"
+            ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementAbstract"
+            ∟ children
+              ∟ 0
+                ∟ label: "General basis for preparation of sustainability statement [table]"
+                ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementTable"
 
 ## ESRS taxonomy
 
