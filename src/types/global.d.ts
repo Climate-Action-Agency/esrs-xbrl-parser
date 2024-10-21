@@ -23,6 +23,20 @@ export interface XBRLSchema {
   include?: XSDInclude[];
 }
 
+export interface XBRLElement {
+  id: string;
+  name: string;
+  abstract: string;
+  domain: string;
+  headUsable: string;
+  linkrole: string;
+  nillable: string;
+  periodType: string;
+  substitutionGroup: string;
+  type: string;
+  typedDomainRef: string;
+}
+
 // Types for import/include elements
 export interface XSDImport {
   namespace: string;

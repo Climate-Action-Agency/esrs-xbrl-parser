@@ -1,4 +1,4 @@
-import { AnyMap, StringMap, Xml2JSNode } from '../types/global';
+import { AnyMap, StringMap, Xml2JSNode, XBRLElement } from '../types/global';
 import { STRING_KEY, parseXML } from './parsing';
 import { printXMLTree } from './output';
 
@@ -28,7 +28,7 @@ export const getRoleLabelFromCoreFile = (roleId: string, esrsCoreXml: Xml2JSNode
 };
 
 /** Get element attributes from file: esrs_cor.xsd */
-export const getAttributesFromCoreFile = (elementId: string, esrsCoreXml: Xml2JSNode): AnyMap => {
+export const getAttributesFromCoreFile = (elementId: string, esrsCoreXml: Xml2JSNode): XBRLElement => {
   const elements = esrsCoreXml['xsd:schema']?.['xsd:element'];
   const element = elements?.find((element: Xml2JSNode) => element?.$?.id === elementId);
   return element?.$;
