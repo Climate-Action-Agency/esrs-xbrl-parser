@@ -48,7 +48,7 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
           ...attributesWithValue,
           ...Object.keys(attributesObject ?? {}).filter((key) => !ATTRIBUTES_TO_SHOW_VALUE.includes(key))
         ];
-        const attributesStr = attributesObject !== undefined ? ` $\{${attributesArray.join(', ')}\}` : '';
+        const attributesStr = attributesObject !== undefined ? ` $\{ ${attributesArray.join(', ')} \}` : '';
         const textChildStr = isTextNode ? `: "${obj[key]}"` : '';
         const completeRowStr = indentStr + key + attributesStr + textChildStr;
         const doShowFilterMatchAndParentNodes =

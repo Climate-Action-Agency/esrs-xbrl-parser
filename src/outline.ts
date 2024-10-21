@@ -5,7 +5,8 @@ import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree, printJSON } from './lib/output';
 import {
   getLabelFromLabFile,
-  getRoleLabelFromCoreFile
+  getRoleLabelFromCoreFile,
+  getAttributesFromCoreFile
   // buildLabelMap,
   // buildRoleLabelMap,
   // getRoleLabel
@@ -16,6 +17,7 @@ interface HierarchyNode {
   id: string;
   label: string;
   order?: string;
+  type?: string;
   children: HierarchyNode[];
 }
 
@@ -83,18 +85,22 @@ export const buildHierarchy = (
 
     // Initialize parent node if it doesn't exist
     if (!nodeMap[parentId]) {
+      const attributes = getAttributesFromCoreFile(parentId, esrsCoreXml);
       nodeMap[parentId] = {
         label: getLabelFromLabFile(parentId, esrsCoreXml),
         id: parentId, // Get the fragment as a simple label
+        type: attributes?.type,
         children: []
       };
     }
 
     // Initialize child node if it doesn't exist
     if (!nodeMap[childId]) {
+      const attributes = getAttributesFromCoreFile(childId, esrsCoreXml);
       nodeMap[childId] = {
         label: getLabelFromLabFile(childId, esrsCoreXml),
         id: childId, // Get the fragment as a simple label
+        type: attributes?.type,
         order: arc.$?.['order'], // Use this for ordering within the parent
         children: []
       };

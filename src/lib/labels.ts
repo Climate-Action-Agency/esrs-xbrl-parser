@@ -29,8 +29,7 @@ export const getRoleLabelFromCoreFile = (roleId: string, esrsCoreXml: Xml2JSNode
 
 /** Get element attributes from file: esrs_cor.xsd */
 export const getAttributesFromCoreFile = (elementId: string, esrsCoreXml: Xml2JSNode): AnyMap => {
-  const annotation = esrsCoreXml['xsd:schema']?.['xsd:annotation'];
-  const elements = annotation?.['xsd:element'];
+  const elements = esrsCoreXml['xsd:schema']?.['xsd:element'];
   const element = elements?.find((element: Xml2JSNode) => element?.$?.id === elementId);
   return element?.$;
 };

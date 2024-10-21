@@ -274,8 +274,8 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
 ## Todo & known issues
 
+- [x] Implement types
 - [ ] Missing top level labels (E1, S1 etc). They’re present in `lab_esrs-en.xml` (e.g. `esrs_ESRSE1ClimateChangeMember_label`) but there are no references to it. Seems to be the same issue when viewing ESRS in Arelle.
-- [ ] Implement types
 - [ ] Implement enumerations
 - [ ] Implement validation
 
