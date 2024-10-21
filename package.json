@@ -1,6 +1,6 @@
 {
   "name": "esrs-xrbl-parser",
-  "description": "",
+  "description": "Tools for parsing European Sustainability Reporting Standards (ESRS) taxonomies in XBRL format",
   "keywords": [
     "esrs",
     "xrbl",
