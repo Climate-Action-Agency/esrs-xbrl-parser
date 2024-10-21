@@ -53,6 +53,7 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
         const completeRowStr = indentStr + key + attributesStr + textChildStr;
         const doShowFilterMatchAndParentNodes =
           !searchFilter?.skipBranches?.includes(key) &&
+          !(key === 'children' && obj[key]?.length === 0) && // Don't list empty 'children' arrays
           (searchFilter?.searchText === undefined ||
             (searchFilter?.searchText !== undefined &&
               (completeRowStr.toLowerCase().includes(searchFilter?.searchText.toLowerCase()) ||
