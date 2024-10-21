@@ -101,7 +101,7 @@ export const buildHierarchy = (
         label: getLabelFromLabFile(childId, esrsCoreXml),
         id: childId, // Get the fragment as a simple label
         type: attributes?.type,
-        order: arc.$?.['order'], // Use this for ordering within the parent
+        order: arc.$?.['order'],
         children: []
       };
     }
@@ -112,7 +112,7 @@ export const buildHierarchy = (
 
   //console.log('nodeMap:', JSON.stringify(nodeMap, null, 2));
 
-  // Create a hierarchy tree root
+  // Create a root object
   const sourceFile = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
   const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
   const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
@@ -120,7 +120,7 @@ export const buildHierarchy = (
   const label = asArray(labels)[0];
   const root: HierarchyRootNode = {
     label,
-    labels: labels,
+    labels,
     roles,
     sourceFile,
     // $: linkbaseRef.$,
