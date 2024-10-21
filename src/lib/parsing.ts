@@ -128,7 +128,8 @@ export const parseAndFollowLinks = async (
 
   // Track visited files to avoid circular references
   if (visited.has(currentFilePath)) {
-    //console.warn(`  - Already visited ${filePath} - skipping`);
+    // esrs_cor.xsd is visited multiple times, so this warning is not useful
+    // if (!filePath.includes('esrs_cor.xsd')) console.warn(`  - Already visited ${filePath} - skipping`);
     return null;
   }
   visited.add(currentFilePath);
