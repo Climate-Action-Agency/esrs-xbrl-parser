@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { StringMap, Xml2JSNode } from './types/global';
+import { StringMap, Xml2JSNode, TreeSearchFilter } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree, printJSON } from './lib/output';
 import {
@@ -150,10 +150,11 @@ async function main() {
   const LINKBASE_PRESENTATIONS = 'pre_esrs_';
   const LINKBASE_DEFINITIONS = 'def_esrs_';
   const LINKBASES_TO_INCLUDE = [LINKBASE_PRESENTATIONS, LINKBASE_DEFINITIONS];
-  const searchFilter = {
+  const searchText = process.argv?.[3];
+  const searchFilter: TreeSearchFilter = {
     // maxLevel: 10,
     onlyFollowBranches: LINKBASES_TO_INCLUDE,
-    ...(process.argv?.[3] !== undefined ? { level: 3, text: process.argv?.[3] } : {})
+    ...(searchText ? { searchLevel: 3, searchText } : {})
   };
   console.log(`${filePath} (filter ${JSON.stringify(searchFilter)}):\n`);
   const esrsAllXml = await parseAndFollowLinks(filePath, '', searchFilter);
