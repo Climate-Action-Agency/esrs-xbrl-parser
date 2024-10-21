@@ -142,31 +142,28 @@ export const buildHierarchy = (
 };
 
 async function main() {
-  const filePath = process.argv?.[2] ?? 'ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd';
-  const rootPath = path.dirname(filePath);
-
-  // Parse the core file
-  const coreFilePath = 'common/esrs_cor.xsd';
-  const esrsCoreXml = await parseAndFollowLinks(coreFilePath, rootPath);
-
-  // printXMLTree(esrsCoreXml, {
-  //   searchLevel: 8,
-  //   searchText: 'link:roleType'
-  // });
-  // return;
-
-  // Build the tree starting from the root file
-  const LINKBASE_PRESENTATIONS = 'pre_esrs_';
-  const LINKBASE_DEFINITIONS = 'def_esrs_';
+  const chapterName = process.argv?.[2] ?? '';
+  const LINKBASE_PRESENTATIONS = 'pre_esrs_' + chapterName;
+  const LINKBASE_DEFINITIONS = 'def_esrs_' + chapterName;
   const LINKBASES_TO_INCLUDE = [LINKBASE_PRESENTATIONS, LINKBASE_DEFINITIONS];
+
   const searchText = process.argv?.[3];
   const searchFilter: TreeSearchFilter = {
     // maxLevel: 10,
     onlyFollowBranches: LINKBASES_TO_INCLUDE,
     ...(searchText ? { searchLevel: 3, searchText } : {})
   };
-  console.log(`${filePath} (filter ${JSON.stringify(searchFilter)}):\n`);
-  const esrsAllXml = await parseAndFollowLinks(filePath, '', searchFilter);
+
+  const esrsAllFilePath = 'ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd';
+  const rootPath = path.dirname(esrsAllFilePath);
+
+  // Parse the core file
+  const esrsCoreFilePath = 'common/esrs_cor.xsd';
+  const esrsCoreXml = await parseAndFollowLinks(esrsCoreFilePath, rootPath);
+
+  // Build the tree starting from the root file
+  console.log(`${esrsAllFilePath} (filter ${JSON.stringify(searchFilter)}):\n`);
+  const esrsAllXml = await parseAndFollowLinks(esrsAllFilePath, '', searchFilter);
   const linkbaseRefs = esrsAllXml?.['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef'];
 
   // Presentations
@@ -184,41 +181,6 @@ async function main() {
     buildHierarchy(LinkbaseType.Definition, linkbaseRef, esrsCoreXml)
   );
   printXMLTree({ presentations, dimensions }, { skipBranches: ['order'] });
-  return;
-
-  /*
-  // Parse the label files
-  const labelFilePath = 'common/labels/lab_esrs-en.xml';
-  const roleLabelFilePath = 'common/labels/gla_esrs-en.xml';
-  const labelMap = await buildLabelMap(path.join(rootPath, labelFilePath));
-  const roleLabelMap = await buildRoleLabelMap(path.join(rootPath, roleLabelFilePath));
-
-  // Create a list of presentations
-  const presentations = linkbaseRefs.map((linkbaseRef: Xml2JSNode) => {
-    const sourceLinkbaseName = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
-    const roleRefs = linkbaseRef['link:linkbase']['link:roleRef'];
-    const roleNames = applyToAll<Xml2JSNode, string>(roleRefs, (roleRef: Xml2JSNode) =>
-      getRoleLabel(roleRef.$['xlink:href'], roleLabelMap, true)
-    );
-    const presentationLink = linkbaseRef['link:linkbase']['link:presentationLink'];
-    const sectionHeadlineRoleId = presentationLink.$['xlink:role'].split('taxonomy/')[1];
-    const sectionHeadline = getRoleLabel(sectionHeadlineRoleId, roleLabelMap);
-    const linkLocs = presentationLink['link:loc'];
-    const descriptions = linkLocs.map((linkLoc: Xml2JSNode) => labelMap[linkLoc.$['xlink:label']]);
-    const descriptionsPreview = [...descriptions.slice(0, 3), `(etc, total ${descriptions.length})`];
-    return {
-      sectionHeadline,
-      roleNames,
-      sourceLinkbaseName,
-      descriptions
-      //descriptionsPreview
-    };
-  });
-
-  // Output the result
-  printXMLTree(presentations);
-  //console.log(JSON.stringify(esrsAllXml, null, 2));
-  */
 }
 
 main();

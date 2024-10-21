@@ -95,6 +95,7 @@ Dump to a text file:
 Show hierarchy for ESRS All:
 
     npm run outline
+    npm run outline 30106  # Only ESRS E1-6
 
 Outputs `presentations` and `dimensions`:
 
