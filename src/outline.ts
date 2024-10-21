@@ -18,7 +18,7 @@ interface HierarchyNode {
   label: string;
   order?: string;
   type?: string;
-  children: HierarchyNode[];
+  children?: HierarchyNode[];
 }
 
 interface HierarchyRootNode extends Partial<Xml2JSNode> {
@@ -26,7 +26,7 @@ interface HierarchyRootNode extends Partial<Xml2JSNode> {
   label: string;
   labels?: string[] | string;
   roleRef?: Xml2JSNode;
-  children: HierarchyNode[];
+  children?: HierarchyNode[];
 }
 
 enum LinkbaseType {
@@ -71,6 +71,7 @@ export const buildHierarchy = (
 
   // Create a map to store nodes by ID
   const nodeMap: { [key: string]: HierarchyNode } = {};
+  const childrenIds: string[] = [];
 
   // Process each arc and build the parent-child relationships
   applyToAll(arcs, (arc: Xml2JSNode) => {
@@ -107,26 +108,9 @@ export const buildHierarchy = (
     }
 
     // Append the child node to the parent's children array
-    nodeMap[parentId].children.push(nodeMap[childId]);
+    nodeMap[parentId].children?.push(nodeMap[childId]);
+    childrenIds.push(childId);
   });
-
-  //console.log('nodeMap:', JSON.stringify(nodeMap, null, 2));
-
-  // Create a root object
-  const sourceFile = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
-  const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
-  const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
-  const labels = applyToAll(roles, (roleId) => getRoleLabelFromCoreFile(roleId, esrsCoreXml));
-  const label = asArray(labels)[0];
-  const root: HierarchyRootNode = {
-    label,
-    labels,
-    roles,
-    sourceFile,
-    // $: linkbaseRef.$,
-    // roleRef: linkbaseRef['link:linkbase']['link:roleRef'],
-    children: Object.values(nodeMap)
-  };
 
   // Sort the children of each node based on the "order" attribute
   Object.values(nodeMap).forEach((node) => {
@@ -134,6 +118,25 @@ export const buildHierarchy = (
       node.children.sort((a, b) => parseFloat(a.order || '0') - parseFloat(b.order || '0'));
     }
   });
+
+  // Create a root object
+  const sourceFile = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
+  const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
+  const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
+  const labels = applyToAll(roles, (roleId) => getRoleLabelFromCoreFile(roleId, esrsCoreXml));
+  const label = asArray(labels)[0];
+  const rootNodeKey = Object.keys(nodeMap).find((key) => !childrenIds.includes(key));
+  const rootNode = rootNodeKey ? nodeMap[rootNodeKey] : undefined;
+  const children = rootNode ? [rootNode] : [];
+  const root: HierarchyRootNode = {
+    label,
+    labels,
+    roles,
+    sourceFile,
+    // $: linkbaseRef.$,
+    // roleRef: linkbaseRef['link:linkbase']['link:roleRef'],
+    children
+  };
 
   return root;
 };
