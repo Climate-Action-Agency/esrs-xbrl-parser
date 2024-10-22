@@ -12,6 +12,16 @@ export const getLabelFromLabFile = (labelId: string, esrsCoreXml: Xml2JSNode): s
   return label;
 };
 
+/** Get documentation from file: doc_esrs-en.xml */
+export const getDocumentation = (labelId: string, esrsCoreXml: Xml2JSNode): string => {
+  const label = esrsCoreXml['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef']
+    ?.find((linkbaseRef: Xml2JSNode) => linkbaseRef.$['xlink:href'] === 'labels/doc_esrs-en.xml')
+    ?.['link:linkbase']?.['link:labelLink']?.['link:label']?.find(
+      (label: Xml2JSNode) => label.$.id === `${labelId}_documentation`
+    )?.[STRING_KEY];
+  return label;
+};
+
 /** Get role label from file: esrs_cor.xsd */
 export const getRoleLabelFromCoreFile = (roleId: string, esrsCoreXml: Xml2JSNode): string => {
   const annotation = esrsCoreXml['xsd:schema']?.['xsd:annotation'];
@@ -26,6 +36,15 @@ export const getRoleLabelFromCoreFile = (roleId: string, esrsCoreXml: Xml2JSNode
   // ]
   return label;
 };
+
+// export const getRoleLabelOld = (
+//   xlinkHref: string,
+//   roleLabelMap: { [key: string]: string },
+//   includeLabelKey = false
+// ): string => {
+//   const labelKey = xlinkHref.includes('#') ? xlinkHref.split('#')[1] : xlinkHref;
+//   return (includeLabelKey ? `${labelKey}: ` : '') + (roleLabelMap[labelKey] ?? labelKey);
+// };
 
 /** Get element attributes from file: esrs_cor.xsd */
 export const getAttributesFromCoreFile = (elementId: string, esrsCoreXml: Xml2JSNode): XBRLElement => {
@@ -119,13 +138,4 @@ export const buildRoleLabelMap = async (labelFilePath: string): Promise<StringMa
   });
 
   return labelMap; // Return the final role-to-label map
-};
-
-export const getRoleLabel = (
-  xlinkHref: string,
-  roleLabelMap: { [key: string]: string },
-  includeLabelKey = false
-): string => {
-  const labelKey = xlinkHref.includes('#') ? xlinkHref.split('#')[1] : xlinkHref;
-  return (includeLabelKey ? `${labelKey}: ` : '') + (roleLabelMap[labelKey] ?? labelKey);
 };

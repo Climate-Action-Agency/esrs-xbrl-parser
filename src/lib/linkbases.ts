@@ -1,10 +1,11 @@
 import { Xml2JSNode } from '../types/global';
-import { getLabelFromLabFile, getRoleLabelFromCoreFile, getAttributesFromCoreFile } from './labels';
+import { getLabelFromLabFile, getRoleLabelFromCoreFile, getDocumentation, getAttributesFromCoreFile } from './labels';
 import { applyToAll, asArray } from './utils';
 
 interface HierarchyNode {
   id: string;
   label: string;
+  documentation?: string;
   order?: string;
   type?: string;
   children?: HierarchyNode[];
@@ -79,6 +80,7 @@ export const buildHierarchyFromLinkbase = (
       const { id, ...otherAttributes } = getAttributesFromCoreFile(parentId, esrsCoreXml) ?? {};
       nodeMap[parentId] = {
         label: getLabelFromLabFile(parentId, esrsCoreXml),
+        documentation: getDocumentation(parentId, esrsCoreXml),
         id: parentId, // Get the fragment as a simple label
         ...otherAttributes,
         children: []
@@ -90,6 +92,7 @@ export const buildHierarchyFromLinkbase = (
       const { id, ...otherAttributes } = getAttributesFromCoreFile(childId, esrsCoreXml) ?? {};
       nodeMap[childId] = {
         label: getLabelFromLabFile(childId, esrsCoreXml),
+        documentation: getDocumentation(childId, esrsCoreXml),
         id: childId, // Get the fragment as a simple label
         ...otherAttributes,
         order: arc.$?.['order'],
