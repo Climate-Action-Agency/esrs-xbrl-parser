@@ -73,3 +73,66 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
     }
   }
 }
+
+// xbrli:stringItemType -> string
+const readableSubstitutionGroup = (obj: any): string =>
+  (obj.substitutionGroup ?? '').split(':')[1]?.replace('Item', '').replace('hypercube', 'table');
+const readableType = (obj: any): string =>
+  obj.type
+    ? [(readableSubstitutionGroup(obj), obj.type.split(':')[1]?.replace('ItemType', ''))].join(':').replace('item:', '')
+    : '';
+const emojiForField = (obj: any): string => {
+  const type = readableType(obj);
+  if (type.includes('table')) {
+    return '📊';
+  } else if (type.includes('string')) {
+    return '🔤';
+  } else if (type.includes('textBlock')) {
+    return '📝';
+  } else if (type.includes('enumerationSet')) {
+    return '⬇️';
+  } else if (type.includes('monetary')) {
+    return '💰';
+  } else if (type.includes('percent')) {
+    return '%';
+  } else if (type.includes('date')) {
+    return '📅';
+  } else if (type.includes('ghgEmissions')) {
+    return '💭';
+  } else if (type.includes('boolean')) {
+    return '✅';
+  } else {
+    return '❓';
+  }
+};
+const formatInputField = (obj: any): string =>
+  obj.type ? `${emojiForField(obj)} ${obj.label}: [${readableType(obj)}]` : obj.label;
+
+export function printInputFormTree(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {
+  const ALLOWED_KEYS = ['sectionCode', 'label', 'children'];
+  const indentStr = currentLevel > 0 ? `${'  '.repeat(currentLevel)}∟ ` : '';
+  // Don't traverse below the maxLevel
+  if (searchFilter?.maxLevel !== undefined && currentLevel >= searchFilter?.maxLevel) {
+    return;
+  }
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      // Don't traverse the attributes ($) object
+      if (ALLOWED_KEYS.includes(key) || !isNaN(Number(key))) {
+        switch (key) {
+          case 'sectionCode':
+            if (currentLevel === 1) console.log(`${obj[key]}`);
+            break;
+          case 'label':
+            console.log(`${indentStr}${formatInputField(obj)}`);
+            break;
+        }
+        // Recursively traverse the child object
+        const hasChildren = typeof obj[key] === 'object' && obj[key] !== null;
+        if (hasChildren) {
+          printInputFormTree(obj[key], searchFilter, currentLevel + 1);
+        }
+      }
+    }
+  }
+}

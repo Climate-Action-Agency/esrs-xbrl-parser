@@ -2,7 +2,7 @@ import path from 'path';
 
 import { Xml2JSNode, TreeSearchFilter, ESRSSection } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
-import { printXMLTree } from './lib/output';
+import { printXMLTree, printInputFormTree } from './lib/output';
 import { LinkbaseType, HierarchyNodeMap, buildHierarchyFromLinkbase } from './lib/linkbases';
 import esrsSections from './config/esrsSections.json';
 
@@ -58,7 +58,7 @@ async function main() {
       (presentation: { sectionCode: string }) => presentation.sectionCode === section.sectionCode
     )
   }));
-  printXMLTree(esrsStructure, { skipBranches: ['order'] });
+  printInputFormTree(esrsStructure, { skipBranches: ['order'] });
 }
 
 main();
