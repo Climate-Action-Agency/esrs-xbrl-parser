@@ -154,6 +154,27 @@ and:
 - Human-readable descriptions and explanations: `labels` folder
 - Field types, dimensions (categories), and enumerations
 
+### How the ESRS XBRL files relate to each other
+
+```mermaid
+graph TD
+	esrs_all["esrs_all (main schema definitions assembly for the complete ESRS taxonomy)"] --> for_esrs*["for_esrs* (validation rules and formulas)"]
+	esrs_all --> pre_esrs*["pre_esrs* (presentation/hierarchy relationships)"]
+	esrs_all --> cal_esrs*["cal_esrs* (calculation relationships)"]
+	esrs_all --> def_esrs*["def_esrs* (enumerated sets)"]
+	esrs_all --> esrs_cor["esrs_cor (core schema definitions: concepts, labels, references)"]
+
+	pre_esrs* --> esrs_cor
+	cal_esrs* --> esrs_cor
+	def_esrs* --> esrs_cor
+
+	esrs_cor --> pre_esrs*
+	esrs_cor --> def_esrs*
+	esrs_cor --> dim_esrs*["dim_esrs* (dimensions for data, e.g., categories)"]
+	esrs_cor --> ref_esrs["ref_esrs (references to regulatory requirements and standards)"]
+	esrs_cor --> labels/*["labels/* (human-readable labels, headlines, documentation)"]
+```
+
 ### `ESRS-Set1-XBRL-Taxonomy` folder contents
 
     📁 META-INF
@@ -241,6 +262,9 @@ Specification: https://www.xbrl.org/specification/basespecification/per-2011-11-
 
 See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
+**Inline XBRL (iXBRL)** is a single XHTML document that is both human-readable _and_ machine-readable with XBRL tags embedded.
+
+- **Assertions**: **validation rules** that are automatically executed by XBRL software when validating XBRL reports.
 - **Arcs**: Define **relationships** (e.g., parent-child, calculation) between elements. Arcs typically have `xlink:from`, `xlink:to`, and `xlink:arcrole` attributes, to indicate which elements are connected and what the nature of the relationship is.
 - **Concepts**:
   - Individual data points or facts in XBRL, such as sustainability metrics or disclosures.
@@ -268,6 +292,9 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
 #### ESRS-specific terminology
 
+- **Dimensions** (also called **Axis**) disaggregate digital disclosures using dimension members.
+  - **Explicit dimensions** (e.g., country, gender, GHG category), which are predefined lists of members
+  - **Typed dimensions** (e.g., geographical area, policy ID, target ID), which are entity-specific and defined during report preparation.
 - **Disclosure Requirements (DRs)**:
   - Specific data points or narratives that companies must disclose, based on relevance to a topic, such as water use or social equity.
 - **Topics**:
