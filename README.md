@@ -32,6 +32,7 @@ Unzip the ESRS files into `./ESRS-Set1-XBRL-Taxonomy` inside this project folder
 ## Usage
 
 - [List](#list): `npm run list [path to XML file]` (list XML file)
+- [Linkbase Tree](#linkbase-tree): `npm run linkbaseTree` (list linkbases for ESRS All)
 - [Outline](#outline): `npm run outline` (show hierarchy for ESRS All)
 
 ### List
@@ -90,26 +91,18 @@ Dump to a text file:
     mkdir output
     npm run list:all > output/all.txt
 
-### Outline
+### Linkbase Tree
 
-Show hierarchy for ESRS All:
+List linkbases for ESRS All:
 
-    npm run outline
-    npm run outline 30106  # Only ESRS E1-6
+    npm run linkbaseTree
+    npm run linkbaseTree 30106  # Only ESRS E1-6
 
-Outputs `presentations` and `dimensions`:
+Outputs linkbases `presentations`, `dimensions`:
 
     presentations
       ∟ 0
         ∟ label: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
-        ∟ labels
-          ∟ 0: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
-          ∟ 1: "[901000] Countries"
-          ∟ 2: "[900000] Disaggregation by country"
-        ∟ roles
-          ∟ 0: "role-200510"
-          ∟ 1: "role-901000"
-          ∟ 2: "role-900000"
         ∟ sourceFile: "pre_esrs_200510.xml"
         ∟ children
           ∟ 0
@@ -119,22 +112,10 @@ Outputs `presentations` and `dimensions`:
               ∟ 0
                 ∟ label: "General basis for preparation of sustainability statement [abstract]"
                 ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementAbstract"
-                ∟ children
-                  ∟ 0
-                    ∟ label: "General basis for preparation of sustainability statement [table]"
-                    ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementTable"
-
-and:
-
+    ...
     dimensions
       ∟ 0
         ∟ label: "[200511] ESRS2.BP-1 General basis for preparation of sustainability statement - general - ESRS2.BP-1.1 General basis for preparation of sustainability statement"
-        ∟ labels
-          ∟ 0: "[200511] ESRS2.BP-1 General basis for preparation of sustainability statement - general - ESRS2.BP-1.1 General basis for preparation of sustainability statement"
-          ∟ 1: "[900000] Disaggregation by country"
-        ∟ roles
-          ∟ 0: "role-200511"
-          ∟ 1: "role-900000"
         ∟ sourceFile: "def_esrs_200510.xml"
         ∟ children
           ∟ 0
@@ -144,6 +125,13 @@ and:
               ∟ 0
                 ∟ label: "General basis for preparation of sustainability statement [table]"
                 ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementTable"
+
+### Outline
+
+Show hierarchy for ESRS All:
+
+    npm run outline
+    npm run outline 30106  # Only ESRS E1-6
 
 ## ESRS taxonomy
 

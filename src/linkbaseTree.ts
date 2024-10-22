@@ -1,10 +1,9 @@
 import path from 'path';
 
-import { Xml2JSNode, TreeSearchFilter, AnyMap } from './types/global';
+import { Xml2JSNode, TreeSearchFilter } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree } from './lib/output';
-import { LinkbaseType, HierarchyNodeMap, buildHierarchyFromLinkbase } from './lib/linkbases';
-import esrsSections from './config/esrsSections.json';
+import { LinkbaseType, buildHierarchyFromLinkbase } from './lib/linkbases';
 
 async function main() {
   const chapterName = process.argv?.[2] ?? '';
@@ -31,32 +30,21 @@ async function main() {
   const esrsAllXml = await parseAndFollowLinks(esrsAllFilePath, '', searchFilter);
   const linkbaseRefs = esrsAllXml?.['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef'];
 
-  // Dimension definitions
-  const definitionLinkbaseRefs =
-    linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_DEFINITIONS)) ??
-    [];
-  const dimensionsLookupMap: HierarchyNodeMap = definitionLinkbaseRefs.reduce(
-    (result: HierarchyNodeMap, linkbaseRef: Xml2JSNode) => ({
-      ...result,
-      ...buildHierarchyFromLinkbase(LinkbaseType.Definition, linkbaseRef, esrsCoreXml, { getAllNodes: true })
-    }),
-    {}
-  );
-
   // Presentations
   const presentationLinkbaseRefs =
     linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_PRESENTATIONS)) ??
     [];
   const presentations = presentationLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
-    // dimensionsLookupMap can be used to link dimensions to presentations, but seems to be not needed
-    buildHierarchyFromLinkbase(LinkbaseType.Presentation, linkbaseRef, esrsCoreXml /*{ dimensionsLookupMap }*/)
+    buildHierarchyFromLinkbase(LinkbaseType.Presentation, linkbaseRef, esrsCoreXml)
   );
-
-  const esrsStructure = esrsSections.map((section: { code: string; name: string }) => ({
-    ...section,
-    children: presentations.filter((presentation: { sectionCode: string }) => presentation.sectionCode === section.code)
-  }));
-  printXMLTree(esrsStructure, { skipBranches: ['order'] });
+  // Definitions
+  const definitionLinkbaseRefs =
+    linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_DEFINITIONS)) ??
+    [];
+  const dimensions = definitionLinkbaseRefs.map((linkbaseRef: Xml2JSNode) =>
+    buildHierarchyFromLinkbase(LinkbaseType.Definition, linkbaseRef, esrsCoreXml)
+  );
+  printXMLTree({ presentations, dimensions }, { skipBranches: ['order'] });
 }
 
 main();
