@@ -58,7 +58,7 @@ Dump to a text file:
 
 ##### Output
 
-See examples: [list:core](blob/main/examples/list_core.txt), [list:all](blob/main/examples/list_all.txt)
+See examples: [list:core](https://raw.githubusercontent.com/Climate-Action-Agency/esrs-xbrl-parser/refs/heads/main/examples/list_core.txt), [list:all](https://raw.githubusercontent.com/Climate-Action-Agency/esrs-xbrl-parser/refs/heads/main/examples/list_all.txt)
 
 #### ESRS All (all topics and disclosure requirements, with all linkbases)
 
@@ -82,7 +82,7 @@ List linkbases for ESRS All:
     npm run linkbaseTree
     npm run linkbaseTree 30106  # Only ESRS E1-6
 
-Outputs linkbases `presentations`, `dimensions`, [see example](blob/main/examples/linkbaseTree.txt).
+Outputs linkbases `presentations`, `dimensions`, [see example](https://raw.githubusercontent.com/Climate-Action-Agency/esrs-xbrl-parser/refs/heads/main/examples/linkbaseTree.txt).
 
 ### Outline
 
@@ -91,7 +91,7 @@ Show hierarchy for ESRS All:
     npm run outline
     npm run outline 30106  # Only ESRS E1-6
 
-Output: [see example](blob/main/examples/outline.txt).
+Output: [see example](https://raw.githubusercontent.com/Climate-Action-Agency/esrs-xbrl-parser/refs/heads/main/examples/outline.txt).
 
 ## ESRS taxonomy
 
