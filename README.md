@@ -116,7 +116,7 @@ graph TD
 	esrs_cor --> pre_esrs*
 	esrs_cor --> def_esrs*
 	esrs_cor --> dim_esrs*["dim_esrs* (dimensions for data, i.e., categories/breakdowns)"]
-	esrs_cor --> ref_esrs["ref_esrs (references to regulatory requirements and standards)"]
+	esrs_cor --> ref_esrs["ref_esrs (references to ESRS requirements and documentation)"]
 	esrs_cor --> labels/*["labels/* (human-readable labels, headlines, documentation)"]
 
 	class esrs_all important;
@@ -135,12 +135,12 @@ graph TD
                 ∟ 📄 esrs_all.xsda (Schema definitions assembly for the complete ESRS taxonomy: all topics and disclosure requirements, with all linkbases)
                 ∟ 📁 common (Shared definitions and schema elements)
                    ∟ 📄 esrs_cor.xsd (Schema definitions for the core ESRS taxonomy: concepts, labels and references only)
-                   ∟ 📁 labels (Human-readable names for things)
+                   ∟ 📁 labels (Human-readable names)
                       ∟ 📄 doc_esrs-en.xml (Explanations how values to ESRS elements/disclosures should be provided)
                       ∟ 📄 gla_esrs-en.xml (Headlines in the taxonomy/hierarchy)
                       ∟ 📄 lab_esrs-en.xml (Labels of individual ESRS elements/disclosures)
-                   ∟ 📁 references (References to regulatory requirements)
-                      ∟ 📄 ref_esrs.xml (References to regulatory requirements or standards linked to ESRS elements)
+                   ∟ 📁 references
+                      ∟ 📄 ref_esrs.xml (References to ESRS requirements and documentation)
                 ∟ 📁 all (Complete ESRS taxonomy)
                    ∟ 📁 dimensions (Categories or breakdowns)
                       ∟ 📄 dim_esrs_*.xml (Defining dimensional data, e.g. categories or breakdowns, for ESRS reporting)
