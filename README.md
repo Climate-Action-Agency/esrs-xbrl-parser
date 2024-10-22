@@ -158,6 +158,8 @@ and:
 
 ```mermaid
 graph TD
+	classDef important fill:#bcbcff, font-weight:bold;
+
 	esrs_all["esrs_all (main schema definitions assembly for the complete ESRS taxonomy)"] --> for_esrs*["for_esrs* (validation rules and formulas)"]
 	esrs_all --> pre_esrs*["pre_esrs* (presentation/hierarchy relationships)"]
 	esrs_all --> cal_esrs*["cal_esrs* (calculation relationships)"]
@@ -173,6 +175,9 @@ graph TD
 	esrs_cor --> dim_esrs*["dim_esrs* (dimensions for data, e.g., categories)"]
 	esrs_cor --> ref_esrs["ref_esrs (references to regulatory requirements and standards)"]
 	esrs_cor --> labels/*["labels/* (human-readable labels, headlines, documentation)"]
+
+	class esrs_all important;
+	class esrs_cor important;
 ```
 
 ### `ESRS-Set1-XBRL-Taxonomy` folder contents
