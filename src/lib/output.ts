@@ -2,6 +2,10 @@ import { TreeSearchFilter } from '../types/global';
 
 import { ATTRIBUTES_KEY } from './parsing';
 
+export function printJSON(obj: any): void {
+  console.log(JSON.stringify(obj, null, 2));
+}
+
 export function printObjectTree(
   obj: any,
   maxLevels: number = -1,
@@ -68,33 +72,4 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
       }
     }
   }
-}
-
-export function printHierarchyTree(obj: any, searchFilter: TreeSearchFilter, currentLevel: number = 0): void {
-  const indent = '  '.repeat(currentLevel);
-  // Stop recursion if the maxLevel is reached
-  if (searchFilter?.maxLevel !== undefined && currentLevel >= searchFilter?.maxLevel) {
-    return;
-  }
-  // Filter by text if the filter is applied
-  if (searchFilter?.searchText && obj?.label && !obj.label.includes(searchFilter?.searchText)) {
-    return;
-  }
-  // Print the current node with its ID and label
-  const label = obj?.label;
-  const id = obj?.id?.split('#')?.[1];
-  if (id !== undefined) {
-    console.log(`${indent} ∟ ${id}: “${label}”`);
-  }
-  const children = obj?.children ?? Object.values(obj) ?? [];
-  // Recurse for each child node
-  if (children && children.length > 0) {
-    children.forEach((child: any) => {
-      printHierarchyTree(child, searchFilter, currentLevel + 1);
-    });
-  }
-}
-
-export function printJSON(obj: any): void {
-  console.log(JSON.stringify(obj, null, 2));
 }
