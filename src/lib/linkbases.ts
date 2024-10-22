@@ -12,6 +12,7 @@ interface HierarchyNode {
 
 interface HierarchyRootNode extends Partial<Xml2JSNode> {
   $?: { [key: string]: any };
+  sectionCode?: string | null;
   label: string;
   labels?: string[] | string;
   roleRef?: Xml2JSNode;
@@ -113,11 +114,15 @@ export const buildHierarchyFromLinkbase = (
   const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
   const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
   const labels = applyToAll(roles, (roleId) => getRoleLabelFromCoreFile(roleId, esrsCoreXml));
-  const label = asArray(labels)[0];
+  const label = asArray(labels).find((label) => label !== undefined) || '(not found)';
+  // Find sectionCode between brackets and the first period/hyphen/space: “[301060] E1-6 Gross Scopes” -> “E1”
+  const match = label.match(/\[.*?\]\s([A-Z0-9]+)[.\-\s]/);
+  const sectionCode = match ? match[1] : null;
   const rootNodeKey = Object.keys(nodeMap).find((key) => !childrenIds.includes(key));
   const rootNode = rootNodeKey ? nodeMap[rootNodeKey] : undefined;
   const children = rootNode ? [rootNode] : [];
   const root: HierarchyRootNode = {
+    sectionCode,
     label,
     labels,
     roles,

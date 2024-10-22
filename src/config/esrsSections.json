@@ -1,0 +1,13 @@
+[
+  { "code": "ESRS2", "name": "General disclosures" },
+  { "code": "E1", "name": "Climate change" },
+  { "code": "E2", "name": "Pollution" },
+  { "code": "E3", "name": "Water and marine resources" },
+  { "code": "E4", "name": "Biodiversity and ecosystems" },
+  { "code": "E5", "name": "Resource use and circular economy" },
+  { "code": "S1", "name": "Own workforce" },
+  { "code": "S2", "name": "Workers in the value chain" },
+  { "code": "S3", "name": "Affected communities" },
+  { "code": "S4", "name": "Consumers and end-users" },
+  { "code": "G1", "name": "Business conduct" }
+]
