@@ -3,7 +3,7 @@ import { STRING_KEY, parseXML } from './parsing';
 import { printXMLTree } from './output';
 
 /** Get label from file: lab_esrs-en.xml */
-export const getLabelFromLabFile = (labelId: string, esrsCoreXml: Xml2JSNode): string => {
+export const getElementLabel = (labelId: string, esrsCoreXml: Xml2JSNode): string => {
   const label = esrsCoreXml['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef']
     ?.find((linkbaseRef: Xml2JSNode) => linkbaseRef.$['xlink:href'] === 'labels/lab_esrs-en.xml')
     ?.['link:linkbase']?.['link:labelLink']?.['link:label']?.find(
@@ -23,7 +23,7 @@ export const getDocumentation = (labelId: string, esrsCoreXml: Xml2JSNode): stri
 };
 
 /** Get role label from file: esrs_cor.xsd */
-export const getRoleLabelFromCoreFile = (roleId: string, esrsCoreXml: Xml2JSNode): string => {
+export const getRoleLabel = (roleId: string, esrsCoreXml: Xml2JSNode): string => {
   const annotation = esrsCoreXml['xsd:schema']?.['xsd:annotation'];
   // 1) Find label
   const roleTypes = annotation?.['xsd:appinfo']?.['link:roleType'];
@@ -47,7 +47,7 @@ export const getRoleLabelFromCoreFile = (roleId: string, esrsCoreXml: Xml2JSNode
 // };
 
 /** Get element attributes from file: esrs_cor.xsd */
-export const getAttributesFromCoreFile = (elementId: string, esrsCoreXml: Xml2JSNode): XBRLElement => {
+export const getElementAttributes = (elementId: string, esrsCoreXml: Xml2JSNode): XBRLElement => {
   const elements = esrsCoreXml['xsd:schema']?.['xsd:element'];
   const element = elements?.find((element: Xml2JSNode) => element?.$?.id === elementId);
   return element?.$;

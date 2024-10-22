@@ -1,5 +1,5 @@
 import { Xml2JSNode } from '../types/global';
-import { getLabelFromLabFile, getRoleLabelFromCoreFile, getDocumentation, getAttributesFromCoreFile } from './labels';
+import { getElementLabel, getRoleLabel, getDocumentation, getElementAttributes } from './labels';
 import { applyToAll, asArray } from './utils';
 
 interface HierarchyNode {
@@ -77,9 +77,9 @@ export const buildHierarchyFromLinkbase = (
 
     // Initialize parent node if it doesn't exist
     if (!nodeMap[parentId]) {
-      const { id, ...otherAttributes } = getAttributesFromCoreFile(parentId, esrsCoreXml) ?? {};
+      const { id, ...otherAttributes } = getElementAttributes(parentId, esrsCoreXml) ?? {};
       nodeMap[parentId] = {
-        label: getLabelFromLabFile(parentId, esrsCoreXml),
+        label: getElementLabel(parentId, esrsCoreXml),
         documentation: getDocumentation(parentId, esrsCoreXml),
         id: parentId, // Get the fragment as a simple label
         ...otherAttributes,
@@ -89,9 +89,9 @@ export const buildHierarchyFromLinkbase = (
 
     // Initialize child node if it doesn't exist
     if (!nodeMap[childId]) {
-      const { id, ...otherAttributes } = getAttributesFromCoreFile(childId, esrsCoreXml) ?? {};
+      const { id, ...otherAttributes } = getElementAttributes(childId, esrsCoreXml) ?? {};
       nodeMap[childId] = {
-        label: getLabelFromLabFile(childId, esrsCoreXml),
+        label: getElementLabel(childId, esrsCoreXml),
         documentation: getDocumentation(childId, esrsCoreXml),
         id: childId, // Get the fragment as a simple label
         ...otherAttributes,
@@ -116,7 +116,7 @@ export const buildHierarchyFromLinkbase = (
   const sourceFile = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
   const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
   const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
-  const labels = applyToAll(roles, (roleId) => getRoleLabelFromCoreFile(roleId, esrsCoreXml));
+  const labels = applyToAll(roles, (roleId) => getRoleLabel(roleId, esrsCoreXml));
   const label = asArray(labels).find((label) => label !== undefined) || '(not found)';
   // Find sectionCode between brackets and the first period/hyphen/space: “[301060] E1-6 Gross Scopes” -> “E1”
   const match = label.match(/\[.*?\]\s([A-Z0-9]+)[.\-\s]/);
