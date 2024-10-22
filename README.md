@@ -147,14 +147,9 @@ and:
 
 ## ESRS taxonomy
 
-- Starting points:
-  - `esrs_all.xsda` (all topics and disclosure requirements, with all linkbases)
-  - `esrs_cor.xsd` (concepts, labels and references only)
-- Structure and hierarchy: `pre_esrs_*.xml`
-- Human-readable descriptions and explanations: `labels` folder
-- Field types, dimensions (categories), and enumerations
-
 ### How the ESRS XBRL files relate to each other
+
+`esrs_all.xsda` is the starting point.
 
 ```mermaid
 graph TD
