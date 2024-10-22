@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { Xml2JSNode, TreeSearchFilter, AnyMap } from './types/global';
+import { Xml2JSNode, TreeSearchFilter, ESRSSection } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
 import { printXMLTree } from './lib/output';
 import { LinkbaseType, HierarchyNodeMap, buildHierarchyFromLinkbase } from './lib/linkbases';
@@ -52,9 +52,11 @@ async function main() {
     buildHierarchyFromLinkbase(LinkbaseType.Presentation, linkbaseRef, esrsCoreXml /*{ dimensionsLookupMap }*/)
   );
 
-  const esrsStructure = esrsSections.map((section: { code: string; name: string }) => ({
+  const esrsStructure = esrsSections.map((section: ESRSSection) => ({
     ...section,
-    children: presentations.filter((presentation: { sectionCode: string }) => presentation.sectionCode === section.code)
+    children: presentations.filter(
+      (presentation: { sectionCode: string }) => presentation.sectionCode === section.sectionCode
+    )
   }));
   printXMLTree(esrsStructure, { skipBranches: ['order'] });
 }

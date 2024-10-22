@@ -9,6 +9,11 @@ export interface TreeSearchFilter {
   searchLevel?: number; // The level at which to find the searchText
 }
 
+export interface ESRSSection {
+  sectionCode: string;
+  label: string;
+}
+
 export interface Xml2JSNode {
   $: AnyMap;
   [key: string]: any;
