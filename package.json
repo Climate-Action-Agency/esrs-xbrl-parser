@@ -20,7 +20,8 @@
     "list": "npx tsx src/list.ts",
     "list:all": "npm run list ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd",
     "list:core": "npm run list ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/common/esrs_cor.xsd",
-    "outline": "npx tsx src/outline.ts"
+    "outline": "npx tsx src/outline.ts",
+    "outline2": "npx tsx src/outline2.ts"
   },
   "dependencies": {
     "node-fetch": "^3.3.2",
