@@ -58,23 +58,7 @@ Dump to a text file:
 
 ##### Output
 
-    common/esrs_cor.xsd (filter {}):
-    ∟ filePath
-    ∟ schema
-      ∟ xsd:schema [targetNamespace, elementFormDefault, xmlns:xsd, xmlns:esrs, xmlns:link, xmlns:xbrldt, xmlns:dtr-types, xmlns:enum2, xmlns:xbrli, xmlns:country, xmlns:xlink]
-        ∟ xsd:annotation
-          ∟ xsd:appinfo
-            ∟ link:linkbaseRef
-              ∟ 0 [xlink:type, xlink:href, xlink:arcrole]
-              ∟ 1 [xlink:type, xlink:href, xlink:role, xlink:arcrole]
-              ∟ 2 [xlink:type, xlink:href, xlink:role, xlink:arcrole]
-    (...etc)
-
-and further down:
-
-    ∟ 2782 [id:'esrs_DisclosureRequirementE21PoliciesRelatedToPollutionMember', type:'dtr-types:domainItemType', name, substitutionGroup, abstract, nillable, xbrli:periodType]
-    (...)
-    ∟ 3976 [id:'esrs_PublicClaimsOfGHGNeutralityThatInvolveUseOfCarbonCreditsHaveBeenMade', type:'xbrli:booleanItemType', name, substitutionGroup, abstract, nillable, xbrli:periodType]
+See examples: [list:core](blob/main/examples/list_core.txt), [list:all](blob/main/examples/list_all.txt)
 
 #### ESRS All (all topics and disclosure requirements, with all linkbases)
 
@@ -98,33 +82,7 @@ List linkbases for ESRS All:
     npm run linkbaseTree
     npm run linkbaseTree 30106  # Only ESRS E1-6
 
-Outputs linkbases `presentations`, `dimensions`:
-
-    presentations
-      ∟ 0
-        ∟ label: "[200510] ESRS2.BP-1 General basis for preparation of sustainability statement - general"
-        ∟ sourceFile: "pre_esrs_200510.xml"
-        ∟ children
-          ∟ 0
-            ∟ label: "General basis for preparation of sustainability statement - general [abstract]"
-            ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementGeneralAbstract"
-            ∟ children
-              ∟ 0
-                ∟ label: "General basis for preparation of sustainability statement [abstract]"
-                ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementAbstract"
-    ...
-    dimensions
-      ∟ 0
-        ∟ label: "[200511] ESRS2.BP-1 General basis for preparation of sustainability statement - general - ESRS2.BP-1.1 General basis for preparation of sustainability statement"
-        ∟ sourceFile: "def_esrs_200510.xml"
-        ∟ children
-          ∟ 0
-            ∟ label: "General basis for preparation of sustainability statement [abstract]"
-            ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementAbstract"
-            ∟ children
-              ∟ 0
-                ∟ label: "General basis for preparation of sustainability statement [table]"
-                ∟ id: "esrs_GeneralBasisForPreparationOfSustainabilityStatementTable"
+Outputs linkbases `presentations`, `dimensions`, [see example](blob/main/examples/linkbaseTree.txt).
 
 ### Outline
 
@@ -132,6 +90,8 @@ Show hierarchy for ESRS All:
 
     npm run outline
     npm run outline 30106  # Only ESRS E1-6
+
+Output: [see example](blob/main/examples/outline.txt).
 
 ## ESRS taxonomy
 
