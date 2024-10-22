@@ -160,11 +160,11 @@ and:
 graph TD
 	classDef important fill:#bcbcff, font-weight:bold;
 
-	esrs_all["esrs_all (main schema definitions assembly for the complete ESRS taxonomy)"] --> for_esrs*["for_esrs* (validation rules and formulas)"]
-	esrs_all --> pre_esrs*["pre_esrs* (presentation/hierarchy relationships)"]
+	esrs_all["esrs_all (starting point for the complete ESRS taxonomy)"] --> pre_esrs*["pre_esrs* (presentation/hierarchy relationships)"]
 	esrs_all --> cal_esrs*["cal_esrs* (calculation relationships)"]
-	esrs_all --> def_esrs*["def_esrs* (enumerated sets)"]
-	esrs_all --> esrs_cor["esrs_cor (core schema definitions: concepts, labels, references)"]
+	esrs_all --> def_esrs*["enumerations/def_esrs* (enumerated sets)"]
+	esrs_all --> for_esrs*["for_esrs* (validation rules and formulas)"]
+	esrs_all --> esrs_cor["esrs_cor (core ESRS definitions: concepts, labels, references)"]
 
 	pre_esrs* --> esrs_cor
 	cal_esrs* --> esrs_cor
@@ -172,7 +172,7 @@ graph TD
 
 	esrs_cor --> pre_esrs*
 	esrs_cor --> def_esrs*
-	esrs_cor --> dim_esrs*["dim_esrs* (dimensions for data, e.g., categories)"]
+	esrs_cor --> dim_esrs*["dim_esrs* (dimensions for data, i.e., categories/breakdowns)"]
 	esrs_cor --> ref_esrs["ref_esrs (references to regulatory requirements and standards)"]
 	esrs_cor --> labels/*["labels/* (human-readable labels, headlines, documentation)"]
 
