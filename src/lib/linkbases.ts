@@ -76,7 +76,7 @@ export const buildHierarchyFromLinkbase = (
     const [topicNumber, label, labelType] = labelMatches
       ? [labelMatches[1] || undefined, labelMatches[2], labelMatches[3] || undefined]
       : [undefined, originalLabel, undefined];
-    if (label === '') return { topicNumber: undefined, label: topicNumber, labelType }; // hack
+    if (label === '') return { topicNumber: undefined, label: topicNumber ?? '(no label)', labelType }; // hack
     return { topicNumber, label, labelType };
   };
 
