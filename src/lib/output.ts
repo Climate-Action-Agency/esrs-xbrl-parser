@@ -75,6 +75,13 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
 }
 
 // xbrli:stringItemType -> string
+const readableType = (obj: any): string =>
+  obj.type
+    ? [(readableSubstitutionGroup(obj), obj.type.split(':')[1]?.replace('ItemType', ''))]
+        .join(':')
+        .replace('item:', '')
+        .replace('gYear', 'year')
+    : '';
 const readableSubstitutionGroup = (obj: any): string =>
   obj.type
     ? obj.substitutionGroup
@@ -83,10 +90,6 @@ const readableSubstitutionGroup = (obj: any): string =>
         .replace('hypercube', 'table')
         .replace('item', 'single item')
     : undefined;
-const readableType = (obj: any): string =>
-  obj.type
-    ? [(readableSubstitutionGroup(obj), obj.type.split(':')[1]?.replace('ItemType', ''))].join(':').replace('item:', '')
-    : '';
 const emojiForField = (obj: any): string => {
   if (obj.type.includes('string')) {
     return '🔤';
@@ -102,8 +105,10 @@ const emojiForField = (obj: any): string => {
     return '💰';
   } else if (obj.type.includes('percent')) {
     return '%';
-  } else if (obj.type.includes('date') || obj.type.includes('gYear')) {
+  } else if (obj.type.includes('date')) {
     return '📅';
+  } else if (obj.type.includes('gYear')) {
+    return '🗓️';
   } else if (obj.type.includes('ghgEmissions')) {
     return '💭';
   } else if (obj.type.includes('boolean')) {
