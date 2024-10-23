@@ -255,6 +255,7 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 - [x] Implement types
 - [x] Implement documentation (`_documentation` labels)
 - [x] Missing top level labels (E1, S1 etc). They’re present in `lab_esrs-en.xml` (e.g. `esrs_ESRSE1ClimateChangeMember_label`) but there are no references to it. Seems to be the same issue when viewing ESRS in Arelle.
+- [ ] What data is required? (`xsi:nil` - `nillable: "true"`)
 - [ ] Type: domain (`dtr-types:domainItemType`)
 - [ ] Type: linkIdentifiers (`esrs:linkIdentifiersItemType`)
 - [ ] Implement calculations (`linkbases/cal_*`)
