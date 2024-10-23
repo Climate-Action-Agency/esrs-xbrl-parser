@@ -71,6 +71,26 @@ export const buildHierarchyFromLinkbase = (
   const allNodes: HierarchyNodeMap = {};
   const childrenIds: string[] = [];
 
+  const getNodeProps = (elementId: string, order?: string) => {
+    const { id, ...otherAttributes } = getElementAttributes(elementId, esrsCoreXml) ?? {};
+    const nodeProps = {
+      label: getElementLabel(elementId, esrsCoreXml),
+      ...(getDocumentation(elementId, esrsCoreXml) !== undefined && {
+        documentation: getDocumentation(elementId, esrsCoreXml)
+      }),
+      id: elementId, // Get the fragment as a simple label
+      ...otherAttributes,
+      ...(order !== undefined && {
+        order
+      }),
+      ...(options.dimensionsLookupMap?.[elementId] !== undefined && {
+        dimension: options.dimensionsLookupMap?.[elementId]
+      }),
+      children: []
+    };
+    return nodeProps;
+  };
+
   // Process each arc and build the parent-child relationships
   applyToAll(arcs, (arc: Xml2JSNode) => {
     const fromLabel = arc.$?.['xlink:from'];
@@ -84,37 +104,12 @@ export const buildHierarchyFromLinkbase = (
 
     // Initialize parent node if it doesn't exist
     if (!nodeMap[parentId]) {
-      const { id, ...otherAttributes } = getElementAttributes(parentId, esrsCoreXml) ?? {};
-      nodeMap[parentId] = {
-        label: getElementLabel(parentId, esrsCoreXml),
-        ...(getDocumentation(parentId, esrsCoreXml) !== undefined && {
-          documentation: getDocumentation(parentId, esrsCoreXml)
-        }),
-        id: parentId, // Get the fragment as a simple label
-        ...otherAttributes,
-        ...(options.dimensionsLookupMap?.[parentId] !== undefined && {
-          dimension: options.dimensionsLookupMap?.[parentId]
-        }),
-        children: []
-      };
+      nodeMap[parentId] = getNodeProps(parentId);
     }
 
     // Initialize child node if it doesn't exist
     if (!nodeMap[childId]) {
-      const { id, ...otherAttributes } = getElementAttributes(childId, esrsCoreXml) ?? {};
-      nodeMap[childId] = {
-        label: getElementLabel(childId, esrsCoreXml),
-        ...(getDocumentation(childId, esrsCoreXml) !== undefined && {
-          documentation: getDocumentation(childId, esrsCoreXml)
-        }),
-        id: childId, // Get the fragment as a simple label
-        ...otherAttributes,
-        order: arc.$?.['order'],
-        ...(options.dimensionsLookupMap?.[childId] !== undefined && {
-          dimension: options.dimensionsLookupMap?.[childId]
-        }),
-        children: []
-      };
+      nodeMap[childId] = getNodeProps(childId, arc.$?.['order']);
     }
 
     // Append the child node to the parent's children array
