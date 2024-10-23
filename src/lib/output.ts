@@ -92,43 +92,41 @@ const readableSubstitutionGroup = (obj: any): string =>
     : undefined;
 const emojiForField = (obj: any): string => {
   if (obj.type.includes('string')) {
-    return '🔤';
+    return ''; // string = label, no emoji
   } else if (obj.type.includes('textBlock')) {
-    return '📝';
+    return '🔤 ';
   } else if (obj.type.includes('enumeration')) {
-    return '⬇️';
-  } else if (obj.type.includes('integer')) {
-    return '1️⃣';
-  } else if (obj.type.includes('decimal')) {
-    return '🔢';
+    return '⬇️ ';
+  } else if (obj.type.includes('integer') || obj.type.includes('decimal')) {
+    return '1️⃣ ';
   } else if (obj.type.includes('monetary')) {
-    return '💰';
+    return '💰 ';
   } else if (obj.type.includes('percent')) {
-    return '%';
+    return '% ';
   } else if (obj.type.includes('date')) {
-    return '📅';
+    return '📅 ';
   } else if (obj.type.includes('gYear')) {
-    return '🗓️';
+    return '🗓️ ';
   } else if (obj.type.includes('ghgEmissions')) {
-    return '💭';
+    return '💭 ';
   } else if (obj.type.includes('boolean')) {
-    return '✅';
+    return '✅ ';
   } else if (obj.type.includes('linkIdentifiers')) {
-    return '🏷️';
+    return '🏷️ ';
   } else if (obj.type.includes('area')) {
-    return '📐';
+    return '📐 ';
   } else if (obj.type.includes('energyPerMonetary')) {
-    return '🔋💰';
+    return '🔋💰 ';
   } else if (obj.type.includes('energy')) {
-    return '🔋';
+    return '🔋 ';
   } else if (obj.type.includes('mass')) {
-    return '🧱';
+    return '🧱 ';
   } else if (obj.type.includes('volumePerMonetary')) {
-    return '🛢️💵';
+    return '🛢️💵 ';
   } else if (obj.type.includes('volume')) {
-    return '🛢️';
+    return '🛢️ ';
   } else {
-    return '❓';
+    return '❓ ';
   }
 };
 const tableTypeForField = (obj: any): string => {
@@ -146,7 +144,7 @@ const tableTypeForField = (obj: any): string => {
 const formatInputField = (obj: any): string => {
   const objTypes = [readableType(obj), readableSubstitutionGroup(obj), obj.labelType].filter((str) => str).join(', ');
   if (obj.type) {
-    return `${tableTypeForField(obj)}${emojiForField(obj)} ${obj.label}${obj.documentation ? '¹' : ''} [${objTypes}]`;
+    return `${tableTypeForField(obj)}${emojiForField(obj)}${obj.label}${obj.documentation ? '¹' : ''} [${objTypes}]`;
   }
   return obj.label;
 };
