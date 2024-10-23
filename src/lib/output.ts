@@ -113,6 +113,8 @@ const emojiForField = (obj: any): string => {
     return '✅ ';
   } else if (obj.type.includes('linkIdentifiers')) {
     return '🏷️ ';
+  } else if (obj.type.includes('domain')) {
+    return '🔲 ';
   } else if (obj.type.includes('area')) {
     return '📐 ';
   } else if (obj.type.includes('energyPerMonetary')) {
