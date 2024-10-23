@@ -71,10 +71,26 @@ export const buildHierarchyFromLinkbase = (
   const allNodes: HierarchyNodeMap = {};
   const childrenIds: string[] = [];
 
+  const getLabelParts = (originalLabel: string) => {
+    const labelMatches = originalLabel?.match(/^\[?(\d+)?\]?\s*(.*?)\s*(?:\[(.+)\])?$/); // "[topicNumber, optional] label [labelType, optional]"
+    const [topicNumber, label, labelType] = labelMatches
+      ? [labelMatches[1] || undefined, labelMatches[2], labelMatches[3] || undefined]
+      : [undefined, originalLabel, undefined];
+    if (label === '') return { topicNumber: undefined, label: topicNumber, labelType }; // hack
+    return { topicNumber, label, labelType };
+  };
+
   const getNodeProps = (elementId: string, order?: string) => {
     const { id, ...otherAttributes } = getElementAttributes(elementId, esrsCoreXml) ?? {};
+    const originalLabel = getElementLabel(elementId, esrsCoreXml);
+    const { topicNumber, label, labelType } = getLabelParts(originalLabel);
     const nodeProps = {
-      label: getElementLabel(elementId, esrsCoreXml),
+      ...(topicNumber !== undefined && {
+        topicNumber
+      }),
+      label,
+      labelType,
+      originalLabel,
       ...(getDocumentation(elementId, esrsCoreXml) !== undefined && {
         documentation: getDocumentation(elementId, esrsCoreXml)
       }),
@@ -132,17 +148,21 @@ export const buildHierarchyFromLinkbase = (
   const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
   const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
   const labels = applyToAll(roles, (roleId) => getRoleLabel(roleId, esrsCoreXml));
-  const label = asArray(labels).find((label) => label !== undefined) || '(not found)';
+  const originalLabel = asArray(labels).find((label) => label !== undefined) || '(not found)';
+  const { topicNumber, label } = getLabelParts(originalLabel);
   // Find sectionCode between brackets and the first period/hyphen/space: “[301060] E1-6 Gross Scopes” -> “E1”
-  const match = label.match(/\[.*?\]\s([A-Z0-9]+)[.\-\s]/);
+  const match = originalLabel.match(/\[.*?\]\s([A-Z0-9]+)[.\-\s]/);
   const sectionCode = match ? match[1] : null;
   const rootNodeKey = Object.keys(nodeMap).find((key) => !childrenIds.includes(key));
   const rootNode = rootNodeKey ? nodeMap[rootNodeKey] : undefined;
   const children = rootNode ? [rootNode] : [];
   const root: HierarchyRootNode = {
     sectionCode,
+    topicNumber,
     label,
     labels,
+    // labelType,
+    originalLabel,
     roles,
     sourceFile,
     // $: linkbaseRef.$,
