@@ -88,19 +88,21 @@ const readableType = (obj: any): string =>
     ? [(readableSubstitutionGroup(obj), obj.type.split(':')[1]?.replace('ItemType', ''))].join(':').replace('item:', '')
     : '';
 const emojiForField = (obj: any): string => {
-  if (obj.type.includes('table')) {
-    return '📊';
-  } else if (obj.type.includes('string')) {
+  if (obj.type.includes('string')) {
     return '🔤';
   } else if (obj.type.includes('textBlock')) {
     return '📝';
-  } else if (obj.type.includes('enumerationSet')) {
+  } else if (obj.type.includes('enumeration')) {
     return '⬇️';
+  } else if (obj.type.includes('integer')) {
+    return '1️⃣';
+  } else if (obj.type.includes('decimal')) {
+    return '🔢';
   } else if (obj.type.includes('monetary')) {
     return '💰';
   } else if (obj.type.includes('percent')) {
     return '%';
-  } else if (obj.type.includes('date')) {
+  } else if (obj.type.includes('date') || obj.type.includes('gYear')) {
     return '📅';
   } else if (obj.type.includes('ghgEmissions')) {
     return '💭';
@@ -108,6 +110,18 @@ const emojiForField = (obj: any): string => {
     return '✅';
   } else if (obj.type.includes('linkIdentifiers')) {
     return '🏷️';
+  } else if (obj.type.includes('area')) {
+    return '📐';
+  } else if (obj.type.includes('energyPerMonetary')) {
+    return '🔋💰';
+  } else if (obj.type.includes('energy')) {
+    return '🔋';
+  } else if (obj.type.includes('mass')) {
+    return '🧱';
+  } else if (obj.type.includes('volumePerMonetary')) {
+    return '🛢️💵';
+  } else if (obj.type.includes('volume')) {
+    return '🛢️';
   } else {
     return '❓';
   }
