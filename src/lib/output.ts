@@ -76,7 +76,13 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
 
 // xbrli:stringItemType -> string
 const readableSubstitutionGroup = (obj: any): string =>
-  obj.substitutionGroup.split(':')[1]?.replace('Item', '').replace('hypercube', 'table').replace('item', 'single item');
+  obj.type
+    ? obj.substitutionGroup
+        .split(':')[1]
+        ?.replace('Item', '')
+        .replace('hypercube', 'table')
+        .replace('item', 'single item')
+    : undefined;
 const readableType = (obj: any): string =>
   obj.type
     ? [(readableSubstitutionGroup(obj), obj.type.split(':')[1]?.replace('ItemType', ''))].join(':').replace('item:', '')
@@ -106,12 +112,10 @@ const emojiForField = (obj: any): string => {
     return '❓';
   }
 };
-const formatInputField = (obj: any): string =>
-  obj.type
-    ? `${emojiForField(obj)} ${obj.label}${obj.documentation ? '¹' : ''} [${readableType(
-        obj
-      )}, ${readableSubstitutionGroup(obj)}]`
-    : obj.label;
+const formatInputField = (obj: any): string => {
+  const objTypes = [readableType(obj), readableSubstitutionGroup(obj), obj.labelType].filter((str) => str).join(', ');
+  return obj.type ? `${emojiForField(obj)} ${obj.label}${obj.documentation ? '¹' : ''} [${objTypes}]` : obj.label;
+};
 
 export function printInputFormTree(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {
   const ALLOWED_KEYS = ['sectionCode', 'label', 'children'];
