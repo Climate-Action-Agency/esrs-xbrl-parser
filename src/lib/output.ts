@@ -112,9 +112,24 @@ const emojiForField = (obj: any): string => {
     return '❓';
   }
 };
+const tableTypeForField = (obj: any): string => {
+  switch (obj.labelType) {
+    case 'table':
+      return 'TABLE: ';
+    case 'axis':
+      return 'AXIS: ';
+    case 'line items':
+      return 'ROW/LINE ITEM: ';
+    default:
+      return '';
+  }
+};
 const formatInputField = (obj: any): string => {
   const objTypes = [readableType(obj), readableSubstitutionGroup(obj), obj.labelType].filter((str) => str).join(', ');
-  return obj.type ? `${emojiForField(obj)} ${obj.label}${obj.documentation ? '¹' : ''} [${objTypes}]` : obj.label;
+  if (obj.type) {
+    return `${tableTypeForField(obj)}${emojiForField(obj)} ${obj.label}${obj.documentation ? '¹' : ''} [${objTypes}]`;
+  }
+  return obj.label;
 };
 
 export function printInputFormTree(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {

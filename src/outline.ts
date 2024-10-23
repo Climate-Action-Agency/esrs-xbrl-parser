@@ -58,7 +58,7 @@ async function main() {
       (presentation: { sectionCode: string }) => presentation.sectionCode === section.sectionCode
     )
   }));
-  //printXMLTree(esrsStructure, { skipBranches: ['order'] });
+  // printXMLTree(esrsStructure, { skipBranches: ['order'] });
   printInputFormTree(esrsStructure, { skipBranches: ['order'] });
 }
 
