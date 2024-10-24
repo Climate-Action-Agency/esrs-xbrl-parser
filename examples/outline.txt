@@ -19858,7 +19858,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 32
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",2-dichloroethane (EDC)"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,2-dichloroethane (EDC) [member]"
@@ -19969,7 +19968,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 42
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",2,3,4,5,6-hexachlorocyclohexane(HCH)"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,2,3,4,5,6-hexachlorocyclohexane(HCH) [member]"
@@ -20091,7 +20089,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 53
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",1,1-trichloroethane"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,1,1-trichloroethane [member]"
@@ -20103,7 +20100,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 54
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",1,2,2-tetrachloroethane"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,1,2,2-tetrachloroethane [member]"
@@ -21109,7 +21105,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 32
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",2-dichloroethane (EDC)"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,2-dichloroethane (EDC) [member]"
@@ -21220,7 +21215,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 42
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",2,3,4,5,6-hexachlorocyclohexane(HCH)"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,2,3,4,5,6-hexachlorocyclohexane(HCH) [member]"
@@ -21342,7 +21336,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 53
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",1,1-trichloroethane"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,1,1-trichloroethane [member]"
@@ -21354,7 +21347,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 54
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",1,2,2-tetrachloroethane"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,1,2,2-tetrachloroethane [member]"
@@ -22360,7 +22352,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 32
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",2-dichloroethane (EDC)"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,2-dichloroethane (EDC) [member]"
@@ -22471,7 +22462,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 42
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",2,3,4,5,6-hexachlorocyclohexane(HCH)"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,2,3,4,5,6-hexachlorocyclohexane(HCH) [member]"
@@ -22593,7 +22583,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 53
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",1,1-trichloroethane"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,1,1-trichloroethane [member]"
@@ -22605,7 +22594,6 @@ ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (fi
                                   ∟ nillable: "true"
                                   ∟ xbrli:periodType: "duration"
                                 ∟ 54
-                                  ∟ topicNumber: "1"
                                   ∟ label: ",1,2,2-tetrachloroethane"
                                   ∟ labelType: "member"
                                   ∟ originalLabel: "1,1,2,2-tetrachloroethane [member]"

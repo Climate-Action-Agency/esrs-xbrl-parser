@@ -1,4 +1,5 @@
 import { TreeSearchFilter } from '../types/global';
+import { EsrsHierarchyNode } from './linkbases';
 
 import { ATTRIBUTES_KEY } from './parsing';
 
@@ -75,63 +76,63 @@ export function printXMLTree(obj: any, searchFilter?: TreeSearchFilter, currentL
 }
 
 // xbrli:stringItemType -> string
-const readableType = (obj: any): string =>
+const readableType = (obj: EsrsHierarchyNode): string =>
   obj.type
     ? [(readableSubstitutionGroup(obj), obj.type.split(':')[1]?.replace('ItemType', ''))]
         .join(':')
         .replace('item:', '')
         .replace('gYear', 'year')
     : '';
-const readableSubstitutionGroup = (obj: any): string =>
+const readableSubstitutionGroup = (obj: EsrsHierarchyNode): string | undefined =>
   obj.type
     ? obj.substitutionGroup
-        .split(':')[1]
+        ?.split(':')[1]
         ?.replace('Item', '')
         .replace('hypercube', 'table')
         .replace('item', 'single item')
     : undefined;
-const emojiForField = (obj: any): string => {
-  if (obj.type.includes('string')) {
+const emojiForField = (obj: EsrsHierarchyNode): string => {
+  if (obj.type?.includes('string')) {
     return ''; // string = label, no emoji
-  } else if (obj.type.includes('textBlock')) {
+  } else if (obj.type?.includes('textBlock')) {
     return '🔤 ';
-  } else if (obj.type.includes('enumeration')) {
+  } else if (obj.type?.includes('enumeration')) {
     return '⬇️ ';
-  } else if (obj.type.includes('integer') || obj.type.includes('decimal')) {
+  } else if (obj.type?.includes('integer') || obj.type?.includes('decimal')) {
     return '1️⃣ ';
-  } else if (obj.type.includes('monetary')) {
+  } else if (obj.type?.includes('monetary')) {
     return '💰 ';
-  } else if (obj.type.includes('percent')) {
+  } else if (obj.type?.includes('percent')) {
     return '% ';
-  } else if (obj.type.includes('date')) {
+  } else if (obj.type?.includes('date')) {
     return '📅 ';
-  } else if (obj.type.includes('gYear')) {
+  } else if (obj.type?.includes('gYear')) {
     return '🗓️ ';
-  } else if (obj.type.includes('ghgEmissions')) {
+  } else if (obj.type?.includes('ghgEmissions')) {
     return '💭 ';
-  } else if (obj.type.includes('boolean')) {
+  } else if (obj.type?.includes('boolean')) {
     return '✅ ';
-  } else if (obj.type.includes('linkIdentifiers')) {
+  } else if (obj.type?.includes('linkIdentifiers')) {
     return '🏷️ ';
-  } else if (obj.type.includes('domain')) {
+  } else if (obj.type?.includes('domain')) {
     return '🔲 ';
-  } else if (obj.type.includes('area')) {
+  } else if (obj.type?.includes('area')) {
     return '📐 ';
-  } else if (obj.type.includes('energyPerMonetary')) {
+  } else if (obj.type?.includes('energyPerMonetary')) {
     return '🔋💰 ';
-  } else if (obj.type.includes('energy')) {
+  } else if (obj.type?.includes('energy')) {
     return '🔋 ';
-  } else if (obj.type.includes('mass')) {
+  } else if (obj.type?.includes('mass')) {
     return '🧱 ';
-  } else if (obj.type.includes('volumePerMonetary')) {
+  } else if (obj.type?.includes('volumePerMonetary')) {
     return '🛢️💵 ';
-  } else if (obj.type.includes('volume')) {
+  } else if (obj.type?.includes('volume')) {
     return '🛢️ ';
   } else {
     return '❓ ';
   }
 };
-const tableTypeForField = (obj: any): string => {
+const tableTypeForField = (obj: EsrsHierarchyNode): string => {
   switch (obj.labelType) {
     case 'table':
       return 'TABLE: ';
@@ -143,7 +144,7 @@ const tableTypeForField = (obj: any): string => {
       return '';
   }
 };
-const formatInputField = (obj: any): string => {
+const formatInputField = (obj: EsrsHierarchyNode): string => {
   const objTypes = [readableType(obj), readableSubstitutionGroup(obj), obj.labelType].filter((str) => str).join(', ');
   if (obj.type) {
     return `${tableTypeForField(obj)}${emojiForField(obj)}${obj.label}${obj.documentation ? '¹' : ''} [${objTypes}]`;

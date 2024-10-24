@@ -2,9 +2,12 @@ import { Xml2JSNode, StringMap } from '../types/global';
 import { getElementLabel, getRoleLabel, getDocumentation, getElementAttributes } from './labels';
 import { applyToAll, asArray } from './utils';
 
-interface EsrsHierarchyNode {
+export interface EsrsHierarchyNode {
   id: string;
   label: string;
+  originalLabel?: string;
+  labelType?: string;
+  substitutionGroup?: string;
   documentation?: string;
   order?: string;
   type?: string;
@@ -12,9 +15,8 @@ interface EsrsHierarchyNode {
   children?: EsrsHierarchyNode[];
 }
 
-interface EsrsHierarchyRootNode extends EsrsHierarchyNode {
+export interface EsrsHierarchyRootNode extends EsrsHierarchyNode {
   sectionCode?: string | null;
-  originalLabel?: string;
   labels?: string[];
   roles?: string[];
   sourceFile?: string;
@@ -82,11 +84,8 @@ export const buildHierarchyFromLinkbase = (
   const getNodeProps = (elementId: string, order?: string) => {
     const { id, ...otherAttributes } = getElementAttributes(elementId, esrsCoreXml) ?? {};
     const originalLabel = getElementLabel(elementId, esrsCoreXml);
-    const { topicNumber, label, labelType } = getLabelParts(originalLabel);
+    const { label, labelType } = getLabelParts(originalLabel);
     const nodeProps = {
-      ...(topicNumber !== undefined && {
-        topicNumber
-      }),
       label,
       labelType,
       originalLabel,
