@@ -135,11 +135,9 @@ const emojiForField = (obj: EsrsHierarchyNode): string => {
 const tableTypeForField = (obj: EsrsHierarchyNode): string => {
   switch (obj.labelType) {
     case 'table':
-      return 'TABLE: ';
     case 'axis':
-      return 'AXIS: ';
     case 'line items':
-      return 'ROW/LINE ITEM: ';
+      return `${obj.labelType.toUpperCase()}: `;
     default:
       return '';
   }
