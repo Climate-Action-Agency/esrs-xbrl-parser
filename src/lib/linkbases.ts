@@ -146,9 +146,9 @@ export const buildHierarchyFromLinkbase = (
   // Create a root object
   const sourceFile = linkbaseRef.$?.['xlink:href'].split('linkbases/').pop();
   const roleRefs = asArray(linkbaseRef['link:linkbase']['link:roleRef']);
-  const roles = applyToAll(roleRefs, (roleRef) => roleRef.$['xlink:href'].split('#').pop());
-  const labels = applyToAll(roles, (roleId) => getRoleLabel(roleId, esrsCoreXml));
-  const originalLabel = asArray(labels).find((label) => label !== undefined) || '(not found)';
+  const roles = roleRefs.map((roleRef) => roleRef.$['xlink:href'].split('#').pop() as string);
+  const labels = roles.map((roleId) => getRoleLabel(roleId, esrsCoreXml)).filter((label) => label !== null);
+  const originalLabel = labels?.[0] ?? '(not found)';
   const { topicNumber, label } = getLabelParts(originalLabel);
   // Find sectionCode between brackets and the first period/hyphen/space: “[301060] E1-6 Gross Scopes” -> “E1”
   const match = originalLabel.match(/\[.*?\]\s([A-Z0-9]+)[.\-\s]/);
