@@ -1,28 +1,27 @@
-import { Xml2JSNode, AnyMap, StringMap } from '../types/global';
+import { Xml2JSNode, StringMap } from '../types/global';
 import { getElementLabel, getRoleLabel, getDocumentation, getElementAttributes } from './labels';
 import { applyToAll, asArray } from './utils';
 
-interface HierarchyNode {
+interface EsrsHierarchyNode {
   id: string;
   label: string;
   documentation?: string;
   order?: string;
   type?: string;
-  dimension?: HierarchyNode;
-  children?: HierarchyNode[];
+  dimension?: EsrsHierarchyNode;
+  children?: EsrsHierarchyNode[];
 }
 
-export interface HierarchyNodeMap {
-  [key: string]: HierarchyNode;
-}
-
-interface HierarchyRootNode extends Partial<Xml2JSNode> {
-  $?: AnyMap;
+interface EsrsHierarchyRootNode extends EsrsHierarchyNode {
   sectionCode?: string | null;
-  label: string;
-  labels?: string[] | string;
-  roleRef?: Xml2JSNode;
-  children?: HierarchyNode[];
+  originalLabel?: string;
+  labels?: string[];
+  roles?: string[];
+  sourceFile?: string;
+}
+
+export interface EsrsHierarchyNodeMap {
+  [key: string]: EsrsHierarchyNode;
 }
 
 export enum LinkbaseType {
@@ -37,8 +36,8 @@ export const buildHierarchyFromLinkbase = (
   linkType = LinkbaseType.Presentation,
   linkbaseRef: Xml2JSNode,
   esrsCoreXml: Xml2JSNode,
-  options: { getAllNodes?: boolean; dimensionsLookupMap?: HierarchyNodeMap } = { getAllNodes: false }
-): HierarchyRootNode | HierarchyNodeMap | null => {
+  options: { getAllNodes?: boolean; dimensionsLookupMap?: EsrsHierarchyNodeMap } = { getAllNodes: false }
+): EsrsHierarchyRootNode | EsrsHierarchyNodeMap | null => {
   const xLink = asArray(linkbaseRef['link:linkbase']?.[`link:${linkType}Link`])[0];
 
   if (!xLink) {
@@ -67,8 +66,8 @@ export const buildHierarchyFromLinkbase = (
   });
 
   // Create a map to store nodes by ID
-  const nodeMap: HierarchyNodeMap = {};
-  const allNodes: HierarchyNodeMap = {};
+  const nodeMap: EsrsHierarchyNodeMap = {};
+  const allNodes: EsrsHierarchyNodeMap = {};
   const childrenIds: string[] = [];
 
   const getLabelParts = (originalLabel: string) => {
@@ -156,9 +155,9 @@ export const buildHierarchyFromLinkbase = (
   const rootNodeKey = Object.keys(nodeMap).find((key) => !childrenIds.includes(key));
   const rootNode = rootNodeKey ? nodeMap[rootNodeKey] : undefined;
   const children = rootNode ? [rootNode] : [];
-  const root: HierarchyRootNode = {
+  const root: EsrsHierarchyRootNode = {
+    id: topicNumber as string,
     sectionCode,
-    topicNumber,
     label,
     labels,
     // labelType,

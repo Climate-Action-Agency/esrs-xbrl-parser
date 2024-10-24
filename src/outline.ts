@@ -2,8 +2,8 @@ import path from 'path';
 
 import { Xml2JSNode, TreeSearchFilter, ESRSSection } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
-import { printXMLTree, printInputFormTree } from './lib/output';
-import { LinkbaseType, HierarchyNodeMap, buildHierarchyFromLinkbase } from './lib/linkbases';
+import { printJSON, printXMLTree, printInputFormTree } from './lib/output';
+import { LinkbaseType, EsrsHierarchyNodeMap, buildHierarchyFromLinkbase } from './lib/linkbases';
 import esrsSections from './config/esrsSections.json';
 
 async function main() {
@@ -35,8 +35,8 @@ async function main() {
   const definitionLinkbaseRefs =
     linkbaseRefs?.filter((linkbaseRef: Xml2JSNode) => linkbaseRef.$?.['xlink:href'].includes(LINKBASE_DEFINITIONS)) ??
     [];
-  const dimensionsLookupMap: HierarchyNodeMap = definitionLinkbaseRefs.reduce(
-    (result: HierarchyNodeMap, linkbaseRef: Xml2JSNode) => ({
+  const dimensionsLookupMap: EsrsHierarchyNodeMap = definitionLinkbaseRefs.reduce(
+    (result: EsrsHierarchyNodeMap, linkbaseRef: Xml2JSNode) => ({
       ...result,
       ...buildHierarchyFromLinkbase(LinkbaseType.Definition, linkbaseRef, esrsCoreXml, { getAllNodes: true })
     }),
@@ -58,8 +58,9 @@ async function main() {
       (presentation: { sectionCode: string }) => presentation.sectionCode === section.sectionCode
     )
   }));
-  // printXMLTree(esrsStructure, { skipBranches: ['order'] });
-  printInputFormTree(esrsStructure, { skipBranches: ['order'] });
+  // printJSON(esrsStructure);
+  // printInputFormTree(esrsStructure, { skipBranches: ['order'] });
+  printXMLTree(esrsStructure, { skipBranches: ['order'] });
 }
 
 main();
