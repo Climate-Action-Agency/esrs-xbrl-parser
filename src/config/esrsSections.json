@@ -1,5 +1,5 @@
 [
-  { "sectionCode": "ESRS2", "label": "General disclosures" },
+  { "sectionCode": "2", "label": "General disclosures" },
   { "sectionCode": "E1", "label": "Climate change" },
   { "sectionCode": "E2", "label": "Pollution" },
   { "sectionCode": "E3", "label": "Water and marine resources" },

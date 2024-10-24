@@ -152,7 +152,7 @@ export const buildHierarchyFromLinkbase = (
   const { topicNumber, label } = getLabelParts(originalLabel);
   // Find sectionCode between brackets and the first period/hyphen/space: “[301060] E1-6 Gross Scopes” -> “E1”
   const match = originalLabel.match(/\[.*?\]\s([A-Z0-9]+)[.\-\s]/);
-  const sectionCode = match ? match[1] : null;
+  const sectionCode = match ? match[1]?.replace('ESRS', '') : null;
   const rootNodeKey = Object.keys(nodeMap).find((key) => !childrenIds.includes(key));
   const rootNode = rootNodeKey ? nodeMap[rootNodeKey] : undefined;
   const children = rootNode ? [rootNode] : [];
