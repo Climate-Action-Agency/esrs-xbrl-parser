@@ -1,13 +1,16 @@
 [
   { "sectionCode": "2", "label": "General disclosures" },
+
   { "sectionCode": "E1", "label": "Climate change" },
   { "sectionCode": "E2", "label": "Pollution" },
   { "sectionCode": "E3", "label": "Water and marine resources" },
   { "sectionCode": "E4", "label": "Biodiversity and ecosystems" },
   { "sectionCode": "E5", "label": "Resource use and circular economy" },
+
   { "sectionCode": "S1", "label": "Own workforce" },
   { "sectionCode": "S2", "label": "Workers in the value chain" },
   { "sectionCode": "S3", "label": "Affected communities" },
   { "sectionCode": "S4", "label": "Consumers and end-users" },
+
   { "sectionCode": "G1", "label": "Business conduct" }
 ]
