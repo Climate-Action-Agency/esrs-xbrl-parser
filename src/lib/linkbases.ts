@@ -6,11 +6,15 @@ export interface EsrsHierarchyNode {
   id: string;
   label: string;
   originalLabel?: string;
-  labelType?: string;
-  substitutionGroup?: string;
   documentation?: string;
   order?: string;
+  name?: string;
+  labelType?: string;
   type?: string;
+  substitutionGroup?: string;
+  abstract?: string;
+  nillable?: string;
+  'xbrli:periodType'?: string;
   dimension?: EsrsHierarchyNode;
   children?: EsrsHierarchyNode[];
 }

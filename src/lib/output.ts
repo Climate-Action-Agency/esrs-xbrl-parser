@@ -93,9 +93,9 @@ const readableSubstitutionGroup = (obj: EsrsHierarchyNode): string | undefined =
     : undefined;
 const emojiForField = (obj: EsrsHierarchyNode): string => {
   if (obj.type?.includes('string')) {
-    return ''; // string = label, no emoji
+    return obj.abstract === 'false' ? '🔤 ' : '';
   } else if (obj.type?.includes('textBlock')) {
-    return '🔤 ';
+    return '🔡 ';
   } else if (obj.type?.includes('enumeration')) {
     return '⬇️ ';
   } else if (obj.type?.includes('integer') || obj.type?.includes('decimal')) {
@@ -136,6 +136,7 @@ const tableTypeForField = (obj: EsrsHierarchyNode): string => {
   switch (obj.labelType) {
     case 'table':
     case 'axis':
+    case 'typed axis':
     case 'line items':
       return `${obj.labelType.toUpperCase()}: `;
     default:
