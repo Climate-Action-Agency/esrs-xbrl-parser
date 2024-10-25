@@ -29,17 +29,33 @@ export interface XBRLSchema {
 }
 
 export interface XBRLElement {
-  id: string;
-  name: string;
+  $: AnyMap;
   abstract: string;
+  children?: string;
+  documentation?: string;
   domain: string;
-  headUsable: string;
+  enumerationMembers?: string;
+  headUsable?: string;
+  id: string;
+  label?: string;
+  labels?: string;
+  labelType?: string;
   linkrole: string;
+  name: string;
   nillable: string;
+  originalLabel?: string;
   periodType: string;
+  roles?: string;
+  sectionCode?: string;
+  sourceFile?: string;
   substitutionGroup: string;
   type: string;
   typedDomainRef: string;
+  'enum2:domain'?: string;
+  'enum2:headUsable'?: string;
+  'enum2:linkrole'?: string;
+  'xbrldt:typedDomainRef'?: string;
+  'xbrli:periodType'?: string;
 }
 
 // Types for import/include elements

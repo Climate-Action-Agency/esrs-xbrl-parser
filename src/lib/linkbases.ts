@@ -1,5 +1,5 @@
 import { Xml2JSNode, StringMap } from '../types/global';
-import { getElementLabel, getRoleLabel, getDocumentation, getElementAttributes } from './labels';
+import { getElementAttributes, getElementLabel, getRoleLabel, getDocumentation, getEnumerationMembers } from './labels';
 import { applyToAll, asArray } from './utils';
 
 export interface EsrsHierarchyNode {
@@ -86,9 +86,14 @@ export const buildHierarchyFromLinkbase = (
   };
 
   const getNodeProps = (elementId: string, order?: string) => {
-    const { id, ...otherAttributes } = getElementAttributes(elementId, esrsCoreXml) ?? {};
+    const element = getElementAttributes(elementId, esrsCoreXml) ?? {};
+    const { id, ...otherAttributes } = element;
     const originalLabel = getElementLabel(elementId, esrsCoreXml);
     const { label, labelType } = getLabelParts(originalLabel);
+    const enumerationMembers =
+      element?.['enum2:domain'] !== undefined
+        ? getEnumerationMembers(element?.['enum2:domain'], esrsCoreXml)
+        : undefined;
     const nodeProps = {
       label,
       labelType,
@@ -103,6 +108,9 @@ export const buildHierarchyFromLinkbase = (
       }),
       ...(options.dimensionsLookupMap?.[elementId] !== undefined && {
         dimension: options.dimensionsLookupMap?.[elementId]
+      }),
+      ...(enumerationMembers !== undefined && {
+        enumerationMembers
       }),
       children: []
     };

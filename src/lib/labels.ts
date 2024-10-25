@@ -53,6 +53,19 @@ export const getElementAttributes = (elementId: string, esrsCoreXml: Xml2JSNode)
   return element?.$;
 };
 
+/** Get enumeration/dropdown items from file: esrs_cor.xsd */
+export const getEnumerationMembers = (enum2DomainId: string, esrsCoreXml: Xml2JSNode): XBRLElement[] => {
+  const elements = esrsCoreXml['xsd:schema']?.['xsd:element'];
+  const enumerationElements = elements
+    ?.filter((element: Xml2JSNode) => element?.$?.['enum2:domain'] === enum2DomainId)
+    .map((elem: XBRLElement) => elem.$)
+    .map((elem: XBRLElement) => ({
+      label: getElementLabel(elem.id, esrsCoreXml),
+      ...elem
+    }));
+  return enumerationElements;
+};
+
 /** Build a dictionary of labels: lab_esrs-en.xml */
 export const buildLabelMap = async (labelFilePath: string): Promise<StringMap> => {
   const labelMap: { [key: string]: string } = {};

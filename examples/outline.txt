@@ -2,8 +2,6 @@
 > esrs-xrbl-parser@0.1.0 outline
 > npx tsx src/outline.ts
 
-ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd (filter {"onlyFollowBranches":["pre_esrs_","def_esrs_"]}):
-
 2
   ∟ General disclosures
       ∟ ESRS2.BP-1 General basis for preparation of sustainability statement - general
