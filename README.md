@@ -89,7 +89,8 @@ Outputs linkbases `presentations`, `dimensions`, [see example](https://raw.githu
 Show hierarchy for ESRS All:
 
     npm run outline
-    npm run outline 30106  # Only ESRS E1-6
+    npm run outline inputformtree  ## As input form tree (default)
+    npm run outline json 30106  # JSON, and only ESRS E1-6
 
 Output: [see example](https://raw.githubusercontent.com/Climate-Action-Agency/esrs-xbrl-parser/refs/heads/main/examples/outline.txt).
 

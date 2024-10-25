@@ -7,12 +7,14 @@ import { LinkbaseType, EsrsHierarchyNodeMap, buildHierarchyFromLinkbase } from '
 import esrsSections from './config/esrsSections.json';
 
 async function main() {
-  const chapterName = process.argv?.[2] ?? '';
+  const printMode = process.argv?.[2] ?? 'inputformtree';
+  const chapterName = process.argv?.[3] ?? '';
+  const searchText = process.argv?.[4];
+
   const LINKBASE_PRESENTATIONS = 'pre_esrs_' + chapterName;
   const LINKBASE_DEFINITIONS = 'def_esrs_' + chapterName;
   const LINKBASES_TO_INCLUDE = [LINKBASE_PRESENTATIONS, LINKBASE_DEFINITIONS];
 
-  const searchText = process.argv?.[3];
   const searchFilter: TreeSearchFilter = {
     // maxLevel: 10,
     onlyFollowBranches: LINKBASES_TO_INCLUDE,
@@ -21,13 +23,13 @@ async function main() {
 
   const esrsAllFilePath = 'ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd';
   const rootPath = path.dirname(esrsAllFilePath);
+  // console.log(`${esrsAllFilePath} (filter ${JSON.stringify(searchFilter)}):\n`);
 
   // Parse the core file
   const esrsCoreFilePath = 'common/esrs_cor.xsd';
   const esrsCoreXml = await parseAndFollowLinks(esrsCoreFilePath, rootPath);
 
   // Build the tree starting from the root file
-  console.log(`${esrsAllFilePath} (filter ${JSON.stringify(searchFilter)}):\n`);
   const esrsAllXml = await parseAndFollowLinks(esrsAllFilePath, '', searchFilter);
   const linkbaseRefs = esrsAllXml?.['xsd:schema']?.['xsd:annotation']?.['xsd:appinfo']?.['link:linkbaseRef'];
 
@@ -58,9 +60,11 @@ async function main() {
       (presentation: { sectionCode: string }) => presentation.sectionCode === section.sectionCode
     )
   }));
-  // printJSON(esrsStructure);
-  // printInputFormTree(esrsStructure, { skipBranches: ['order'] });
-  printXMLTree(esrsStructure, { skipBranches: ['order'] });
+
+  // Print with the selected mode
+  if (printMode === 'inputformtree') printInputFormTree(esrsStructure, { skipBranches: ['order'] });
+  if (printMode === 'xmltree') printXMLTree(esrsStructure, { skipBranches: ['order'] });
+  if (printMode === 'json') printJSON(esrsStructure);
 }
 
 main();
