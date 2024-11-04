@@ -241,7 +241,7 @@ See also the [XBRL Glossary](https://www.xbrl.org/guidance/xbrl-glossary/)
 
 #### ESRS-specific terminology
 
-- **Dimensions** (also called **Axis**) disaggregate digital disclosures using dimension members.
+- **Dimensions** (also called **Domain** or **Axis**) used to _disaggregate_ (break apart, specify) information.
   - **Explicit dimensions** (e.g., country, gender, GHG category), which are predefined lists of members
   - **Typed dimensions** (e.g., geographical area, policy ID, target ID), which are entity-specific and defined during report preparation.
 - **Disclosure Requirements (DRs)**:
