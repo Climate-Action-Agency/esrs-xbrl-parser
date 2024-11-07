@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
 
+import { printJSON, printXMLTree, printInputFormTree } from './lib/output';
+
 // Load the HTML file
 const html = fs.readFileSync('./ESRS-Set1-XBRL-Taxonomy/esrs_set1.html', 'utf-8');
 
@@ -11,12 +13,68 @@ function cleanString(str: string): string {
   return str?.replace(/\s+/g, ' ')?.trim();
 }
 
-const printTag = (element: cheerio.Element) => `<${$(element).prop('tagName').toLowerCase()}>`;
+interface TextNode {
+  id: string | null;
+  text: string;
+  rawText?: string;
+  type?: string;
+  tagName?: string;
+  children?: TextNode[];
+}
+
+function startsWithNumber(str: string): boolean {
+  const firstChar = str.trim()[0]; // Trim leading spaces and take the first character
+  return !isNaN(firstChar as unknown as number) && firstChar !== ' ';
+}
+
+function splitAtFirstSpace(str: string): [string | null, string] {
+  const firstSpaceIndex = str.indexOf(' ');
+  if (firstSpaceIndex === -1) {
+    // If there is no space, return the original string as the second part, with the first part empty
+    return [null, str];
+  }
+  const firstPart = str.substring(0, firstSpaceIndex).replace(/\.+$/, ''); // remove trailing period
+  const secondPart = str.substring(firstSpaceIndex + 1);
+  return [firstPart, secondPart];
+}
 
 // Example: Get all paragraphs
+let results: TextNode[] = [];
+
 $('.eli-container > *').each((index, element) => {
-  console.log(`#${index + 1}:`, printTag(element), cleanString($(element).text())?.substring(0, 70));
-  if (index >= 200) {
-    return false;
+  const tagName = $(element).prop('tagName').toLowerCase();
+  const rawText = cleanString($(element).text());
+  let id: string | null = null;
+  let type = 'text';
+  let text: string = rawText;
+
+  if (rawText.includes('Disclosure Requirement')) {
+    const match = rawText.match(/Disclosure Requirement ([A-Z]\d+-\d+) – (.+)/);
+    if (match) {
+      type = 'disclosure';
+      id = match[1];
+      text = match[2] || '';
+    }
+  } else if (rawText.startsWith('( ')) {
+    // "( 44 ) This information supports the information needs of financial"
+    const match = rawText.match(/\(\s*(\d+)\s*\)\s*(.+)/);
+    if (match) {
+      type = 'footnote';
+      id = match[1];
+      text = match[2] || '';
+    }
+  } else if (startsWithNumber(rawText)) {
+    // "3.7 The undertaking shall describe its policies"
+    const stringParts = splitAtFirstSpace(rawText);
+    id = stringParts[0];
+    text = stringParts[1];
+  }
+
+  if (tagName === 'p') {
+    results.push({ id, type, text, rawText, children: [] });
+  } else if (tagName === 'a' && results.length > 0) {
+    results[results.length - 1].children?.push({ id, type, text, rawText });
   }
 });
+
+printXMLTree(results);
