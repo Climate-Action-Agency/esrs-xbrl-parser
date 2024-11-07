@@ -48,18 +48,17 @@ $('.eli-container > *').each((index, element) => {
   let type = 'text';
   let text: string = rawText;
 
-  if (rawText.includes('Disclosure Requirement')) {
-    const match = rawText.match(/Disclosure Requirement ([A-Z]\d+-\d+) – (.+)/);
-    if (match) {
-      type = 'disclosure';
-      id = match[1];
-      text = match[2] || '';
-    }
+  if (rawText.startsWith('Disclosure Requirement ')) {
+    // "Disclosure Requirement BP-1 – General basis..."
+    type = 'disclosure';
+    const stringParts = rawText.replace(' - ', ' – ').split('– ');
+    id = stringParts[0]?.replace('Disclosure Requirement ', '')?.trim();
+    text = stringParts[1]?.trim();
   } else if (rawText.startsWith('( ')) {
     // "( 44 ) This information supports the information needs of financial"
+    type = 'footnote';
     const match = rawText.match(/\(\s*(\d+)\s*\)\s*(.+)/);
     if (match) {
-      type = 'footnote';
       id = match[1];
       text = match[2] || '';
     }
@@ -77,4 +76,6 @@ $('.eli-container > *').each((index, element) => {
   }
 });
 
-printXMLTree(results);
+const disclosures = results.filter((node) => node.type === 'disclosure');
+
+printXMLTree(disclosures);
