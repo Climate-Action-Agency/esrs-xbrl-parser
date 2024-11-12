@@ -4,6 +4,7 @@ import { applyToAll, asArray } from './utils';
 
 export interface EsrsHierarchyNode {
   id: string;
+  labelCode?: string;
   label: string;
   originalLabel?: string;
   documentation?: string;
@@ -81,8 +82,15 @@ export const buildHierarchyFromLinkbase = (
     const [topicNumber, label, labelType] = labelMatches
       ? [labelMatches[1] || undefined, labelMatches[2], labelMatches[3] || undefined]
       : [undefined, originalLabel, undefined];
-    if (label === '') return { topicNumber: undefined, label: topicNumber ?? '(no label)', labelType }; // hack
-    return { topicNumber, label, labelType };
+    if (label === undefined || label === '') {
+      return { topicNumber: undefined, labelCode: undefined, label: topicNumber ?? '(no label)', labelType }; // hack
+    }
+    if (label.split(' ')?.[0].includes('-')) {
+      const firstWord = label.split(' ')?.[0];
+      const restOfWords = label.split(' ')?.slice(1).join(' ');
+      return { topicNumber, labelCode: firstWord, label: restOfWords, labelType };
+    }
+    return { topicNumber, labelCode: undefined, label, labelType };
   };
 
   const getNodeProps = (elementId: string, order?: string) => {
@@ -159,7 +167,7 @@ export const buildHierarchyFromLinkbase = (
   const roles = roleRefs.map((roleRef) => roleRef.$['xlink:href'].split('#').pop() as string);
   const labels = roles.map((roleId) => getRoleLabel(roleId, esrsCoreXml)).filter((label) => label !== null);
   const originalLabel = labels?.[0] ?? '(not found)';
-  const { topicNumber, label } = getLabelParts(originalLabel);
+  const { topicNumber, label, labelCode } = getLabelParts(originalLabel);
   // Find sectionCode between brackets and the first period/hyphen/space: “[301060] E1-6 Gross Scopes” -> “E1”
   const match = originalLabel.match(/\[.*?\]\s([A-Z0-9]+)[.\-\s]/);
   const sectionCode = match ? match[1]?.replace('ESRS', '') : null;
@@ -169,6 +177,7 @@ export const buildHierarchyFromLinkbase = (
   const root: EsrsHierarchyRootNode = {
     id: topicNumber as string,
     sectionCode,
+    labelCode,
     label,
     labels,
     // labelType,

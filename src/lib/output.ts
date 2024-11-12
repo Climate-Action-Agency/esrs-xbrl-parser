@@ -143,10 +143,13 @@ const tableTypeForField = (obj: EsrsHierarchyNode): string => {
 };
 const formatInputField = (obj: EsrsHierarchyNode): string => {
   const objTypes = [readableType(obj), readableSubstitutionGroup(obj), obj.labelType].filter((str) => str).join(', ');
+  const labelWithCode = obj.labelCode ? `${obj.labelCode} ${obj.label}` : obj.label;
   if (obj.type) {
-    return `${tableTypeForField(obj)}${emojiForField(obj)}${obj.label}${obj.documentation ? '¹' : ''} [${objTypes}]`;
+    return `${tableTypeForField(obj)}${emojiForField(obj)}${labelWithCode}${
+      obj.documentation ? '¹' : ''
+    } [${objTypes}]`;
   }
-  return obj.label;
+  return labelWithCode;
 };
 
 export function printInputFormTree(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {
