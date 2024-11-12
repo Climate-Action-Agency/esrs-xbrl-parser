@@ -174,3 +174,74 @@ export function printInputFormTree(obj: any, searchFilter?: TreeSearchFilter, cu
     }
   }
 }
+
+const toSlug = (str: string): string =>
+  str
+    .toLowerCase()
+    .replace(/[ .]/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .trim();
+
+const rootRowId = 100000;
+let csvRowId = rootRowId;
+let csvParentRowId: number | null = null;
+let parentOrderNr = 0;
+let orderNr = 0;
+const formatCSVRow = (obj: EsrsHierarchyNode, currentLevel: number, index: number): string => {
+  const indentStr = '   ' + ' '.repeat(currentLevel);
+  if (currentLevel === 1) {
+    csvRowId = Math.round(csvRowId / 1000) * 1000 + 1000;
+    csvParentRowId = csvRowId;
+    orderNr = -1;
+    parentOrderNr++;
+  } else {
+    csvRowId += 10;
+  }
+  orderNr++;
+  let rowCode = obj.labelCode ?? obj.sectionCode ?? null;
+  const labelFixed = (obj.label ?? '').replace(/'/, '’').replace(' - general', '');
+  let slug = toSlug(rowCode ?? '');
+  switch (labelFixed) {
+    case 'General disclosures':
+      rowCode = 'ESRS2';
+      slug = toSlug('esrs2 ' + labelFixed);
+      break;
+    case 'ESRS2 Policies, actions and (or) targets not adopted':
+      rowCode = null;
+      slug = toSlug(labelFixed);
+      break;
+  }
+  return `${indentStr}(${csvRowId}, ${currentLevel === 1 ? rootRowId : csvParentRowId}, ${
+    currentLevel === 1 ? parentOrderNr : orderNr
+  }, ${rowCode !== null ? `'${rowCode}'` : 'NULL'}, '${labelFixed}', '${slug}', NULL, NULL),`;
+};
+
+export function printCSV(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {
+  if (currentLevel === 0) {
+    console.log(`INSERT INTO "public"."category"
+  ("id", "parent_category_id", "position", "reference", "name", "slug", "description", "ai_instructions")
+VALUES
+  (100000, NULL, 1, NULL, 'ESRS', 'esrs', 'The European Sustainability Reporting Standards', NULL),`);
+  }
+  const ALLOWED_KEYS = ['sectionCode', 'labelCode', 'children'];
+  let index = 0;
+  for (const key in obj) {
+    // Only print the ALLOWED_KEYS and array children
+    if (obj.hasOwnProperty(key) && (ALLOWED_KEYS.includes(key) || !isNaN(Number(key)))) {
+      switch (key) {
+        case 'sectionCode':
+          if (currentLevel === 1) console.log(formatCSVRow(obj, currentLevel, index));
+          break;
+        case 'labelCode':
+          console.log(formatCSVRow(obj, currentLevel, index));
+          break;
+      }
+      // Recursively traverse the child object
+      const hasChildren = typeof obj[key] === 'object' && obj[key] !== null;
+      if (hasChildren) {
+        printCSV(obj[key], searchFilter, currentLevel + 1);
+      }
+    }
+    index++;
+  }
+}
