@@ -4,6 +4,7 @@ import { applyToAll, asArray } from './utils';
 
 export interface EsrsHierarchyNode {
   id: string;
+  sectionCode?: string;
   labelCode?: string;
   label: string;
   originalLabel?: string;
@@ -85,8 +86,8 @@ export const buildHierarchyFromLinkbase = (
     if (label === undefined || label === '') {
       return { topicNumber: undefined, labelCode: undefined, label: topicNumber ?? '(no label)', labelType }; // hack
     }
-    if (label.split(' ')?.[0].includes('-')) {
-      const firstWord = label.split(' ')?.[0];
+    const firstWord = label.split(' ')?.[0];
+    if (firstWord.includes('-') && /\d$/.test(firstWord)) {
       const restOfWords = label.split(' ')?.slice(1).join(' ');
       return { topicNumber, labelCode: firstWord, label: restOfWords, labelType };
     }
