@@ -34,7 +34,7 @@ Unzip the ESRS files into `./ESRS-Set1-XBRL-Taxonomy` inside this project folder
 - [List](#list): `npm run list [path to XML file]` (list XML file)
 - [Linkbase Tree](#linkbase-tree): `npm run linkbaseTree` (list linkbases for ESRS All)
 - [Outline](#outline): `npm run outline` (show hierarchy for ESRS All)
-- Parse HTML file: `npm run parse-html > output/html.json` (uses HTML file `esrs_set1.html` instead of XBLR files)
+- Parse HTML file: `npm run parse-html > output/esrs_html.json` (uses HTML file `esrs_set1.html` instead of XBLR files)
 
 ### List
 
