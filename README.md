@@ -92,11 +92,12 @@ Show hierarchy for ESRS All:
     npm run outline
     npm run outline inputformtree  # As input form tree (default)
     npm run outline xmltree        # As XML tree
-    npm run outline csv            # As CSV
+    npm run outline sql            # As SQL
     npm run outline json 30106     # As JSON, and only ESRS E1-6
 
     npm run outline > output/esrs_outline.txt
     npm run outline json > output/esrs_outline.json
+    npm run outline sql > output/esrs_outline.sql
 
 Output: [see example](https://raw.githubusercontent.com/Climate-Action-Agency/esrs-xbrl-parser/refs/heads/main/examples/outline.txt).
 

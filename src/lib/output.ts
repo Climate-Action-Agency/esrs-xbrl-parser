@@ -183,19 +183,19 @@ const toSlug = (str: string): string =>
     .trim();
 
 const rootRowId = 100000;
-let csvRowId = rootRowId;
-let csvParentRowId: number | null = null;
+let sqlRowId = rootRowId;
+let sqlParentRowId: number | null = null;
 let parentOrderNr = 0;
 let orderNr = 0;
-const formatCSVRow = (obj: EsrsHierarchyNode, currentLevel: number, index: number): string => {
+const formatSQLRow = (obj: EsrsHierarchyNode, currentLevel: number, index: number): string => {
   const indentStr = '   ' + ' '.repeat(currentLevel);
   if (currentLevel === 1) {
-    csvRowId = Math.round(csvRowId / 1000) * 1000 + 1000;
-    csvParentRowId = csvRowId;
+    sqlRowId = Math.round(sqlRowId / 1000) * 1000 + 1000;
+    sqlParentRowId = sqlRowId;
     orderNr = -1;
     parentOrderNr++;
   } else {
-    csvRowId += 10;
+    sqlRowId += 10;
   }
   orderNr++;
   let rowCode = obj.labelCode ?? obj.sectionCode ?? null;
@@ -211,12 +211,12 @@ const formatCSVRow = (obj: EsrsHierarchyNode, currentLevel: number, index: numbe
       slug = toSlug(labelFixed);
       break;
   }
-  return `${indentStr}(${csvRowId}, ${currentLevel === 1 ? rootRowId : csvParentRowId}, ${
+  return `${indentStr}(${sqlRowId}, ${currentLevel === 1 ? rootRowId : sqlParentRowId}, ${
     currentLevel === 1 ? parentOrderNr : orderNr
   }, ${rowCode !== null ? `'${rowCode}'` : 'NULL'}, '${labelFixed}', '${slug}', NULL, NULL),`;
 };
 
-export function printCSV(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {
+export function printSQL(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {
   if (currentLevel === 0) {
     console.log(`INSERT INTO "public"."category"
   ("id", "parent_category_id", "position", "reference", "name", "slug", "description", "ai_instructions")
@@ -230,16 +230,16 @@ VALUES
     if (obj.hasOwnProperty(key) && (ALLOWED_KEYS.includes(key) || !isNaN(Number(key)))) {
       switch (key) {
         case 'sectionCode':
-          if (currentLevel === 1) console.log(formatCSVRow(obj, currentLevel, index));
+          if (currentLevel === 1) console.log(formatSQLRow(obj, currentLevel, index));
           break;
         case 'labelCode':
-          console.log(formatCSVRow(obj, currentLevel, index));
+          console.log(formatSQLRow(obj, currentLevel, index));
           break;
       }
       // Recursively traverse the child object
       const hasChildren = typeof obj[key] === 'object' && obj[key] !== null;
       if (hasChildren) {
-        printCSV(obj[key], searchFilter, currentLevel + 1);
+        printSQL(obj[key], searchFilter, currentLevel + 1);
       }
     }
     index++;
