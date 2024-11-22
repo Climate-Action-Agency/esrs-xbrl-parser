@@ -79,6 +79,9 @@ $('.eli-container > *').each((index, element) => {
     text = stringParts[1];
   }
 
+  id = id?.replace(/–/, '-') ?? null;
+
+  // Add the node to the results
   if (tagName === 'p') {
     results.push({ id, type, text, rawText, children: [] });
   } else if (tagName === 'a' && results.length > 0) {
