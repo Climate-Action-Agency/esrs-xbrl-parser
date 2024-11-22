@@ -143,10 +143,13 @@ const tableTypeForField = (obj: EsrsHierarchyNode): string => {
 };
 const formatInputField = (obj: EsrsHierarchyNode): string => {
   const objTypes = [readableType(obj), readableSubstitutionGroup(obj), obj.labelType].filter((str) => str).join(', ');
+  const labelWithCode = obj.labelCode ? `${obj.labelCode} ${obj.label}` : obj.label;
   if (obj.type) {
-    return `${tableTypeForField(obj)}${emojiForField(obj)}${obj.label}${obj.documentation ? '¹' : ''} [${objTypes}]`;
+    return `${tableTypeForField(obj)}${emojiForField(obj)}${labelWithCode}${
+      obj.documentation ? '¹' : ''
+    } [${objTypes}]`;
   }
-  return obj.label;
+  return labelWithCode;
 };
 
 export function printInputFormTree(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {
@@ -169,5 +172,76 @@ export function printInputFormTree(obj: any, searchFilter?: TreeSearchFilter, cu
         printInputFormTree(obj[key], searchFilter, currentLevel + 1);
       }
     }
+  }
+}
+
+const toSlug = (str: string): string =>
+  str
+    .toLowerCase()
+    .replace(/[ .]/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .trim();
+
+const rootRowId = 100000;
+let sqlRowId = rootRowId;
+let sqlParentRowId: number | null = null;
+let parentOrderNr = 0;
+let orderNr = 0;
+const formatSQLRow = (obj: EsrsHierarchyNode, currentLevel: number, index: number): string => {
+  const indentStr = '   ' + ' '.repeat(currentLevel);
+  if (currentLevel === 1) {
+    sqlRowId = Math.round(sqlRowId / 1000) * 1000 + 1000;
+    sqlParentRowId = sqlRowId;
+    orderNr = -1;
+    parentOrderNr++;
+  } else {
+    sqlRowId += 10;
+  }
+  orderNr++;
+  let rowCode = obj.labelCode ?? obj.sectionCode ?? null;
+  const labelFixed = (obj.label ?? '').replace(/'/, '’').replace(' - general', '');
+  let slug = toSlug(rowCode ?? '');
+  switch (labelFixed) {
+    case 'General disclosures':
+      rowCode = 'ESRS2';
+      slug = toSlug('esrs2 ' + labelFixed);
+      break;
+    case 'ESRS2 Policies, actions and (or) targets not adopted':
+      rowCode = null;
+      slug = toSlug(labelFixed);
+      break;
+  }
+  return `${indentStr}(${sqlRowId}, ${currentLevel === 1 ? rootRowId : sqlParentRowId}, ${
+    currentLevel === 1 ? parentOrderNr : orderNr
+  }, ${rowCode !== null ? `'${rowCode}'` : 'NULL'}, '${labelFixed}', '${slug}', NULL, NULL),`;
+};
+
+export function printSQL(obj: any, searchFilter?: TreeSearchFilter, currentLevel: number = 0): void {
+  if (currentLevel === 0) {
+    console.log(`INSERT INTO "public"."category"
+  ("id", "parent_category_id", "position", "reference", "name", "slug", "description", "ai_instructions")
+VALUES
+  (100000, NULL, 1, NULL, 'ESRS', 'esrs', 'The European Sustainability Reporting Standards', NULL),`);
+  }
+  const ALLOWED_KEYS = ['sectionCode', 'labelCode', 'children'];
+  let index = 0;
+  for (const key in obj) {
+    // Only print the ALLOWED_KEYS and array children
+    if (obj.hasOwnProperty(key) && (ALLOWED_KEYS.includes(key) || !isNaN(Number(key)))) {
+      switch (key) {
+        case 'sectionCode':
+          if (currentLevel === 1) console.log(formatSQLRow(obj, currentLevel, index));
+          break;
+        case 'labelCode':
+          console.log(formatSQLRow(obj, currentLevel, index));
+          break;
+      }
+      // Recursively traverse the child object
+      const hasChildren = typeof obj[key] === 'object' && obj[key] !== null;
+      if (hasChildren) {
+        printSQL(obj[key], searchFilter, currentLevel + 1);
+      }
+    }
+    index++;
   }
 }

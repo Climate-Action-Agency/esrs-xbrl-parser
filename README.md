@@ -34,6 +34,7 @@ Unzip the ESRS files into `./ESRS-Set1-XBRL-Taxonomy` inside this project folder
 - [List](#list): `npm run list [path to XML file]` (list XML file)
 - [Linkbase Tree](#linkbase-tree): `npm run linkbaseTree` (list linkbases for ESRS All)
 - [Outline](#outline): `npm run outline` (show hierarchy for ESRS All)
+- Parse HTML file: `npm run parse-html > output/esrs_html.json` (uses HTML file `esrs_set1.html` instead of XBLR files)
 
 ### List
 
@@ -89,8 +90,14 @@ Outputs linkbases `presentations`, `dimensions`, [see example](https://raw.githu
 Show hierarchy for ESRS All:
 
     npm run outline
-    npm run outline inputformtree  ## As input form tree (default)
-    npm run outline json 30106  # JSON, and only ESRS E1-6
+    npm run outline inputformtree  # As input form tree (default)
+    npm run outline xmltree        # As XML tree
+    npm run outline sql            # As SQL
+    npm run outline json 30106     # As JSON, and only ESRS E1-6
+
+    npm run outline > output/esrs_outline.txt
+    npm run outline json > output/esrs_outline.json
+    npm run outline sql > output/esrs_outline.sql
 
 Output: [see example](https://raw.githubusercontent.com/Climate-Action-Agency/esrs-xbrl-parser/refs/heads/main/examples/outline.txt).
 

@@ -22,13 +22,16 @@
     "list:core": "npm run list ESRS-Set1-XBRL-Taxonomy/xbrl.efrag.org/taxonomy/esrs/2023-12-22/common/esrs_cor.xsd",
     "linkbaseTree": "npx tsx src/linkbaseTree.ts",
     "outline": "npx tsx src/outline.ts",
-    "examples": "npm run list:all > examples/list_all.txt; npm run list:core > examples/list_core.txt; npm run linkbaseTree > examples/linkbaseTree.txt; npm run outline > examples/outline.txt"
+    "parse-html": "npx tsx src/parse-html.ts",
+    "examples": "npm run list:all > examples/list_all.txt; npm run list:core > examples/list_core.txt; npm run linkbaseTree > examples/linkbaseTree.txt; npm run outline > examples/outline.txt; npm run outline sql > examples/outline.sql"
   },
   "dependencies": {
+    "cheerio": "^1.0.0",
     "node-fetch": "^3.3.2",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.35",
     "@types/node": "^22.5.5",
     "@types/xml2js": "^0.4.14",
     "tsx": "^4.19.1",

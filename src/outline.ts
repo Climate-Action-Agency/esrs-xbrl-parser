@@ -2,7 +2,7 @@ import path from 'path';
 
 import { Xml2JSNode, TreeSearchFilter, ESRSSection } from './types/global';
 import { parseAndFollowLinks } from './lib/parsing';
-import { printJSON, printXMLTree, printInputFormTree } from './lib/output';
+import { printJSON, printXMLTree, printInputFormTree, printSQL } from './lib/output';
 import { LinkbaseType, EsrsHierarchyNodeMap, buildHierarchyFromLinkbase } from './lib/linkbases';
 import esrsSections from './config/esrsSections.json';
 
@@ -64,6 +64,7 @@ async function main() {
   // Print with the selected mode
   if (printMode === 'inputformtree') printInputFormTree(esrsStructure, { skipBranches: ['order'] });
   if (printMode === 'xmltree') printXMLTree(esrsStructure, { skipBranches: ['order'] });
+  if (printMode === 'sql') printSQL(esrsStructure);
   if (printMode === 'json') printJSON(esrsStructure);
 }
 
