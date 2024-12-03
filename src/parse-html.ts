@@ -41,10 +41,13 @@ function splitAtFirstSpace(str: string): [string | null, string] {
 function printDisclosures(disclosures: TextNode[]): void {
   console.log('Generate ESRS (for CSRD) checklist, list of possible tables needed – based on the ESRS disclosure:\n');
   disclosures.forEach((disclosure) => {
-    console.log(`Disclosure Requirement ${disclosure.id}: ${disclosure.text}\n`);
+    let disclosureText = '';
+    disclosureText += `Disclosure Requirement ${disclosure.id}: ${disclosure.text}\n`;
     disclosure.children?.forEach((paragraph) => {
-      console.log(`  §${paragraph.id}. ${paragraph.text}`);
+      disclosureText += `\n§${paragraph.id}. ${paragraph.text}`;
     });
+    console.log(disclosureText);
+    console.warn(disclosure.id, 'length:', disclosureText.length);
   });
 }
 
@@ -92,5 +95,5 @@ $('.eli-container > *').each((index, element) => {
 const allDisclosures = results.filter((node) => node.type === 'disclosure');
 printJSON(allDisclosures);
 
-// const selectedDisclosures = allDisclosures.filter((disclosure) => disclosure.id === 'E1-6');
+// const selectedDisclosures = allDisclosures.filter((disclosure) => disclosure.id === 'SBM-1');
 // printDisclosures(selectedDisclosures);
