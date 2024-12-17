@@ -61,22 +61,22 @@ async function main() {
   let results: TextNode[] = [];
 
   const processElements = (index: number, element: cheerio.Element, isAppendix = false) => {
-    const tagName = $(element).prop('tagName').toLowerCase();
-    const className = $(element).attr('class');
+    // const tagName = $(element).prop('tagName').toLowerCase();
+    const isHeading = $(element).attr('class') !== undefined;
     const rawText = cleanString($(element).text());
     let id: string | null = null;
-    let type = 'text';
+    let type = isHeading ? 'heading' : 'text';
     let text: string = rawText;
+    let isDisclosure = false;
 
-    if (rawText.startsWith('Disclosure Requirement ')) {
+    if (rawText.startsWith('Disclosure Requirement ') || rawText.startsWith('Disclosure Requirements ')) {
       // "Disclosure Requirement BP-1 – General basis..."
-      type = isAppendix ? 'disclosure-appendix' : 'disclosure';
+      isDisclosure = true;
       const stringParts = rawText.replace(' - ', ' – ').split('– ');
-      id = stringParts[0]?.replace('Disclosure Requirement ', '')?.trim();
+      id = stringParts[0]?.replace('Disclosure Requirement ', '').replace('Disclosure Requirements ', '')?.trim();
       text = stringParts[1]?.trim();
     } else if (rawText.startsWith('AR ')) {
       // "AR 17. An example of what the description..."
-      type = 'AR';
       const match = rawText.match(/^AR\s(\d+)\.\s(.+)$/);
       if (match) {
         id = match[1];
@@ -99,12 +99,12 @@ async function main() {
 
     id = id?.replace(/–/, '-') ?? null;
 
-    const nodeObject = { id, type, text, rawText };
+    const nodeObject = { id, type, isDisclosure, isAppendix, text, rawText };
 
     if (rawText.startsWith('Appendix A Application Requirements')) {
       const secondDiv = $(element).find('div');
       secondDiv.children().each((i, e) => processElements(i, e, true));
-    } else if (className !== undefined) {
+    } else if (isHeading) {
       // Elements with a 'class' are headings
       results.push({ ...nodeObject, children: [] });
     } else if (results.length > 0) {
