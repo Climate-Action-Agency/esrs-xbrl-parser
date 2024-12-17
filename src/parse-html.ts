@@ -7,6 +7,8 @@ import * as cheerio from 'cheerio';
 
 import { printJSON, printXMLTree, printInputFormTree } from './lib/output';
 
+const ESRS_HTML_FILENAME = './ESRS-Set1-XBRL-Taxonomy/esrs_en.html';
+
 function cleanString(str: string): string {
   return str?.replace(/\s+/g, ' ')?.trim();
 }
@@ -51,15 +53,16 @@ function printDisclosures(disclosures: TextNode[]): void {
 
 async function main() {
   // Load the HTML file
-  const html = fs.readFileSync('./ESRS-Set1-XBRL-Taxonomy/esrs_en.html', 'utf-8');
+  const html = fs.readFileSync(ESRS_HTML_FILENAME, 'utf-8');
 
   // Parse the HTML using cheerio
   const $ = cheerio.load(html);
 
   let results: TextNode[] = [];
 
-  $('.eli-container > *').each((index, element) => {
+  const processElements = (index: number, element: cheerio.Element, isAppendix = false) => {
     const tagName = $(element).prop('tagName').toLowerCase();
+    const className = $(element).attr('class');
     const rawText = cleanString($(element).text());
     let id: string | null = null;
     let type = 'text';
@@ -67,10 +70,18 @@ async function main() {
 
     if (rawText.startsWith('Disclosure Requirement ')) {
       // "Disclosure Requirement BP-1 – General basis..."
-      type = 'disclosure';
+      type = isAppendix ? 'disclosure-appendix' : 'disclosure';
       const stringParts = rawText.replace(' - ', ' – ').split('– ');
       id = stringParts[0]?.replace('Disclosure Requirement ', '')?.trim();
       text = stringParts[1]?.trim();
+    } else if (rawText.startsWith('AR ')) {
+      // "AR 17. An example of what the description..."
+      type = 'AR';
+      const match = rawText.match(/^AR\s(\d+)\.\s(.+)$/);
+      if (match) {
+        id = match[1];
+        text = match[2] || '';
+      }
     } else if (rawText.startsWith('( ')) {
       // "( 44 ) This information supports the information needs of financial"
       type = 'footnote';
@@ -88,19 +99,27 @@ async function main() {
 
     id = id?.replace(/–/, '-') ?? null;
 
-    // Add the node to the results
-    if (tagName === 'p') {
-      results.push({ id, type, text, rawText, children: [] });
-    } else if (tagName === 'a' && results.length > 0) {
-      results[results.length - 1].children?.push({ id, type, text, rawText });
+    const nodeObject = { id, type, text, rawText };
+
+    if (rawText.startsWith('Appendix A Application Requirements')) {
+      const secondDiv = $(element).find('div');
+      secondDiv.children().each((i, e) => processElements(i, e, true));
+    } else if (className !== undefined) {
+      // Elements with a 'class' are headings
+      results.push({ ...nodeObject, children: [] });
+    } else if (results.length > 0) {
+      results[results.length - 1].children?.push(nodeObject);
     }
-  });
+  };
+
+  $('.eli-container > *').each(processElements);
 
   const allDisclosures = results; //.filter((node) => node.type === 'disclosure');
   printJSON(allDisclosures);
 
   const selectedDisclosures = allDisclosures.filter((disclosure) => disclosure.id === 'E1-6');
-  //printDisclosures(selectedDisclosures);
+  // printDisclosures(selectedDisclosures);
+  //printJSON(selectedDisclosures);
 }
 
 main();

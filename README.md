@@ -103,7 +103,7 @@ Output: [see example](https://raw.githubusercontent.com/Climate-Action-Agency/es
 
 ### Parse HTML
 
-Uses HTML file `esrs_set1.html` instead of XBRL files, as input.
+Uses HTML file `esrs_en.html` (see https://eur-lex.europa.eu/eli/reg_del/2023/2772/oj) instead of XBRL files, as input.
 
     npm run parse-html
     npm run parse-html > output/esrs_html.json
