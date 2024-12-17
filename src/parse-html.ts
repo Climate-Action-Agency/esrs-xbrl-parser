@@ -1,13 +1,11 @@
+/**
+ * npm run parse-html
+ */
+
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
 
 import { printJSON, printXMLTree, printInputFormTree } from './lib/output';
-
-// Load the HTML file
-const html = fs.readFileSync('./ESRS-Set1-XBRL-Taxonomy/esrs_set1.html', 'utf-8');
-
-// Parse the HTML using cheerio
-const $ = cheerio.load(html);
 
 function cleanString(str: string): string {
   return str?.replace(/\s+/g, ' ')?.trim();
@@ -51,49 +49,58 @@ function printDisclosures(disclosures: TextNode[]): void {
   });
 }
 
-// Example: Get all paragraphs
-let results: TextNode[] = [];
+async function main() {
+  // Load the HTML file
+  const html = fs.readFileSync('./ESRS-Set1-XBRL-Taxonomy/esrs_en.html', 'utf-8');
 
-$('.eli-container > *').each((index, element) => {
-  const tagName = $(element).prop('tagName').toLowerCase();
-  const rawText = cleanString($(element).text());
-  let id: string | null = null;
-  let type = 'text';
-  let text: string = rawText;
+  // Parse the HTML using cheerio
+  const $ = cheerio.load(html);
 
-  if (rawText.startsWith('Disclosure Requirement ')) {
-    // "Disclosure Requirement BP-1 – General basis..."
-    type = 'disclosure';
-    const stringParts = rawText.replace(' - ', ' – ').split('– ');
-    id = stringParts[0]?.replace('Disclosure Requirement ', '')?.trim();
-    text = stringParts[1]?.trim();
-  } else if (rawText.startsWith('( ')) {
-    // "( 44 ) This information supports the information needs of financial"
-    type = 'footnote';
-    const match = rawText.match(/\(\s*(\d+)\s*\)\s*(.+)/);
-    if (match) {
-      id = match[1];
-      text = match[2] || '';
+  let results: TextNode[] = [];
+
+  $('.eli-container > *').each((index, element) => {
+    const tagName = $(element).prop('tagName').toLowerCase();
+    const rawText = cleanString($(element).text());
+    let id: string | null = null;
+    let type = 'text';
+    let text: string = rawText;
+
+    if (rawText.startsWith('Disclosure Requirement ')) {
+      // "Disclosure Requirement BP-1 – General basis..."
+      type = 'disclosure';
+      const stringParts = rawText.replace(' - ', ' – ').split('– ');
+      id = stringParts[0]?.replace('Disclosure Requirement ', '')?.trim();
+      text = stringParts[1]?.trim();
+    } else if (rawText.startsWith('( ')) {
+      // "( 44 ) This information supports the information needs of financial"
+      type = 'footnote';
+      const match = rawText.match(/\(\s*(\d+)\s*\)\s*(.+)/);
+      if (match) {
+        id = match[1];
+        text = match[2] || '';
+      }
+    } else if (startsWithNumber(rawText)) {
+      // "3.7 The undertaking shall describe its policies"
+      const stringParts = splitAtFirstSpace(rawText);
+      id = stringParts[0];
+      text = stringParts[1];
     }
-  } else if (startsWithNumber(rawText)) {
-    // "3.7 The undertaking shall describe its policies"
-    const stringParts = splitAtFirstSpace(rawText);
-    id = stringParts[0];
-    text = stringParts[1];
-  }
 
-  id = id?.replace(/–/, '-') ?? null;
+    id = id?.replace(/–/, '-') ?? null;
 
-  // Add the node to the results
-  if (tagName === 'p') {
-    results.push({ id, type, text, rawText, children: [] });
-  } else if (tagName === 'a' && results.length > 0) {
-    results[results.length - 1].children?.push({ id, type, text, rawText });
-  }
-});
+    // Add the node to the results
+    if (tagName === 'p') {
+      results.push({ id, type, text, rawText, children: [] });
+    } else if (tagName === 'a' && results.length > 0) {
+      results[results.length - 1].children?.push({ id, type, text, rawText });
+    }
+  });
 
-const allDisclosures = results.filter((node) => node.type === 'disclosure');
-printJSON(allDisclosures);
+  const allDisclosures = results; //.filter((node) => node.type === 'disclosure');
+  printJSON(allDisclosures);
 
-// const selectedDisclosures = allDisclosures.filter((disclosure) => disclosure.id === 'SBM-1');
-// printDisclosures(selectedDisclosures);
+  const selectedDisclosures = allDisclosures.filter((disclosure) => disclosure.id === 'E1-6');
+  //printDisclosures(selectedDisclosures);
+}
+
+main();
