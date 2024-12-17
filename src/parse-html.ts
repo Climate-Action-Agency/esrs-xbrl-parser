@@ -13,12 +13,16 @@ function cleanString(str: string): string {
   return str?.replace(/\s+/g, ' ')?.trim();
 }
 
+type TextNodeType = 'heading' | 'text' | 'footnote';
+
 interface TextNode {
   id: string | null;
   text: string;
   rawText?: string;
-  type?: string;
-  tagName?: string;
+  type?: TextNodeType;
+  elementTag?: string;
+  isDisclosure?: boolean;
+  isAppendix?: boolean;
   children?: TextNode[];
 }
 
@@ -39,13 +43,13 @@ function splitAtFirstSpace(str: string): [string | null, string] {
 }
 
 function printDisclosures(disclosures: TextNode[]): void {
-  console.log('Generate ESRS (for CSRD) checklist, list of possible tables needed – based on the ESRS disclosure:\n');
   disclosures.forEach((disclosure) => {
     let disclosureText = '';
     disclosureText += `Disclosure Requirement ${disclosure.id}: ${disclosure.text}\n`;
     disclosure.children?.forEach((paragraph) => {
       disclosureText += `\n§${paragraph.id}. ${paragraph.text}`;
     });
+    disclosureText += '\n';
     console.log(disclosureText);
     console.warn(disclosure.id, 'length:', disclosureText.length);
   });
@@ -58,21 +62,23 @@ async function main() {
   // Parse the HTML using cheerio
   const $ = cheerio.load(html);
 
-  let results: TextNode[] = [];
+  let allNodes: TextNode[] = [];
+  let lastAppendixId: string | null = null;
+  let lastAppendixIsDisclosure = false;
 
   const processElements = (index: number, element: cheerio.Element, isAppendix = false) => {
-    // const tagName = $(element).prop('tagName').toLowerCase();
+    const elementTag = $(element).prop('tagName').toLowerCase();
     const isHeading = $(element).attr('class') !== undefined;
     const rawText = cleanString($(element).text());
     let id: string | null = null;
-    let type = isHeading ? 'heading' : 'text';
+    let type: TextNodeType = isHeading ? 'heading' : 'text';
     let text: string = rawText;
     let isDisclosure = false;
 
     if (rawText.startsWith('Disclosure Requirement ') || rawText.startsWith('Disclosure Requirements ')) {
       // "Disclosure Requirement BP-1 – General basis..."
       isDisclosure = true;
-      const stringParts = rawText.replace(' - ', ' – ').split('– ');
+      const stringParts = rawText.replace(' - ', ' – ').replace(' –', ' – ').split('– ');
       id = stringParts[0]?.replace('Disclosure Requirement ', '').replace('Disclosure Requirements ', '')?.trim();
       text = stringParts[1]?.trim();
     } else if (rawText.startsWith('AR ')) {
@@ -99,27 +105,45 @@ async function main() {
 
     id = id?.replace(/–/, '-') ?? null;
 
-    const nodeObject = { id, type, isDisclosure, isAppendix, text, rawText };
+    // Fix for appendices with missing id
+    if (isAppendix && isHeading) {
+      if (id === null && lastAppendixId !== null) {
+        console.warn(`No ID for appendix, reuse '${lastAppendixId}'? –`, rawText.substring(0, 50));
+        id = lastAppendixId;
+        isDisclosure = lastAppendixIsDisclosure;
+      } else {
+        lastAppendixId = id;
+        lastAppendixIsDisclosure = isDisclosure;
+      }
+    }
+    if (!isAppendix) {
+      lastAppendixId = null;
+    }
+
+    const nodeObject = { id, type, isDisclosure, isAppendix, elementTag, text, rawText };
 
     if (rawText.startsWith('Appendix A Application Requirements')) {
       const secondDiv = $(element).find('div');
       secondDiv.children().each((i, e) => processElements(i, e, true));
     } else if (isHeading) {
       // Elements with a 'class' are headings
-      results.push({ ...nodeObject, children: [] });
-    } else if (results.length > 0) {
-      results[results.length - 1].children?.push(nodeObject);
+      allNodes.push({ ...nodeObject, children: [] });
+    } else if (allNodes.length > 0) {
+      allNodes[allNodes.length - 1].children?.push(nodeObject);
     }
   };
 
   $('.eli-container > *').each(processElements);
 
-  const allDisclosures = results; //.filter((node) => node.type === 'disclosure');
+  // Print JSON of all disclosures
+  const allDisclosures = allNodes.filter((node) => node.isDisclosure);
   printJSON(allDisclosures);
 
+  // Print AI prompt for one disclosure
   const selectedDisclosures = allDisclosures.filter((disclosure) => disclosure.id === 'E1-6');
+  // AI prompt
+  // console.log('Generate ESRS (for CSRD) checklist, list of possible tables needed – based on the ESRS disclosure:\n');
   // printDisclosures(selectedDisclosures);
-  //printJSON(selectedDisclosures);
 }
 
 main();
